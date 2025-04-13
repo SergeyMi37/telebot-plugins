@@ -1,5 +1,10 @@
 
-# Получение отчетов по задачам и меткам из GitLab
+# Chat bot project with plug-ins and application configuration via Dynaconf
+
+Currently supported plug-ins:
+- Interlocutor Giga Chat
+- Monitoring of IRIS servers
+- Reporter on issue from GitLab
 
 ``` bash
 git clone https://github.com/SergeyMi37/telebot-plugins
