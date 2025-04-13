@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: dtb_redis
+  web:
+    build:
+      context: .
+      dockerfile: LocalDockerfile
+    container_name: dtb_django
+    restart: always
+    environment:
+      ENV_FOR_DYNACONF: ${ENV_FOR_DYNACONF}
+    command: bash -c "python manage.py migrate && python manage.py runserver --noreload 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+  bot:
+    build:
+      context: .
+      dockerfile: LocalDockerfile
+    container_name: dtb_bot
+    restart: always
+    environment:
+      ENV_FOR_DYNACONF: ${ENV_FOR_DYNACONF}
+    command: python run_polling.py
+    env_file:
+      - ./.env
+    depends_on:
+      - web
+  celery:
+    build:
+      context: .
+      dockerfile: LocalDockerfile
+    container_name: dtb_celery
+    restart: always
+    environment:
+      ENV_FOR_DYNACONF: ${ENV_FOR_DYNACONF}
+    command: celery -A dtb worker --loglevel=INFO
+    volumes:
+      - .:/code
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - web
+  celery-beat:
+    build:
+      context: .
+      dockerfile: LocalDockerfile
+    container_name: dtb_beat
+    restart: always
+    environment:
+      ENV_FOR_DYNACONF: ${ENV_FOR_DYNACONF}
+    command: celery -A dtb beat -l info --scheduler django_celery_beat.schedulers.DatabaseScheduler
+    volumes:
+      - .:/code
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - celery
+      - web
