@@ -2,7 +2,7 @@
 # Получение отчетов по задачам и меткам из GitLab
 
 ``` bash
-git clone https://github.com/SergeyMi37/reports-gitlab-telebot.git
+git clone https://github.com/SergeyMi37/telebot-plugins
 cd django-telegram-bot
 ```
 
@@ -18,14 +18,12 @@ python -m venv env
 source env/Scripts/activate
 ```
 
-
 Install all requirements:
 ```
 pip install -r requirements.txt
 ```
 
-Create `.env` file in root directory and copy-paste this or just run `cp env_example .env`,
-don't forget to change telegram token:
+Create `config/settings.yaml` file in config directory and copy-paste this or just run `cp settings.example.yaml`, don't forget to change tokens:
 
 Run migrations to setup SQLite database:
 ``` bash

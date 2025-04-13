@@ -111,7 +111,7 @@ def handle_text_message(update, context):
     # Логика обработки сообщения
     resp = ask_giga(text)
     # Ответ пользователю
-    print(f"User {user.first_name} На вопрос: {text}\n Получил ответ:{resp}")
+    #print(f"User {user.first_name} На вопрос: {text}\n Получил ответ:{resp}")
     update.message.reply_text(f"Ответ Гиги: '{resp}'")
 
 

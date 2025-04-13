@@ -13,7 +13,6 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 consolehandler.setFormatter(formatter)
 logger.addHandler(consolehandler)
 
-
 from pathlib import Path
 
 from dynaconf import Dynaconf
@@ -27,6 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 dotenv_file = BASE_DIR / ".env"
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
+
+if not os.environ.get("ENV_FOR_DYNACONF"):
+    logger.error(
+        "Please provide ENV_FOR_DYNACONF \n"
+        "Example of export ENV_FOR_DYNACONF=dev "
+    )
+    sys.exit(1)
 
 settings = Dynaconf(
     envvar_prefix=False,
@@ -47,10 +53,10 @@ settings = Dynaconf(
         Validator("TIMESTAMP_FORMAT", default="%H:%M %d.%m.%Y"),
         Validator("TIME_ZONE", default="Europe/Moscow"),
         Validator("TELEGRAM_TOKEN", must_exist=True),
-        Validator("DB_URL", must_exist=True),
-        
+        Validator("DATABASE_URL", must_exist=True),
     ],
 )
+DATABASE_URL = settings.get("DATABASE_URL")
 
 logger.info('======== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF","")))
 def get_plugins(name_plug):
@@ -74,6 +80,7 @@ SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
     'x%#3&%giwv8f0+%r946en7z&d@9*rc$sl0qoql56xr%bh^w2mj',
 )
+
 
 if os.environ.get('DJANGO_DEBUG', default=False) in ['True', 'true', '1', True]:
     DEBUG = True
@@ -150,8 +157,9 @@ ASGI_APPLICATION = 'dtb.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+#DATABASES = {    'default': dj_database_url.config(conn_max_age=600, default="sqlite:///db.sqlite3"),}
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, default="sqlite:///db.sqlite3"),
+    'default': dj_database_url.parse(DATABASE_URL)
 }
 
 # Password validation
@@ -214,7 +222,7 @@ CELERY_TASK_DEFAULT_QUEUE = 'default'
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN",settings.get("TELEGRAM_TOKEN",None))
 if TELEGRAM_TOKEN is None:
     logging.error(
-        "Please provide TELEGRAM_TOKEN in .env file or settings\settings.yaml.\n"
+        "Please provide TELEGRAM_TOKEN in settings\settings.yaml.\n"
         "Example of .env file: https://github.com/ohld/django-telegram-bot/blob/main/.env_example"
     )
     sys.exit(1)

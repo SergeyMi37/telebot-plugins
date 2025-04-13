@@ -321,7 +321,7 @@ def get_report(label: str = "Табель", fromDate: datetime="", toDate: datet
     td=str(toDate).replace("-","")
     #lb=label.replace("Рейтинг","rating").replace("ВПР","vpr").replace("Табель","tabel").replace(",","_")
     lb = lab_replay(label,"ru_en")
-    print("---====-ru_en-",label,lb)
+    #print("---====-ru_en-",label,lb)
     prefix = f"/reports_date_{fd}_{td}_mode_{mode}_labels_{lb}" if pref=='' else pref
     
     errno, answer = get_issues_id(GITLAB_URL,label)

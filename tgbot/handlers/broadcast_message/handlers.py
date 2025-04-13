@@ -1,5 +1,5 @@
 import re
-
+from dtb.settings import logger
 import telegram
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -88,9 +88,10 @@ def reports(update: Update, context: CallbackContext):
                 lb = par.split("labels_")[1] #.split("_")[0:-1]
                 #lbl=lb.replace("rating","Рейтинг").replace("vpr","ВПР").replace("tabel","Табель").replace("_",",")
                 lbl = lab_replay(lb,"en_ru")
-                print("---====-en_ru-",lb,lbl)
+                #print("---====-en_ru-",lb,lbl)
             except Exception as err:
-                print("---err-lbl-",err)
+                #print("---err-lbl-",err)
+                logger.error("---err-lbl-"+err)
             fda = f'{fd[0:4]}-{fd[4:6]}-{fd[6:8]}'
             tda = f'{td[0:4]}-{td[4:6]}-{td[6:8]}'
             #print(fda,td,md,lbl)
@@ -98,7 +99,7 @@ def reports(update: Update, context: CallbackContext):
         # Логика разбора параметров
         mode="name"
         labels=GITLAB_LABELS
-        print('---params----',params)
+        #print('---params----',params)
         if 'date:yesterday' in params:
             _fromDate = datetime.now() + timedelta(days=-1)
             fromDate=_fromDate.date()

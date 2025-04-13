@@ -135,11 +135,11 @@ def command_server(cmd: str) -> None:
        _ns = cmd.split("_")[1] if cmd.split("_")[1].find('-')!=-1 else cmd.split("_")[1].replace("v","-")
        if _ns=='CC':
           cc = f'CC_{_servname}_{cmd.split("_")[2]}'
-          #_urlcc = os.environ.get(cc, default=False)
-          _urlcc = plugins_iris.get(cc, default=False)
+          #logger.info(cc)
+          _urlcc = plugins_iris.get(cc, "")
           if _urlcc:
              err, resp = get_open(url=_urlcc,timeout=TIMEOUT)
-             print('---=-',err,type(resp), resp)
+             #print('---=-',err,type(resp), resp)
              result +=f'Статус:<b>{resp["status"]}</b>\n'
              if resp.get("array",''):
               for arr in resp["array"]:
@@ -160,7 +160,7 @@ def command_server(cmd: str) -> None:
             _url = url.replace('/products/','/custom-task/user/run&class=apptools.MVK.utl&met=GetMetrixOneServer&par=all')
             
            err, resp = get_open(url=_url,timeout=TIMEOUT)
-           print('---=-',_url, err,type(resp), resp)
+           #print('---=-',_url, err,type(resp), resp)
            result +=f'Статус:<b>{resp["status"]}</b>\n'
            if resp.get("array",''):
             for arr in resp["array"]:
@@ -173,7 +173,7 @@ def command_server(cmd: str) -> None:
                   ic = "⚪️" 
                 result += f'{ic} {arr["text"]}\n'
             result += "\n/help /servers /s_"+_servname
-            print('---===-',result)
+            #print('---===-',result)
            return result
        _url = url.replace('/products/','/productslist/')+_ns
        err, resp = get_open(url=_url,timeout=TIMEOUT)
@@ -211,7 +211,7 @@ def get_custom_commands(servname: str, mode: str) -> None:
     #for key in os.environ:
     for key in plugins_iris:
       if f"CC_{servname}_" in key:
-        print(key, '=>', os.environ[key])
+        #print(key, '=>', os.environ[key])
         if mode=="list":
           result += f'✨ /s_{servname}_CC_{key.split("_")[2]}\n' #👉
         else:
@@ -219,7 +219,7 @@ def get_custom_commands(servname: str, mode: str) -> None:
           #Загрузить из сервиса результат
           #_u = os.environ[key]
           _u = plugins_iris[key]
-          print('-url-',_u )
+          #print('-url-',_u )
           err, resp = get_open(url=_u,timeout=TIMEOUT) # 0 - Только статус
-          print(err, resp)
+          #print(err, resp)
     return result
