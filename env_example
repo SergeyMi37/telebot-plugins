@@ -1,23 +1,4 @@
 DJANGO_DEBUG=True
-DATABASE_URL=sqlite:///db.sqlite3
-#DATABASE_URL=postgres://postgres:postgres@db:5432/postgres  # when using PostgreSQL via docker-compose
-TELEGRAM_TOKEN=1725447442:testAATIAicSdePAxSxTHdbO1X_4hfAnONOyiA
 
-CERT_FILE = ''
-CERT_KEY_FILE = ''
-
-# gitlab.com
-ACCESS_TOKEN = '<ACCESS_TOKEN>'
-GRAPHQL_URL = 'https://gitlab.com/api/graphql'
-GITLAB_URL = 'https://gitlab.com/api/v4/projects/2344904121/issues'
-GITLAB_LABELS = 'Теst'
-
-PROJ_RU = 'Периметр,Ветер,Спектр'
-PROJ_EN = 'perimetr,wind,spectr'
-
-
-# Адреса серверов IRIS с Web портами для выполнения запросов к Apptools-Admin пакету /apptoolsrest/products
-URL_TEST2 = http://UserName:UserPassword@iris-test:52773/USER #
-URL_DEMO = https://superuser:SYS@appadmin.demo.community.intersystems.com/apptoolsrest/products/
-# Custom Commands
-CC_DEMO_USERViewLog = https://superuser:SYS@appadmin.demo.community.intersystems.com/apptoolsrest/custom-task/spgz/run&class=apptools.core.rest&met=GetLastLogs&par=5
+# prod dev test ... for config\settings.yaml
+ENV_FOR_DYNACONF=dev
