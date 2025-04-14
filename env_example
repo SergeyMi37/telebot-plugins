@@ -1,4 +1,5 @@
 DJANGO_DEBUG=True
+DJANGO_SECRET_KEY='x%#3&8f0+%r946en7z&d@9*rc$sl0qoq3l56xr%bh^w2mj'
 
 # prod dev test ... for config\settings.yaml
 ENV_FOR_DYNACONF=dev

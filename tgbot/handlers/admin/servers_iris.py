@@ -26,7 +26,7 @@ from dtb.settings import logger
 TIMEOUT =25
 
 plugins_iris = get_plugins('IRIS')
-logger.info('-----plugins_iris-'+str(plugins_iris))
+logger.info('--- plugin IRIS: '+str(plugins_iris))
 #for key in plugins_iris:
   #print('-- ',key,plugins_iris[key])
 

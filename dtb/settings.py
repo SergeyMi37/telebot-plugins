@@ -58,7 +58,9 @@ settings = Dynaconf(
 )
 DATABASE_URL = settings.get("DATABASE_URL")
 
-logger.info('======== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF","")))
+logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF","")))
+logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
+
 def get_plugins(name_plug):
     plug = settings.get("PLUGINS")
     ret = {}
@@ -72,7 +74,6 @@ def get_plugins(name_plug):
                     val = it.split(' = ')[1]
                 if key:
                     ret[key]=val
-                    #print('===',val)
     return ret
 
 # SECURITY WARNING: keep the secret key used in production secret!
