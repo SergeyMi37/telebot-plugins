@@ -7,8 +7,8 @@ ps: ## Смотреть список запущенных контнейнеро
 build: ## Собрать images Docker и запустить   # docker-compose build
 	docker-compose up --build -d
 
-drop: ## Остановить и удалить контейнеры Docker
-	docker-compose down -v
+drop: ## Остановить и удалить контейнеры Docker ; docker-compose down -v
+	docker-compose down
 
 start: ## Запустить собранный контейнеры Docker
 	docker-compose up -d
