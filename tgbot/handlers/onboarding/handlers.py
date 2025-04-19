@@ -11,9 +11,11 @@ from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import BR
 from tgbot.handlers.admin.reports_gitlab import PROJ_EN, PROJ_RU
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
-
+from dtb.settings import get_plugins
+from dtb.settings import logger
 
 def command_help(update: Update, context: CallbackContext) -> None:
+    plugins = get_plugins()
     u, created = User.get_user_and_created(update, context)
     user_id = extract_user_data_from_update(update)['user_id']
     if created:
@@ -22,11 +24,14 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text = static_text.start_not_created.format(first_name=u.first_name)
 
     text += BR+'/start: Кнопки ссылок'
+    if plugins:
+        text += BR+'/plugins: список приложений - плагтнов'
+    
     # Если есть доступ к плпгину IRIS
     text += BR+'/servers: Смотреть статус всех серверов IRIS'
     text += BR+'/s_TEST: Смотреть продукции сервера TEST'
     text += BR
-    # Если есть доступ к плагину Issue Time tracking
+    # Если есть доступ к плагину GITLAB
     text += BR+'/daily: Отчет ежедневный по меткам "{proj_labels}"'
     text += BR+'/yesterday: Отчет вчерашний по меткам "{proj_labels}"'
     text += BR
@@ -44,9 +49,13 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
     text += BR
     text += BR + reports_wrong_format
+    # Если есть доступ к плпгину GIGA
+    text += BR + 'Задавайте вопросы к Гига-ИИ'
     
+    # Если есть доступ к роли суперадмин
     text += BR+'/ask_location: Отправить локацию 📍'
     text += BR+'/export_users: Экспорт users.csv 👥'
+    
     text += BR+'/help: Перечень команд'
     context.bot.send_message(
         chat_id=u.user_id,
@@ -63,6 +72,17 @@ def command_start(update: Update, context: CallbackContext) -> None:
         text = static_text.start_not_created.format(first_name=u.first_name)
 
     update.message.reply_text(text=text,
+                              reply_markup=make_keyboard_for_start_command())
+
+def command_plugins(update: Update, context: CallbackContext) -> None:
+    u, created = User.get_user_and_created(update, context)
+
+    if created:
+        text = static_text.start_created.format(first_name=u.first_name)
+    else:
+        text = static_text.start_not_created.format(first_name=u.first_name)
+
+    update.message.reply_text(text='ddddddddddddddd'+text,
                               reply_markup=make_keyboard_for_start_command())
 
 

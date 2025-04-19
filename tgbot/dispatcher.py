@@ -30,6 +30,7 @@ def setup_dispatcher(dp):
     # onboarding
     dp.add_handler(CommandHandler("start", onboarding_handlers.command_start))
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
+    dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
  
     # Если есть доступ к плагину IRIS
     if plugins_iris:
@@ -39,7 +40,7 @@ def setup_dispatcher(dp):
             MessageHandler(Filters.regex(rf'^/s(/s)?.*'), broadcast_handlers.server)
         )
    
-    # Если есть доступ к плагину Issue Time tracking
+    # Если есть доступ к плагину GITLAB
     if PROJ_EN:
         dp.add_handler(CommandHandler("daily", reports_gitlab.command_daily)) 
         dp.add_handler(CommandHandler("yesterday", reports_gitlab.command_yesterday)) 
@@ -113,7 +114,6 @@ def handle_text_message(update, context):
     # Ответ пользователю
     #print(f"User {user.first_name} На вопрос: {text}\n Получил ответ:{resp}")
     update.message.reply_text(f"Ответ Гиги: '{resp}'")
-
 
 n_workers = 0 if DEBUG else 4
 dispatcher = setup_dispatcher(Dispatcher(bot, update_queue=None, workers=n_workers, use_context=True))

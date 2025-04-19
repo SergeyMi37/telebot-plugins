@@ -15,7 +15,6 @@ def admin(update: Update, context: CallbackContext) -> None:
     """ Show help info about all secret admins commands """
     update.message.reply_text(static_text.secret_admin_commands)
 
-
 @superadmin_only
 def stats(update: Update, context: CallbackContext) -> None:
     """ Show help info about all secret admins commands """
@@ -23,7 +22,6 @@ def stats(update: Update, context: CallbackContext) -> None:
         user_count=User.objects.count(),  # count may be ineffective if there are a lot of users.
         active_24=User.objects.filter(updated_at__gte=now() - timedelta(hours=24)).count()
     )
-
     update.message.reply_text(
         text,
         parse_mode=ParseMode.HTML,

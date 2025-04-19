@@ -61,20 +61,25 @@ DATABASE_URL = settings.get("DATABASE_URL")
 logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF","")))
 logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
 
-def get_plugins(name_plug):
+def get_plugins(name_plug = ''):
     plug = settings.get("PLUGINS")
-    ret = {}
+    retpl = {}
     for pl in plug:
         pldict=dict(pl)
-        item= pldict.get(name_plug)
-        if item:
-            for it in item:
-                if ' = ' in it:
-                    key = it.split(' = ')[0]
-                    val = it.split(' = ')[1]
-                if key:
-                    ret[key]=val
-    return ret
+        for name_plug,val in pldict.items():
+            #print(f'----{name_plug} --- {val}')
+            #ret[key]=val
+            item = pldict.get(name_plug)
+            ret = {}
+            if item:
+                for it in item:
+                    if ' = ' in it:
+                        key = it.split(' = ')[0]
+                        val = it.split(' = ')[1]
+                    if key:
+                        ret[key]=val
+            retpl[name_plug] = ret
+    return retpl
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv(
