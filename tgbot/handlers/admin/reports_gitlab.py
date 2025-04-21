@@ -26,8 +26,9 @@ from openpyxl import Workbook
 from dtb.settings import get_plugins
 from dtb.settings import logger
 
-plugins_gitlab = get_plugins('GITLAB').get('GITLAB')
-logger.info('--- plugin GITLAB: '+str(plugins_gitlab))
+# Добавить проверку на роль 
+plugins_gitlab = get_plugins('').get('GITLAB')
+#logger.info('--- plugin GITLAB: '+str(plugins_gitlab))
 
 ACCESS_TOKEN = plugins_gitlab.get('ACCESS_TOKEN')
 GRAPHQL_URL = plugins_gitlab.get('GRAPHQL_URL')

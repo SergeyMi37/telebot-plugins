@@ -21,8 +21,9 @@ from langchain_gigachat.chat_models import GigaChat
 from dtb.settings import get_plugins
 from dtb.settings import logger
 
-GIGA_TOKEN = get_plugins('GIGA').get('GIGA').get("GIGA_CHAT")
-logger.info('--- plugin GIGA: '+str(get_plugins('GIGA')))
+# Добавить проверку на роль 
+GIGA_TOKEN = get_plugins('').get('GIGA').get("GIGA_CHAT")
+#logger.info('--- plugin GIGA: '+str(get_plugins('GIGA')))
 
 def ask_giga(prompt):
     if not GIGA_TOKEN:

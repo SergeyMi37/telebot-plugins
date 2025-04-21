@@ -15,46 +15,48 @@ from dtb.settings import get_plugins
 from dtb.settings import logger
 
 def command_help(update: Update, context: CallbackContext) -> None:
-    plugins = get_plugins()
     u, created = User.get_user_and_created(update, context)
     user_id = extract_user_data_from_update(update)['user_id']
     if created:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-
+    plugins = get_plugins(u.roles)
+    #print(u.roles,plugins)
     text += BR+'/start: Кнопки ссылок'
     if plugins:
-        text += BR+'/plugins: список приложений - плагтнов'
-    
-    # Если есть доступ к плпгину IRIS
-    text += BR+'/servers: Смотреть статус всех серверов IRIS'
-    text += BR+'/s_TEST: Смотреть продукции сервера TEST'
-    text += BR
-    # Если есть доступ к плагину GITLAB
-    text += BR+'/daily: Отчет ежедневный по меткам "{proj_labels}"'
-    text += BR+'/yesterday: Отчет вчерашний по меткам "{proj_labels}"'
-    text += BR
-    _i = 0
-    if PROJ_RU:
-        for _ru in PROJ_RU.split(','):
-            if _ru in u.roles or "All" in u.roles:
-                _en = PROJ_EN.split(',')[_i]
-                text += BR+f'/yesterday_{_en}: Отчет за вчера по метке "{_ru}"'
-                text += BR+f'/daily_{_en}: Отчет за сегодня по метке "{_ru}"'
-                text += BR+f'/daily_{_en}_noname: Отчет ежедневный по метке "{_ru}" обезличенный'
-                text += BR+f'/weekly_{_en}: Отчет еженедельный по первой части $"'
-                text += BR
-            _i += 1
+        text += BR+'/plugins: список приложений - плагинов'
+    if plugins.get('IRIS'):
+        # Если есть доступ к плпгину IRIS
+        text += BR+'/servers: Смотреть статус всех серверов IRIS'
+        text += BR+'/s_TEST: Смотреть продукции сервера TEST'
+        text += BR
+    if plugins.get('GITLAB'):
+        # Если есть доступ к плагину GITLAB
+        text += BR+'/daily: Отчет ежедневный по меткам "{proj_labels}"'
+        text += BR+'/yesterday: Отчет вчерашний по меткам "{proj_labels}"'
+        text += BR
+        _i = 0
+        if PROJ_RU:
+            for _ru in PROJ_RU.split(','):
+                if _ru in u.roles or "All" in u.roles:
+                    _en = PROJ_EN.split(',')[_i]
+                    text += BR+f'/yesterday_{_en}: Отчет за вчера по метке "{_ru}"'
+                    text += BR+f'/daily_{_en}: Отчет за сегодня по метке "{_ru}"'
+                    text += BR+f'/daily_{_en}_noname: Отчет ежедневный по метке "{_ru}" обезличенный'
+                    text += BR+f'/weekly_{_en}: Отчет еженедельный по первой части $"'
+                    text += BR
+                _i += 1
 
-    text += BR
-    text += BR + reports_wrong_format
-    # Если есть доступ к плпгину GIGA
-    text += BR + 'Задавайте вопросы к Гига-ИИ'
-    
-    # Если есть доступ к роли суперадмин
-    text += BR+'/ask_location: Отправить локацию 📍'
-    text += BR+'/export_users: Экспорт users.csv 👥'
+        text += BR
+        text += BR + reports_wrong_format
+    if plugins.get('GIGA'):
+        # Если есть доступ к плпгину GIGA
+        text += BR + 'Задавайте вопросы к Гига-ИИ'
+    if u.is_superadmin:
+        # Если есть доступ к роли суперадмин
+        text += BR+'/ask_location: Отправить локацию 📍'
+        text += BR+'/export_users: Экспорт users.csv 👥'
     
     text += BR+'/help: Перечень команд'
     context.bot.send_message(

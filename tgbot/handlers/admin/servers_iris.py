@@ -25,10 +25,11 @@ from openpyxl import Workbook
 from dtb.settings import logger
 TIMEOUT =25
 
-plugin = get_plugins('IRIS')
+# Добавить проверку на роль 
+plugin = get_plugins('')
 plugins_iris = plugin['IRIS']
-logger.info('--- plugin IRIS: '+str(plugins_iris))
-logger.info('--=- plugin IRIS: '+str(plugin))
+#logger.info('--- plugin IRIS: '+str(plugins_iris))
+#logger.info('--=- plugin IRIS: '+str(plugin))
 
 #for key in plugins_iris:
   #print('-- ',key,plugins_iris[key])
