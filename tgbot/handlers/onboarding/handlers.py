@@ -28,11 +28,13 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += BR+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
         # Если есть доступ к плпгину IRIS
+        text += BR+'👉----plugin-IRIS-'
         text += BR+'/servers: Смотреть статус всех серверов IRIS'
         text += BR+'/s_TEST: Смотреть продукции сервера TEST'
         text += BR
     if plugins.get('GITLAB'):
         # Если есть доступ к плагину GITLAB
+        text += BR+'👉----plugin-GITLAB-'
         text += BR+'/daily: Отчет ежедневный по меткам "{proj_labels}"'
         text += BR+'/yesterday: Отчет вчерашний по меткам "{proj_labels}"'
         text += BR
@@ -52,7 +54,11 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += BR + reports_wrong_format
     if plugins.get('GIGA'):
         # Если есть доступ к плпгину GIGA
+        text += BR+'👉----plugin-GIGA-'
         text += BR + 'Задавайте вопросы к Гига-ИИ'
+    for pl in plugins.items():
+        if not (pl in ['GIGA,"GITLAB','IRIS']):
+            pass
     if u.is_superadmin:
         # Если есть доступ к роли суперадмин
         text += BR+'/ask_location: Отправить локацию 📍'
