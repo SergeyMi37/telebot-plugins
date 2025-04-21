@@ -70,20 +70,23 @@ def command_start(update: Update, context: CallbackContext) -> None:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-
     update.message.reply_text(text=text,
                               reply_markup=make_keyboard_for_start_command())
 
 def command_plugins(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
-
+    Roles=''
     if created:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-
-    update.message.reply_text(text='ddddddddddddddd'+text,
-                              reply_markup=make_keyboard_for_start_command())
+        Roles=u.roles
+    plugins = get_plugins('')
+    text += f"{BR}Вам доступны следующие плагтны:"
+    for pl,val in plugins.items():
+        if pl in Roles.split(','):
+            text += f"{BR}/{pl} - {val.get('desc')}"
+    update.message.reply_text(text=text)
 
 
 def secret_level(update: Update, context: CallbackContext) -> None:

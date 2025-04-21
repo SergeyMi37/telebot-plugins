@@ -80,7 +80,7 @@ def setup_dispatcher(dp):
         Filters.animation, files.show_file_id,
     ))
 
-    #dp.add_handler(MessageHandler(        Filters.document.txt, files.save_file_id,    ))
+    dp.add_handler(MessageHandler(        Filters.document.txt, files.save_file_id,    ))
     dp.add_handler(MessageHandler(
         Filters.document, files.save_file_id,
     ))
