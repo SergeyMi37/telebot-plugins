@@ -61,6 +61,40 @@ def setup_dispatcher(dp):
 
     # secret level
     dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
+    '''
+    from telegram.ext import CallbackQueryHandler
+    
+# Обработчик события нажатия кнопки
+def button_callback(update, context):
+    query = update.callback_query
+    data = query.data
+    
+    # Логика обработки нажатия
+    if data == 'button_1':
+        query.answer(text="Нажата Кнопка 1")
+        # Здесь можете обработать действие первой кнопки
+        
+    elif data == 'button_2':
+        query.answer(text="Нажата Кнопка 2")
+        # Здесь можете обработать действие второй кнопки
+        
+    else:
+        query.answer(text="Ошибка!")
+
+# Регистрация обработчика
+dispatcher.add_handler(CallbackQueryHandler(button_callback))
+
+
+#### 4. Асинхронная логика и возможность изменения состояния клавиатуры
+Можно также изменять состояние клавиатуры прямо в обработчике. Например, изменить надпись на кнопке или скрыть клавиатуру:
+
+python
+if data == 'button_1':
+    new_buttons = [[InlineKeyboardButton("Изменённая кнопка", callback_data='new_button')]]
+    new_markup = InlineKeyboardMarkup(new_buttons)
+    query.edit_message_reply_markup(reply_markup=new_markup)
+'''
+   
     
     # reports
     dp.add_handler(

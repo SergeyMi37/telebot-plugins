@@ -3,6 +3,7 @@ import datetime
 from django.utils import timezone
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from tgbot.handlers.onboarding import static_text
 from tgbot.handlers.utils.info import extract_user_data_from_update
@@ -78,17 +79,30 @@ def command_start(update: Update, context: CallbackContext) -> None:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-    update.message.reply_text(text=text,
-                              reply_markup=make_keyboard_for_start_command())
+    '''
+    markup = InlineKeyboardMarkup('',row_width=2)
+    
+    # Добавляем первую строку с двумя кнопками
+    button1 = InlineKeyboardButton("Кнопка 1", callback_data="button1")
+    button2 = InlineKeyboardButton("Кнопка 2", callback_data="button2")
+    markup.add(button1, button2)
+    
+    # Вторая строка с одной кнопкой
+    button3 = InlineKeyboardButton("Кнопка 3", callback_data="button3")
+    markup.add(button3)
+    update.message.reply_text(text=text, reply_markup=markup)
+
+    '''
+    update.message.reply_text(text=text, reply_markup=make_keyboard_for_start_command(u.roles))
+   
 
 def command_plugins(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
-    Roles=''
     if created:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-        Roles=u.roles
+    Roles=u.roles
     plugins = get_plugins('')
     text += f"{BR}Вам доступны следующие плагтны:"
     for pl,val in plugins.items():
