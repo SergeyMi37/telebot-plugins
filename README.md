@@ -5,7 +5,7 @@ Currently supported plug-ins:
 - Interlocutor Giga Chat
 - Monitoring of IRIS servers
 - Reporter on issue from GitLab
-- Video clip generator
+- Video clip generator...
 
 ``` bash
 git clone https://github.com/SergeyMi37/telebot-plugins
