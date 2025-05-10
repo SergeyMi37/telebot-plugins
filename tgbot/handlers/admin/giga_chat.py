@@ -43,7 +43,7 @@ def ask_giga(prompt):
     messages.append(HumanMessage(content=prompt))
     res = giga.invoke(messages)
     messages.append(res)
-    return res.content + "\n /help"
+    return res.content
 '''
 """Пример работы с чатом"""
 from gigachat import GigaChat

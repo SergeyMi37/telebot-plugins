@@ -147,7 +147,7 @@ def handle_text_message(update, context):
     resp = ask_giga(text)
     # Ответ пользователю
     #print(f"User {user.first_name} На вопрос: {text}\n Получил ответ:{resp}")
-    update.message.reply_text(f"Ответ Гиги: '{resp}'")
+    update.message.reply_text(f"Ответ Гиги: {resp} \n /help")
 
 n_workers = 0 if DEBUG else 4
 dispatcher = setup_dispatcher(Dispatcher(bot, update_queue=None, workers=n_workers, use_context=True))
