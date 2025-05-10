@@ -36,13 +36,14 @@ def ask_giga(prompt):
     )
     messages = [
         SystemMessage(
-            content="Ты бот-собеседник, который помогает пользователю провести время с пользой."
+            #content="Ты бот-собеседник, который помогает пользователю провести время с пользой."
+            content="Ты бот супер программист на питон, который помогает пользователю провести время с пользой."
         )
     ]
     messages.append(HumanMessage(content=prompt))
     res = giga.invoke(messages)
     messages.append(res)
-    return res.content
+    return res.content + "\n /help"
 '''
 """Пример работы с чатом"""
 from gigachat import GigaChat
