@@ -217,7 +217,7 @@ def get_custom_commands(servname: str, mode: str) -> None:
       if f"CC_{servname}_" in key:
         #print(key, '=>', os.environ[key])
         if mode=="list":
-          result += f'✨ /s_{servname}_CC_{key.split("_")[2]}\n' #👉
+          result += f'🟤 /s_{servname}_CC_{key.split("_")[2]}\n' #👉
         else:
           #result += key.split("URL_")[1]
           #Загрузить из сервиса результат
