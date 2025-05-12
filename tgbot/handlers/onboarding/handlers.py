@@ -104,9 +104,9 @@ def command_plugins(update: Update, context: CallbackContext) -> None:
         text = static_text.start_not_created.format(first_name=u.first_name)
     Roles=u.roles
     plugins = get_plugins('')
-    text += f"{BR}Вам доступны следующие плагины:{Roles}:{plugins}"
+    text += f"{BR}Вам доступны следующие плагины:"
     for pl,val in plugins.items():
-        if pl in Roles.split(','):
+        if pl in Roles.split(',') or "All" in Roles.split(','):
             text += f"{BR}/{pl} - {val.get('desc')}"
     update.message.reply_text(text=text)
 
