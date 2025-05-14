@@ -30,13 +30,21 @@ from dtb.settings import logger
 plugins_gitlab = get_plugins('').get('GITLAB')
 #logger.info('--- plugin GITLAB: '+str(plugins_gitlab))
 
-ACCESS_TOKEN = plugins_gitlab.get('ACCESS_TOKEN')
-GRAPHQL_URL = plugins_gitlab.get('GRAPHQL_URL')
-GITLAB_URL = plugins_gitlab.get('GITLAB_URL')
-GITLAB_LABELS = plugins_gitlab.get('GITLAB_LABELS')
-PROJ_EN = plugins_gitlab.get('PROJ_EN','')
-PROJ_RU = plugins_gitlab.get('PROJ_RU','')
-
+if plugins_gitlab:
+  ACCESS_TOKEN = plugins_gitlab.get('ACCESS_TOKEN')
+  GRAPHQL_URL = plugins_gitlab.get('GRAPHQL_URL')
+  GITLAB_URL = plugins_gitlab.get('GITLAB_URL')
+  GITLAB_LABELS = plugins_gitlab.get('GITLAB_LABELS')
+  PROJ_EN = plugins_gitlab.get('PROJ_EN','')
+  PROJ_RU = plugins_gitlab.get('PROJ_RU','')
+else:
+  ACCESS_TOKEN = ''
+  GRAPHQL_URL = ''
+  GITLAB_URL = ''
+  GITLAB_LABELS = ''
+  PROJ_EN = ''
+  PROJ_RU = ''
+   
 def get_tele_command(update: Update) -> str:
    try:
       if update.message.text:

@@ -52,7 +52,7 @@ def setup_dispatcher(dp):
 
     # admin commands
     dp.add_handler(CommandHandler("admin", admin_handlers.admin))
-    dp.add_handler(CommandHandler("stats", admin_handlers.stats))
+    #dp.add_handler(CommandHandler("stats", admin_handlers.stats))
     dp.add_handler(CommandHandler('export_users', admin_handlers.export_users))
 
     # location

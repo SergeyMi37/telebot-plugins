@@ -11,12 +11,12 @@ from users.models import User
 from tgbot.handlers.admin.reports_gitlab import get_tele_command
 
 @admin_only
-def admin(update: Update, context: CallbackContext) -> None:
+def admin2(update: Update, context: CallbackContext) -> None:
     """ Show help info about all secret admins commands """
     update.message.reply_text(static_text.secret_admin_commands)
 
 @superadmin_only
-def stats(update: Update, context: CallbackContext) -> None:
+def admin(update: Update, context: CallbackContext) -> None:
     """ Show help info about all secret admins commands """
     text = static_text.users_amount_stat.format(
         user_count=User.objects.count(),  # count may be ineffective if there are a lot of users.
