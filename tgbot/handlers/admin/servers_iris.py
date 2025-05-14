@@ -26,8 +26,8 @@ from dtb.settings import logger
 TIMEOUT =25
 
 # Добавить проверку на роль 
-plugin = get_plugins('')
-plugins_iris = plugin['IRIS']
+#plugin
+plugins_iris = get_plugins('').get('IRIS')
 #logger.info('--- plugin IRIS: '+str(plugins_iris))
 #logger.info('--=- plugin IRIS: '+str(plugin))
 
