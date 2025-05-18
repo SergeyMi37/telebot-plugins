@@ -29,7 +29,7 @@ Install all requirements:
 pip install -r requirements.txt
 ```
 
-Create `config/settings.yaml` file in config directory and copy-paste this or just run `cp settings.example.yaml`, don't forget to change tokens:
+Create `settings.yaml` file in config directory and copy-paste this or just run `cp settings.example.yaml`, don't forget to change tokens:
 
 Run migrations to setup SQLite database:
 ``` bash

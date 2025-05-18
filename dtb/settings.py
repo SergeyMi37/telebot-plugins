@@ -37,7 +37,7 @@ if not os.environ.get("ENV_FOR_DYNACONF"):
 settings = Dynaconf(
     envvar_prefix=False,
     environments=True,
-    settings_files=["config/settings.yaml"],
+    settings_files=["settings.yaml"],
     validators=[
         Validator("ADMIN_IDS", must_exist=True),
         Validator("ERRORS_CHAT_ID", must_exist=True),

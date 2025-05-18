@@ -112,6 +112,7 @@ env.bak/
 venv.bak/
 dtb_venv/
 config/settings.yaml
+settings.yaml
 
 # Spyder project settings
 .spyderproject
