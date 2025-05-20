@@ -27,20 +27,20 @@ prod:
     - GITLAB:
         # gitlab.com -------------------------------
     - GIGA:
-        - GIGA_CHAT = dfddfdfdfdiiijiiuuyiuyuh
+        - GIGA_CHAT = <dfddfdfdfdiiijiiuuyiuyuh>
 
 dev:
   TELEGRAM_TOKEN: "<234344-121212343434312>"
-  DATABASE_URL: "postgres://postgres:postgres@localhost:5432/telebot"
+  DATABASE_URL: sqlite:///db.sqlite3
   PLUGINS:
     - IRIS:
         - URL_DEMO = https://superuser:Dev@appadmin.demo.community.intersystems.com/apptoolsrest/products/    # Демо
     - GITLAB:
-        - ACCESS_TOKEN = glpat-sdfsdfsdfsdfsffs
+        - ACCESS_TOKEN = <glpat-sdfsdfsdfsdfsffs>
         - GRAPHQL_URL = https://gitlab.com/api/graphql
         - GITLAB_URL = https://gitlab.com/api/v4/projects/23890341/issues
         - GITLAB_LABELS = Табель
         - PROJ_RU = Периметр,Ветер,Спектр
         - PROJ_EN = perimetr,wind,spectr
     - GIGA:
-        - GIGA_CHAT = jhuhuihijmsdfswrddwwdw==
+        - GIGA_CHAT = <jhuhuihijmsdfswrddwwdw==>
