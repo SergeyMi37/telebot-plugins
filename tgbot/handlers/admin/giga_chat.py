@@ -41,9 +41,12 @@ def ask_giga(prompt):
         )
     ]
     messages.append(HumanMessage(content=prompt))
-    res = giga.invoke(messages)
-    messages.append(res)
-    return res.content
+    try:
+        res = giga.invoke(messages)
+        messages.append(res)
+        return res.content
+    except Exception as e:
+        return e.args.__repr__()
 '''
 """Пример работы с чатом"""
 from gigachat import GigaChat

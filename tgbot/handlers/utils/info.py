@@ -9,7 +9,7 @@ def extract_user_data_from_update(update: Update) -> Dict:
 
     return dict(
         user_id=user["id"],
-        is_blocked_bot=False,
+        #is_blocked_bot=False,
         **{
             k: user[k]
             for k in ["username", "first_name", "last_name", "language_code"]
