@@ -74,14 +74,18 @@ def get_plugins(Roles = ''):
             #print('-2-',name_plug)
             item = pldict.get(name_plug)
             ret = {}
+            blocked=0
             if item:
                 for it in item:
                     if ' = ' in it:
                         key = it.split(' = ')[0]
                         val = it.split(' = ')[1]
+                    if key=='blocked' and val in ['True', 'true', '1', True]:
+                        blocked=1
                     if key:
                         ret[key]=val
-            retpl[name_plug] = ret
+            if not blocked:
+                retpl[name_plug] = ret
     return retpl
 
 # SECURITY WARNING: keep the secret key used in production secret!

@@ -23,7 +23,10 @@ from dtb.settings import get_plugins
 from dtb.settings import logger
 
 # Добавить проверку на роль 
-GIGA_TOKEN = get_plugins('').get('GIGA').get("GIGA_CHAT")
+try:
+    GIGA_TOKEN = get_plugins('').get('GIGA').get("GIGA_CHAT")
+except Exception as e:
+    GIGA_TOKEN = ''
 #logger.info('--- plugin GIGA: '+str(get_plugins('GIGA')))
 
 def ask_giga(prompt):
@@ -36,7 +39,8 @@ def ask_giga(prompt):
     )
     messages = [
         SystemMessage(
-            #content="Ты бот-собеседник, который помогает пользователю провести время с пользой."
+            # content="Ты внимательный бот-психолог, который помогает пользователю решить его проблемы."
+            # content="Ты бот-собеседник, который помогает пользователю провести время с пользой."
             content="Ты бот супер программист на питон, который помогает пользователю провести время с пользой."
         )
     ]
@@ -47,6 +51,8 @@ def ask_giga(prompt):
         return res.content
     except Exception as e:
         return e.args.__repr__()
+
+
 '''
 """Пример работы с чатом"""
 from gigachat import GigaChat
