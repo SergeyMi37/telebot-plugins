@@ -6,7 +6,7 @@ from telegram.ext import CallbackContext
 
 from tgbot.handlers.admin import static_text
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
-from tgbot.handlers.utils.decorators import admin_only, send_typing_action, superadmin_only
+from tgbot.handlers.utils.decorators import admin_only, send_typing_action, superadmin_only, check_blocked_user
 from users.models import User
 from tgbot.handlers.admin.reports_gitlab import get_tele_command
 
@@ -15,6 +15,7 @@ def admin2(update: Update, context: CallbackContext) -> None:
     """ Show help info about all secret admins commands """
     update.message.reply_text(static_text.secret_admin_commands)
 
+@check_blocked_user
 @superadmin_only
 def admin(update: Update, context: CallbackContext) -> None:
     """ Show help info about all secret admins commands """
@@ -28,6 +29,7 @@ def admin(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True,
     )
 
+@check_blocked_user
 @superadmin_only
 @send_typing_action
 def export_users(update: Update, context: CallbackContext) -> None:

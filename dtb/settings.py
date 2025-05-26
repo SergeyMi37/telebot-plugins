@@ -14,7 +14,6 @@ consolehandler.setFormatter(formatter)
 logger.addHandler(consolehandler)
 
 from pathlib import Path
-
 from dynaconf import Dynaconf
 from dynaconf.validator import Validator
 
@@ -37,7 +36,7 @@ if not os.environ.get("ENV_FOR_DYNACONF"):
 settings = Dynaconf(
     envvar_prefix=False,
     environments=True,
-    settings_files=["settings.yaml"],
+    settings_files=["dynaconf.yaml"],
     validators=[
         Validator("ADMIN_IDS", must_exist=True),
         Validator("ERRORS_CHAT_ID", must_exist=True),

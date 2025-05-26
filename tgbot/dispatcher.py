@@ -10,7 +10,7 @@ from telegram.ext import (
 from dtb.settings import DEBUG
 from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCAST
 from tgbot.handlers.broadcast_message.static_text import broadcast_command,reports_command
-from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
+#from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
 
 from tgbot.handlers.utils import files, error
 from tgbot.handlers.admin import handlers as admin_handlers
@@ -60,7 +60,7 @@ def setup_dispatcher(dp):
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
 
     # secret level
-    dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
+    #dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
     '''
     from telegram.ext import CallbackQueryHandler
     
@@ -140,6 +140,9 @@ if data == 'button_1':
     return dp
 
 # Функция-обработчик для текстовых сообщений
+from tgbot.handlers.utils.decorators import check_blocked_user
+
+@check_blocked_user
 def handle_text_message(update, context):
     user = update.effective_user
     text = update.message.text

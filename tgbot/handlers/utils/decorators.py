@@ -1,11 +1,29 @@
 from functools import wraps
 from typing import Callable
 
-from telegram import Update, ChatAction
+from telegram import Update, ChatAction, ParseMode
 from telegram.ext import CallbackContext
 
 from users.models import User
 
+def check_blocked_user(func: Callable):
+    """
+    check_blocked_user decorator
+    Used for handlers that check_blocked_user have access to
+    """
+    @wraps(func)
+    def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
+        user = User.get_user(update, context)
+        if user.is_blocked_bot:
+            text = 'you are blocked'
+            context.bot.send_message(
+                chat_id=user.user_id,
+                text=text,
+                parse_mode=ParseMode.HTML
+            )
+            return
+        return func(update, context, *args, **kwargs)
+    return wrapper
 
 def admin_only(func: Callable):
     """
