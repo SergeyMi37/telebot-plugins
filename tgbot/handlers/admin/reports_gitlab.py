@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 #import datetime
 from datetime import datetime, timedelta
-
+from tgbot.handlers.utils.decorators import check_blocked_user
 import requests
 import json
 from tgbot.handlers.admin import static_text
@@ -44,7 +44,8 @@ else:
   GITLAB_LABELS = ''
   PROJ_EN = ''
   PROJ_RU = ''
-   
+
+
 def get_tele_command(update: Update) -> str:
    try:
       if update.message.text:
@@ -55,12 +56,13 @@ def get_tele_command(update: Update) -> str:
       #print("---err-get_tele_command-",err) 
       return update.edited_message.text, update.edited_message
 
-
+@check_blocked_user
 def command_yesterday(update: Update, context: CallbackContext) -> None:
   _fromDate = datetime.now() + timedelta(days=-1)
   fromDate=_fromDate.date()
   command_daily(update, context, reportDate = fromDate )
 
+@check_blocked_user
 def command_daily(update: Update, context: CallbackContext, reportDate = '' ) -> None:
     u = User.get_user(update, context)
     if not u.is_admin:
@@ -101,6 +103,7 @@ def get_lab(cmdmess: str):
     _i += 1
   return lab
 
+@check_blocked_user
 def command_daily_rating_noname(update: Update, context: CallbackContext,lab = "") -> None:
     u = User.get_user(update, context)
     if not u.is_admin:
@@ -111,6 +114,7 @@ def command_daily_rating_noname(update: Update, context: CallbackContext,lab = "
     labels = GITLAB_LABELS + "," + lab
     put_report(update=update, fromDate=fromDate,label=labels,mode="noname")
 
+@check_blocked_user
 def command_daily_rating(update: Update, context: CallbackContext,lab = "") -> None:
     u = User.get_user(update, context)
     if not u.is_admin:
@@ -122,6 +126,7 @@ def command_daily_rating(update: Update, context: CallbackContext,lab = "") -> N
     labels = GITLAB_LABELS + ","+lab
     put_report(update=update, fromDate=fromDate,label=labels)
     
+@check_blocked_user
 def command_weekly_rating(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     fromDate = (datetime.now() + timedelta(days=-7)).date()
@@ -308,14 +313,6 @@ def get_report_issue(id_issue: int = None, fromDate: datetime="", toDate: dateti
     return errno, answer, summ, week
   else:
     return errno, answer, summ, week
-
-def admin_old(update: Update, context: CallbackContext) -> None:
-    """ Show help info about all secret admins commands """
-    u = User.get_user(update, context)
-    if not u.is_admin:
-        update.message.reply_text(static_text.only_for_admins)
-        return
-    update.message.reply_text(static_text.secret_admin_commands)
 
 def get_report(label: str = "Табель", fromDate: datetime="", toDate: datetime="", mode: str='name', pref: str=''):
     if toDate=='':

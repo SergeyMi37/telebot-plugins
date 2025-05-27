@@ -23,6 +23,7 @@ import json
 from tgbot.handlers.admin import static_text
 from openpyxl import Workbook
 from dtb.settings import logger
+from tgbot.handlers.utils.decorators import check_blocked_user
 TIMEOUT =25
 
 # Добавить проверку на роль 
@@ -46,6 +47,9 @@ def get_tele_command(update: Update) -> str:
       #print("---err-get_tele_command-",err)
       return update.edited_message.text, update.edited_message
 
+
+
+@check_blocked_user
 def command_servers(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     if not u.is_admin:

@@ -119,7 +119,7 @@ if data == 'button_1':
         Filters.document, files.save_file_id,
     ))
 
-    # Обработка всех текстовых сообщений
+    # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_text_message))
 
     # handling errors

@@ -1,12 +1,12 @@
 import telegram
 from telegram import Update
 from telegram.ext import CallbackContext
-
+from tgbot.handlers.utils.decorators import check_blocked_user
 from tgbot.handlers.location.static_text import share_location, thanks_for_location
 from tgbot.handlers.location.keyboards import send_location_keyboard
 from users.models import User, Location
 
-
+@check_blocked_user
 def ask_for_location(update: Update, context: CallbackContext) -> None:
     """ Entered /ask_location command"""
     u = User.get_user(update, context)
@@ -16,7 +16,6 @@ def ask_for_location(update: Update, context: CallbackContext) -> None:
         text=share_location,
         reply_markup=send_location_keyboard()
     )
-
 
 def location_handler(update: Update, context: CallbackContext) -> None:
     # receiving user's location

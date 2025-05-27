@@ -15,6 +15,8 @@ from datetime import datetime, timedelta
 from tgbot.handlers.admin.reports_gitlab import put_report, get_tele_command, lab_replay
 from tgbot.handlers.admin.servers_iris import command_server
 import os
+from tgbot.handlers.utils.decorators import check_blocked_user
+
 GITLAB_LABELS = os.getenv('GITLAB_LABELS')
 
 def is_permiss(user: User,roleslist: list):
@@ -31,6 +33,7 @@ def is_permiss(user: User,roleslist: list):
                 return True
     return False
 
+@check_blocked_user
 def server(update: Update, context: CallbackContext):
     """ Работа с серверами ИРИС """
     u = User.get_user(update, context)
