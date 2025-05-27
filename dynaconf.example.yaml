@@ -2,17 +2,18 @@ dynaconf_merge: true
 default:
   ADMIN_IDS:
     - 1111111111
-  ERRORS_CHAT_ID: -222222222
+  ERRORS_CHAT_ID: 
   ERRORS_THREAD_ID:
   UPDATES_PATH: "/updates"
-  WEBHOOK_DOMAIN: "https://example.com"
+  DOWNLOADS_PATH: "/downloads"
+  WEBHOOK_DOMAIN: "https://serpan.site/telebot"
   YAML_FILE_PATH: "strings"
   LOG_DIR: "logs"
   LOG_FILE: "logs.txt"
   LOG_LEVEL: "INFO"  # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
   MAX_SIZE_MB: 10
   DEFAULT_LANGUAGE: "ru"
-  ALLOWED_LANGUAGES: [ "ru", "en" ]
+  ALLOWED_LANGUAGES: [ "ru", "en", "de" ]
   TIMESTAMP_FORMAT: "%H:%M %d.%m.%Y"
   TIME_ZONE: "Europe/Moscow"
   PLUGINS:

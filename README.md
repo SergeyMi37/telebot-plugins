@@ -103,7 +103,6 @@ docker logs -f dtb_django
 https://github.com/ohld/django-telegram-bot
 
 ### Check the example bot that uses the code from Main branch: [t.me/djangotelegrambot](https://t.me/djangotelegrambot)
-
 ## Features
 
 * Database: Postgres, Sqlite3, MySQL - you decide!
