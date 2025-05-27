@@ -14,14 +14,12 @@ from tgbot.handlers.broadcast_message.static_text import broadcast_command,repor
 
 from tgbot.handlers.utils import files, error
 from tgbot.handlers.admin import handlers as admin_handlers
-from tgbot.handlers.admin import reports_gitlab, servers_iris
 from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
-from tgbot.handlers.admin.giga_chat import ask_giga
-from tgbot.handlers.admin.reports_gitlab import PROJ_EN
-from tgbot.handlers.admin.servers_iris import plugins_iris
+from tgbot.plugins import reports_gitlab, servers_iris, giga_chat
+
 
 def setup_dispatcher(dp):
     """
@@ -33,7 +31,7 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
  
     # Если есть доступ к плагину IRIS
-    if plugins_iris:
+    if servers_iris.plugins_iris:
         dp.add_handler(CommandHandler("servers", servers_iris.command_servers)) 
         # Сервера ИРИС
         dp.add_handler(
@@ -41,10 +39,10 @@ def setup_dispatcher(dp):
         )
    
     # Если есть доступ к плагину GITLAB
-    if PROJ_EN:
+    if reports_gitlab.PROJ_EN:
         dp.add_handler(CommandHandler("daily", reports_gitlab.command_daily)) 
         dp.add_handler(CommandHandler("yesterday", reports_gitlab.command_yesterday)) 
-        for _en in PROJ_EN.split(','):
+        for _en in reports_gitlab.PROJ_EN.split(','):
             dp.add_handler(CommandHandler(f"daily_{_en}_noname", reports_gitlab.command_daily_rating_noname)) 
             dp.add_handler(CommandHandler(f"daily_{_en}", reports_gitlab.command_daily_rating)) 
             dp.add_handler(CommandHandler(f"yesterday_{_en}", reports_gitlab.command_daily_rating)) 
@@ -147,7 +145,7 @@ def handle_text_message(update, context):
     user = update.effective_user
     text = update.message.text
     # Логика обработки сообщения
-    resp = ask_giga(text)
+    resp = giga_chat.ask_giga(text)
     # Ответ пользователю
     #print(f"User {user.first_name} На вопрос: {text}\n Получил ответ:{resp}")
     update.message.reply_text(f"Ответ Гиги: {resp} \n /help")

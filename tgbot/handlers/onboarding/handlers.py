@@ -10,7 +10,7 @@ from tgbot.handlers.utils.info import extract_user_data_from_update
 from users.models import User
 from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import BR
-from tgbot.handlers.admin.reports_gitlab import PROJ_EN, PROJ_RU
+from tgbot.plugins import reports_gitlab
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
 from dtb.settings import get_plugins
 from dtb.settings import logger
@@ -39,14 +39,14 @@ def command_help(update: Update, context: CallbackContext) -> None:
     if plugins.get('GITLAB'):
         # Если есть доступ к плагину GITLAB
         text += BR+'👉----plugin-GITLAB---------'
-        text += BR+'/daily: Отчет ежедневный по меткам "{proj_labels}"'
-        text += BR+'/yesterday: Отчет вчерашний по меткам "{proj_labels}"'
+        text += BR+'/daily: Отчет ежедневный по меткам проекта'
+        text += BR+'/yesterday: Отчет вчерашний по меткам проекта'
         text += BR
         _i = 0
-        if PROJ_RU:
-            for _ru in PROJ_RU.split(','):
+        if reports_gitlab.PROJ_RU:
+            for _ru in reports_gitlab.PROJ_RU.split(','):
                 if _ru in u.roles or "All" in u.roles:
-                    _en = PROJ_EN.split(',')[_i]
+                    _en = reports_gitlab.PROJ_EN.split(',')[_i]
                     text += BR+f'/yesterday_{_en}: Отчет за вчера по метке "{_ru}"'
                     text += BR+f'/daily_{_en}: Отчет за сегодня по метке "{_ru}"'
                     text += BR+f'/daily_{_en}_noname: Отчет ежедневный по метке "{_ru}" обезличенный'
@@ -60,13 +60,15 @@ def command_help(update: Update, context: CallbackContext) -> None:
         # Если есть доступ к плпгину GIGA
         text += BR+'👉----plugin-GIGA---------'
         text += BR + 'Задавайте вопросы к Гига-ИИ'
-    for pl in plugins.items():
-        if not (pl in ['GIGA,"GITLAB','IRIS']):
-            pass
+    for pl,val in plugins.items():
+        if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
+            text += BR + f'👉----plugin-{pl}---------'
+            text += BR + f"{val.get('desc')}"
     if u.is_superadmin:
-        text += BR+'👉----Super Admin jption--------'
+        text += BR+'👉----Super admin options--------'
         # Если есть доступ к роли суперадмин
         text += BR+'/ask_location: Отправить локацию 📍'
+        text += BR+'/broadcast Текст рассылаемого сообщения'
         text += BR+'/export_users: Экспорт users.csv 👥'
     
     text += BR+'/help: Перечень команд'

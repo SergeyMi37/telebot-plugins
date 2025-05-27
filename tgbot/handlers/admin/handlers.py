@@ -8,7 +8,7 @@ from tgbot.handlers.admin import static_text
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
 from tgbot.handlers.utils.decorators import admin_only, send_typing_action, superadmin_only, check_blocked_user
 from users.models import User
-from tgbot.handlers.admin.reports_gitlab import get_tele_command
+from tgbot.plugins import reports_gitlab
 
 @admin_only
 def admin2(update: Update, context: CallbackContext) -> None:
@@ -34,7 +34,7 @@ def admin(update: Update, context: CallbackContext) -> None:
 @send_typing_action
 def export_users(update: Update, context: CallbackContext) -> None:
     # in values argument you can specify which fields should be returned in output csv
-    telecmd, upms = get_tele_command(update)
+    telecmd, upms = reports_gitlab.get_tele_command(update)
     # Если команда редакрирован, то upms
     users = User.objects.all().values()
     csv_users = _get_csv_from_qs_values(users)

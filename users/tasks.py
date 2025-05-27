@@ -12,8 +12,7 @@ from celery.utils.log import get_task_logger
 from tgbot.handlers.broadcast_message.utils import send_one_message, from_celery_entities_to_entities, \
     from_celery_markup_to_markup
 from users.models import User
-from tgbot.handlers.admin.reports_gitlab import lab_replay
-from tgbot.handlers.admin.servers_iris import command_server
+from tgbot.plugins import reports_gitlab, servers_iris
 
 logger = get_task_logger(__name__)
 
@@ -67,7 +66,7 @@ def broadcast_gitlb_daily_message(
     '''  Если есть условие в первом поле UserId, проверяем на его сработку, есть да, то смотрим для каких Ролей, эта сработка
     if 'Condition(' in user_ids[0]: # Получение условия
         cond = user_ids[0].split('Condition(')[1].split(')')[0]
-        res = command_server(cond)
+        res = servers_iris.command_server(cond)
         print('--== res =',res)
         if '<b>Err</b>' in res: # Нужно послать сообщение пользователям
             pass
@@ -95,7 +94,7 @@ def broadcast_gitlb_daily_message(
                     try:
                         # Сохраните в табеле ежедневный отчет ---  https://git.lab.nexus/ctz/lab/tabel/-/issues/?sort=updated_desc&state=opened&label_name%5B%5D={pro_ru}&first_page_size=20 --- И проверьте командой /daily_{pro_en}
                         pro_ru = _rol[0]
-                        pro_en = lab_replay(pro_ru,"ru_en")
+                        pro_en = reports_gitlab.lab_replay(pro_ru,"ru_en")
                         msg = text.replace("{pro_ru}",pro_ru).replace("{pro_en}",pro_en)
                         print('---ИД;',msg)
                         send_one_message(
@@ -131,7 +130,7 @@ def broadcast_custom_message(
     res = ''
     if 'Condition(' in user_ids[0]: # Получение условия
         cond = user_ids[0].split('Condition(')[1].split(')')[0]
-        res = command_server(cond)
+        res = servers_iris.command_server(cond)
         print('--== res =',res)
         if '<b>Error</b>' in res: # Нужно послать сообщение пользователям в  следующим блоке
             pass

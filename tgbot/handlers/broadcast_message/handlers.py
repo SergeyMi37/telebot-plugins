@@ -12,8 +12,7 @@ from .static_text import broadcast_command, broadcast_wrong_format, broadcast_no
 from users.models import User
 from users.tasks import broadcast_message
 from datetime import datetime, timedelta
-from tgbot.handlers.admin.reports_gitlab import put_report, get_tele_command, lab_replay
-from tgbot.handlers.admin.servers_iris import command_server
+from tgbot.plugins import servers_iris, reports_gitlab
 import os
 from tgbot.handlers.utils.decorators import check_blocked_user
 
@@ -37,7 +36,7 @@ def is_permiss(user: User,roleslist: list):
 def server(update: Update, context: CallbackContext):
     """ Работа с серверами ИРИС """
     u = User.get_user(update, context)
-    telecmd, upms = get_tele_command(update)
+    telecmd, upms = reports_gitlab.get_tele_command(update)
     if not is_permiss(u,['iris']):
         upms.reply_text(
             text="В этом режиме можно работать только после одобрения Администратора",
@@ -52,14 +51,14 @@ def server(update: Update, context: CallbackContext):
             return
         cmd = upms.text.replace(f'/s_', '')+"_____" # Добавим подчеркивание чтоб не ломалось по несуществующему элементу списка _
         upms.reply_text(
-          text = command_server(cmd),
+          text = servers_iris.command_server(cmd),
           parse_mode=ParseMode.HTML,
           disable_web_page_preview=True,
           )
 
 def reports(update: Update, context: CallbackContext):
     """ Reports."""
-    telecmd, upms = get_tele_command(update)
+    telecmd, upms = reports_gitlab.get_tele_command(update)
 
     u = User.get_user(update, context)
     if not u.is_admin:
@@ -90,7 +89,7 @@ def reports(update: Update, context: CallbackContext):
             try:
                 lb = par.split("labels_")[1] #.split("_")[0:-1]
                 #lbl=lb.replace("rating","Рейтинг").replace("vpr","ВПР").replace("tabel","Табель").replace("_",",")
-                lbl = lab_replay(lb,"en_ru")
+                lbl = reports_gitlab.lab_replay(lb,"en_ru")
                 #print("---====-en_ru-",lb,lbl)
             except Exception as err:
                 #print("---err-lbl-",err)
@@ -124,12 +123,12 @@ def reports(update: Update, context: CallbackContext):
             _toDate = f"{params} ".split('date:')[1].split(" ")[0].split(":")[1]
             toDate = datetime.strptime(_toDate,  "%Y-%m-%d").date()
         
-        put_report(update=update, fromDate=fromDate,toDate=toDate,label=labels,mode=mode)
+        reports_gitlab.put_report(update=update, fromDate=fromDate,toDate=toDate,label=labels,mode=mode)
 
 def broadcast_command_with_message(update: Update, context: CallbackContext):
     """ Type /broadcast <some_text>. Then check your message in HTML format and broadcast to users."""
     u = User.get_user(update, context)
-    telecmd, upms = get_tele_command(update)
+    telecmd, upms = reports_gitlab.get_tele_command(update)
     if not u.is_superadmin:
         upms.reply_text(
             text=broadcast_no_access,

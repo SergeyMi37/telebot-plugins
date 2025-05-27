@@ -8,7 +8,7 @@ from dtb.celery import app
 from dtb.settings import DEBUG
 from tgbot.dispatcher import dispatcher
 from tgbot.main import bot
-from tgbot.handlers.admin.servers_iris import command_server
+from tgbot.plugins import servers_iris
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ def process_custom_telegram_event(update_json):
     print('--=-= update_json =',update_json) # ТО что пришло из такска из параметра Arguments
     if update_json["message"]["condition"]:
         cond = update_json["message"]["condition"]
-        res = command_server(cond)
+        res = servers_iris.command_server(cond)
         print('--== res , cond=',res, cond)
         if '<b>Err</b>' in res:
             update_json["message"]["text"] = "/s_PROD_SYS_AlertsView_На_серверах_есть_проблеммы "
