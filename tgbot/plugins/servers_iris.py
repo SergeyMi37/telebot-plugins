@@ -4,10 +4,11 @@
 from django.utils.timezone import now
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
-
 from tgbot.handlers.admin import static_text
+from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
-from tgbot.handlers.utils.decorators import admin_only, send_typing_action
+#from tgbot.handlers.utils.decorators import admin_only, send_typing_action
+from tgbot.handlers.utils.decorators import check_blocked_user
 from tgbot.handlers.utils.date_utils import tz_to_moscow
 from users.models import User
 from tgbot.handlers.admin.static_text import BR
@@ -20,10 +21,10 @@ from urllib.parse import urlparse
 from dtb.settings import get_plugins
 import requests
 import json
-from tgbot.handlers.admin import static_text
+
 from openpyxl import Workbook
 from dtb.settings import logger
-from tgbot.handlers.utils.decorators import check_blocked_user
+
 TIMEOUT =25
 
 # Добавить проверку на роль 
@@ -34,20 +35,6 @@ plugins_iris = get_plugins('').get('IRIS')
 
 #for key in plugins_iris:
   #print('-- ',key,plugins_iris[key])
-
-
-def get_tele_command(update: Update) -> str:
-   #print('---update:---',update)
-   try:
-      if update.message.text:
-         return update.message.text, update.message
-      else:
-         return update.edited_message.text, update.message
-   except Exception as err:
-      #print("---err-get_tele_command-",err)
-      return update.edited_message.text, update.edited_message
-
-
 
 @check_blocked_user
 def command_servers(update: Update, context: CallbackContext) -> None:

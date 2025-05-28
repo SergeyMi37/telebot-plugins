@@ -8,11 +8,13 @@ from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 
 from tgbot.handlers.admin import static_text
+from tgbot.handlers.admin.static_text import BR
+from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
 from tgbot.handlers.utils.decorators import admin_only, send_typing_action
 from tgbot.handlers.utils.date_utils import tz_to_moscow
 from users.models import User
-from tgbot.handlers.admin.static_text import BR
+
 import os
 from pathlib import Path
 from typing import Any
@@ -21,7 +23,6 @@ from datetime import datetime, timedelta
 from tgbot.handlers.utils.decorators import check_blocked_user
 import requests
 import json
-from tgbot.handlers.admin import static_text
 from openpyxl import Workbook
 from dtb.settings import get_plugins
 from dtb.settings import logger
@@ -44,17 +45,6 @@ else:
   GITLAB_LABELS = ''
   PROJ_EN = ''
   PROJ_RU = ''
-
-
-def get_tele_command(update: Update) -> str:
-   try:
-      if update.message.text:
-         return update.message.text, update.message
-      else:
-         return update.edited_message.text, update.message
-   except Exception as err:
-      #print("---err-get_tele_command-",err) 
-      return update.edited_message.text, update.edited_message
 
 @check_blocked_user
 def command_yesterday(update: Update, context: CallbackContext) -> None:
