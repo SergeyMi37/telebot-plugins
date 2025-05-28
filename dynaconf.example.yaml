@@ -45,3 +45,17 @@ dev:
         - PROJ_EN = perimetr,wind,spectr
     - GIGA:
         - GIGA_CHAT = <token==>
+    - NEWS:
+        - blocked = 0
+        - desc = Сервис агрегации rss новостей 
+        - rss_vz = https://vz.ru/rss.xml
+        - rss_rg = https://rg.ru/xml/index.xml
+        - rss_vz = https://www.pnp.ru/rss/index.xml
+        - rss_lenta_news = https://lenta.ru/rss/news
+        - rss_lenta_top7 = https://lenta.ru/rss/top7
+        - rss_lenta_last24 = https://lenta.ru/rss/last24
+        - rss_ria = https://ria.ru/export/rss2/archive/index.xml
+        - rss_rbc = http://static.feed.rbc.ru/rbc/logical/footer/rbcdaily_last_issue.rss
+        - rss_rt = https://russian.rt.com/rss
+        - rss_rusvesna = https://rusvesna.su/rss.xml
+        - rss_computerra = https://www.computerra.ru/feed/ 
