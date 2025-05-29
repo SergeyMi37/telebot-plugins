@@ -58,8 +58,9 @@ def setup_dispatcher(dp):
 
     plugins = get_plugins()
     for pl,val in plugins.items():
-        dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
-
+        #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
+        cmd="/"+pl.lower()
+        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
     # secret level
     #dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
     '''
