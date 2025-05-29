@@ -12,11 +12,11 @@ def make_keyboard_for_start_command(roles) -> InlineKeyboardMarkup:
     keyboard = []
     row = []  # Текущий ряд кнопок
     for pl,val in plugins.items():
-        print('--',pl,val)
-        row.append(InlineKeyboardButton(str(pl), callback_data=str(pl)))
-        if len(row) == columns:
-            keyboard.append(row)
-            row = []
+        if pl in roles.split(',') or "All" in roles.split(','):
+            row.append(InlineKeyboardButton(f"{pl.lower()} - {val.get('desc')}", callback_data=str(pl.lower())))
+            if len(row) == columns:
+                keyboard.append(row)
+                row = []
     if row:  # Если остались неиспользованные кнопки, добавляем последний ряд
         keyboard.append(row)
     '''

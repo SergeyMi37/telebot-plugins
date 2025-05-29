@@ -7,8 +7,7 @@ from django.utils.timezone import now
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 
-from tgbot.handlers.admin import static_text
-from tgbot.handlers.admin.static_text import BR
+from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
 from tgbot.handlers.utils.decorators import admin_only, send_typing_action
@@ -56,7 +55,7 @@ def command_yesterday(update: Update, context: CallbackContext) -> None:
 def command_daily(update: Update, context: CallbackContext, reportDate = '' ) -> None:
     u = User.get_user(update, context)
     if not u.is_admin:
-        update.message.reply_text(static_text.only_for_admins)
+        update.message.reply_text(only_for_admins)
         return
     if reportDate:
       fromDate = reportDate
@@ -97,7 +96,7 @@ def get_lab(cmdmess: str):
 def command_daily_rating_noname(update: Update, context: CallbackContext,lab = "") -> None:
     u = User.get_user(update, context)
     if not u.is_admin:
-        update.message.reply_text(static_text.only_for_admins)
+        update.message.reply_text(only_for_admins)
         return
     fromDate=datetime.today().date()
     lab = get_lab(update.message.text)
@@ -108,7 +107,7 @@ def command_daily_rating_noname(update: Update, context: CallbackContext,lab = "
 def command_daily_rating(update: Update, context: CallbackContext,lab = "") -> None:
     u = User.get_user(update, context)
     if not u.is_admin:
-        update.message.reply_text(static_text.only_for_admins)
+        update.message.reply_text(only_for_admins)
         return
     
     fromDate = datetime.today().date() if 'daily_' in update.message.text else (datetime.now() + timedelta(days=-1)).date()
@@ -122,7 +121,7 @@ def command_weekly_rating(update: Update, context: CallbackContext) -> None:
     fromDate = (datetime.now() + timedelta(days=-7)).date()
     toDate = datetime.today().date()
     if not u.is_admin:
-        update.message.reply_text(static_text.only_for_admins)
+        update.message.reply_text(only_for_admins)
         return
     lab = get_lab(update.message.text)
     labels = GITLAB_LABELS + ","+lab
@@ -279,12 +278,12 @@ def get_report_issue(id_issue: int = None, fromDate: datetime="", toDate: dateti
             if mode == 'weekly':
               #print('---',summary)
               if "$" in summary and (summary.split("$")[0] !='') :
-                #week += summary.split("$")[0] + static_text.BR
+                #week += summary.split("$")[0] + CRLF
                 week[f'{summary.split("$")[0]}']={}
             elif mode != "noname":
-                userfio=f'{answer_item["name"].split(" ")[0]} {answer_item["spent_at"].strftime("%Y-%m-%d")} {item.get("spentAt")} {static_text.BR}'
+                userfio=f'{answer_item["name"].split(" ")[0]} {answer_item["spent_at"].strftime("%Y-%m-%d")} {item.get("spentAt")} {CRLF}'
             
-            summ += f"{userfio} {summary.replace('$','.') }{static_text.BR+static_text.BR}"
+            summ += f"{userfio} {summary.replace('$','.') }{CRLF+CRLF}"
           answer_list.append(answer_item)
         return errno, answer_list, summ, week
       else:
@@ -322,7 +321,7 @@ def get_report(label: str = "Табель", fromDate: datetime="", toDate: datet
     
     errno, answer = get_issues_id(GITLAB_URL,label)
     #print('---',errno, answer)
-    summ=f"{label}{static_text.BR}Выполненные мероприятия {_date}{static_text.BR+static_text.BR}"
+    summ=f"{label}{CRLF}Выполненные мероприятия {_date}{CRLF+CRLF}"
     sum=summ
     week={}
     if errno == "code.CODE_GITLAB_GET_ISSUE_OK":
@@ -332,7 +331,7 @@ def get_report(label: str = "Табель", fromDate: datetime="", toDate: datet
             week= {**week, **_week}
         if summ==sum:
            summ=summ+' не найдено'
-        summ += static_text.BR+'/help'
+        summ += CRLF+'/help'
         return summ, prefix, week #[:4090]
     else:
        return errno, prefix, week
@@ -346,11 +345,11 @@ def put_report(update: Update, label: str = "", fromDate: datetime="", toDate: d
     do=CONST
     
     if mode == 'weekly':
-      text = pref +BR+ "<b>Недельная сводка</b>" + BR + BR
+      text = pref +CRLF+ "<b>Недельная сводка</b>" + CRLF + CRLF
       for key in week:
-         text += key + BR + BR
+         text += key + CRLF + CRLF
     else:
-      text = pref +BR+ txt 
+      text = pref +CRLF+ txt 
 
     media_dir = Path(__file__).resolve().parent.parent.parent.parent.joinpath('downloads')
     if not os.path.exists(media_dir):
@@ -360,7 +359,7 @@ def put_report(update: Update, label: str = "", fromDate: datetime="", toDate: d
       wb = Workbook() # creates a workbook object.
       ws = wb.active # creates a worksheet object.
       #_out=[[f"{pref}"],["Дата","ФИО", "Дата UTC", "Мероприятия"]]
-      outlist = text.split(BR)
+      outlist = text.split(CRLF)
       #ws.append([f"{pref}"])
       ws.append([f"{outlist[2]}"])
       
@@ -386,14 +385,14 @@ def put_report(update: Update, label: str = "", fromDate: datetime="", toDate: d
     
     # Вывод в текстовый файл -----------------------------------------
     elif mode=='txt':
-      lines = text.split(BR)
+      lines = text.split(CRLF)
       _file = os.path.join(media_dir, f'{telecmd[1:-1]}_{upms.chat.id}.txt')
       with open(_file, "w") as file:
         for  line in lines:
           if line !='':
             file.write(line + '\n')
       upms.reply_document(open(_file, 'rb'))
-      #for row in txt.split(BR):
+      #for row in txt.split(CRLF):
       #  print(row)
 
     # вывод в цикле текстом  -----------------------------------------

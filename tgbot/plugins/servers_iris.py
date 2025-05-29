@@ -11,7 +11,7 @@ from tgbot.handlers.admin.utils import _get_csv_from_qs_values
 from tgbot.handlers.utils.decorators import check_blocked_user
 from tgbot.handlers.utils.date_utils import tz_to_moscow
 from users.models import User
-from tgbot.handlers.admin.static_text import BR
+from tgbot.handlers.admin.static_text import CRLF
 import os
 from pathlib import Path
 from typing import Any
@@ -65,7 +65,7 @@ def command_servers(update: Update, context: CallbackContext) -> None:
            icon = "🔴 "
            msg = "Нет доступа"
         #
-        result += f'{icon}s_{key.split("URL_")[1]} {msg}{BR}'
+        result += f'{icon}s_{key.split("URL_")[1]} {msg}{CRLF}'
     upms.reply_text(
             text=result,
             parse_mode=ParseMode.HTML,
@@ -121,7 +121,7 @@ def command_server(cmd: str) -> None:
     _servname = cmd.split("_")[0]
     if not url:
       msg = "🔴 Нет сервера "+ _servname
-      result += f'{msg}{BR} /help'
+      result += f'{msg}{CRLF} /help'
       return result
 
     #if cmd.split("_")[2]: #если есть параметр 1
@@ -197,7 +197,7 @@ def command_server(cmd: str) -> None:
           msg = "🔴 Нет доступа"
           #
       cc = get_custom_commands(_servname,'list') # прикладные команды берем из .env
-      result += f'{msg}{cc}{BR} /help'
+      result += f'{msg}{cc}{CRLF} /help'
     return result
 
 def get_custom_commands(servname: str, mode: str) -> None:

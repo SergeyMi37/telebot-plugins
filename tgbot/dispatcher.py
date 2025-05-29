@@ -6,7 +6,7 @@ from telegram.ext import (
     CommandHandler, MessageHandler,
     CallbackQueryHandler,
 )
-
+from dtb.settings import get_plugins
 from dtb.settings import DEBUG
 from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCAST
 from tgbot.handlers.broadcast_message.static_text import broadcast_command,reports_command
@@ -52,10 +52,13 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("admin", admin_handlers.admin))
     #dp.add_handler(CommandHandler("stats", admin_handlers.stats))
     dp.add_handler(CommandHandler('export_users', admin_handlers.export_users))
-
     # location
     dp.add_handler(CommandHandler("ask_location", location_handlers.ask_for_location))
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
+
+    plugins = get_plugins()
+    for pl,val in plugins.items():
+        dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
 
     # secret level
     #dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))

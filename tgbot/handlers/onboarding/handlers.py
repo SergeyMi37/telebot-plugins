@@ -9,12 +9,18 @@ from tgbot.handlers.onboarding import static_text
 from tgbot.handlers.utils.info import extract_user_data_from_update
 from users.models import User
 from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
-from tgbot.handlers.admin.static_text import BR
+from tgbot.handlers.admin.static_text import CRLF
 from tgbot.plugins import reports_gitlab
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
 from dtb.settings import get_plugins
 from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_blocked_user
+
+@check_blocked_user
+def command_dispatcher(update: Update, context: CallbackContext) -> None:
+    u, created = User.get_user_and_created(update, context)
+    plugins = get_plugins(u.roles)
+    text += CRLF+'dispatcher'
 
 @check_blocked_user
 def command_help(update: Update, context: CallbackContext) -> None:
@@ -27,56 +33,68 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
     plugins = get_plugins(u.roles)
     #print(u.roles,plugins)
-    text += BR+'/start: Кнопки ссылок'
+    text += CRLF+'/start: Кнопки ссылок'
     if plugins:
-        text += BR+'/plugins: список приложений - плагинов'
+        text += CRLF+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
         # Если есть доступ к плпгину IRIS
-        text += BR+'👉----plugin-IRIS---------'
-        text += BR+'/servers: Смотреть статус всех серверов IRIS'
-        text += BR+'/s_TEST: Смотреть продукции сервера TEST'
-        text += BR
+        text += CRLF+'👉----plugin-IRIS---------'
+        text += CRLF+'/servers: Смотреть статус всех серверов IRIS'
+        text += CRLF+'/s_TEST: Смотреть продукции сервера TEST'
+        text += CRLF
     if plugins.get('GITLAB'):
         # Если есть доступ к плагину GITLAB
-        text += BR+'👉----plugin-GITLAB---------'
-        text += BR+'/daily: Отчет ежедневный по меткам проекта'
-        text += BR+'/yesterday: Отчет вчерашний по меткам проекта'
-        text += BR
+        text += CRLF+'👉----plugin-GITLAB---------'
+        text += CRLF+'/daily: Отчет ежедневный по меткам проекта'
+        text += CRLF+'/yesterday: Отчет вчерашний по меткам проекта'
+        text += CRLF+CRLF
         _i = 0
         if reports_gitlab.PROJ_RU:
             for _ru in reports_gitlab.PROJ_RU.split(','):
                 if _ru in u.roles or "All" in u.roles:
                     _en = reports_gitlab.PROJ_EN.split(',')[_i]
-                    text += BR+f'/yesterday_{_en}: Отчет за вчера по метке "{_ru}"'
-                    text += BR+f'/daily_{_en}: Отчет за сегодня по метке "{_ru}"'
-                    text += BR+f'/daily_{_en}_noname: Отчет ежедневный по метке "{_ru}" обезличенный'
-                    text += BR+f'/weekly_{_en}: Отчет еженедельный по первой части $"'
-                    text += BR
+                    text += CRLF+f'/yesterday_{_en}: Отчет за вчера по метке "{_ru}"'
+                    text += CRLF+f'/daily_{_en}: Отчет за сегодня по метке "{_ru}"'
+                    text += CRLF+f'/daily_{_en}_noname: Отчет ежедневный по метке "{_ru}" обезличенный'
+                    text += CRLF+f'/weekly_{_en}: Отчет еженедельный по первой части $"'
+                    text += CRLF
                 _i += 1
 
-        text += BR
-        text += BR + reports_wrong_format
+        text += CRLF
+        text += CRLF + reports_wrong_format
     if plugins.get('GIGA'):
         # Если есть доступ к плпгину GIGA
-        text += BR+'👉----plugin-GIGA---------'
-        text += BR + 'Задавайте вопросы к Гига-ИИ'
+        text += CRLF+'👉----plugin-GIGA---------'
+        text += CRLF + 'Задавайте вопросы к Гига-ИИ'+CRLF
+    Roles=u.roles
     for pl,val in plugins.items():
         if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
-            text += BR + f'👉----plugin-{pl}---------'
-            text += BR + f"{val.get('desc')}"
+            if pl in Roles.split(',') or "All" in Roles.split(','):
+                text += CRLF + f'👉----plugin-{pl}---------'
+                text += CRLF + f"/{pl.lower()} {val.get('desc')}{CRLF}"
     if u.is_superadmin:
-        text += BR+'👉----Super admin options--------'
+        text += CRLF+'👉----Super admin options--------'
         # Если есть доступ к роли суперадмин
-        text += BR+'/ask_location: Отправить локацию 📍'
-        text += BR+'/broadcast Текст рассылаемого сообщения'
-        text += BR+'/export_users: Экспорт users.csv 👥'
+        text += CRLF+'/ask_location: Отправить локацию 📍'
+        text += CRLF+'/broadcast Текст рассылаемого сообщения'
+        text += CRLF+'/export_users: Экспорт users.csv 👥'
     
-    text += BR+'/help: Перечень команд'
+    text += CRLF+CRLF+'/help: Перечень команд'
     context.bot.send_message(
         chat_id=u.user_id,
         text=text,
         parse_mode=ParseMode.HTML
     )
+
+
+@check_blocked_user
+def command_dispatcher(update: Update, context: CallbackContext) -> None:
+    u, created = User.get_user_and_created(update, context)
+    if created:
+        text = static_text.start_created.format(first_name=u.first_name)
+    else:
+        text = static_text.start_not_created.format(first_name=u.first_name)
+
 
 @check_blocked_user
 def command_start(update: Update, context: CallbackContext) -> None:
@@ -113,10 +131,10 @@ def command_plugins(update: Update, context: CallbackContext) -> None:
         text = static_text.start_not_created.format(first_name=u.first_name)
     Roles=u.roles
     plugins = get_plugins('')
-    text += f"{BR}Вам доступны следующие плагины:"
+    text += f"{CRLF}Вам доступны следующие плагины:"
     for pl,val in plugins.items():
         if pl in Roles.split(',') or "All" in Roles.split(','):
-            text += f"{BR}/{pl} - {val.get('desc')}"
+            text += f"{CRLF}/{pl.lower()} - {val.get('desc')}{CRLF}"
     update.message.reply_text(text=text)
 
 # depricate
