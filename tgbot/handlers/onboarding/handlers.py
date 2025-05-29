@@ -6,7 +6,7 @@ from telegram.ext import CallbackContext
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from tgbot.handlers.onboarding import static_text
-from tgbot.handlers.utils.info import extract_user_data_from_update
+from tgbot.handlers.utils.info import extract_user_data_from_update, get_tele_command
 from users.models import User
 from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import CRLF
@@ -19,9 +19,14 @@ from tgbot.handlers.utils.decorators import check_blocked_user
 @check_blocked_user
 def command_dispatcher(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
+    telecmd, upms = get_tele_command(update)
     plugins = get_plugins(u.roles)
-    text += CRLF+'dispatcher'
-
+    text = CRLF+'dispatcher '+telecmd
+    context.bot.send_message(
+        chat_id=u.user_id,
+        text=text,
+        parse_mode=ParseMode.HTML
+    )
 @check_blocked_user
 def command_help(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
@@ -85,16 +90,6 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text=text,
         parse_mode=ParseMode.HTML
     )
-
-
-@check_blocked_user
-def command_dispatcher(update: Update, context: CallbackContext) -> None:
-    u, created = User.get_user_and_created(update, context)
-    if created:
-        text = static_text.start_created.format(first_name=u.first_name)
-    else:
-        text = static_text.start_not_created.format(first_name=u.first_name)
-
 
 @check_blocked_user
 def command_start(update: Update, context: CallbackContext) -> None:
