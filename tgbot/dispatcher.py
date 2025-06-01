@@ -20,6 +20,8 @@ from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
 from tgbot.plugins import reports_gitlab, servers_iris, giga_chat
 
+from telegram import ParseMode, Update
+from telegram.ext import CallbackContext
 
 def setup_dispatcher(dp):
     """
@@ -30,6 +32,12 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
     dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
  
+    plugins = get_plugins()
+    for pl,val in plugins.items():
+        #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
+        cmd="/"+pl.lower()
+        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))  #(update=Update,context=CallbackContext,plug=cmd)))
+    
     # Если есть доступ к плагину IRIS
     if servers_iris.plugins_iris:
         dp.add_handler(CommandHandler("servers", servers_iris.command_servers)) 
@@ -56,11 +64,7 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("ask_location", location_handlers.ask_for_location))
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
 
-    plugins = get_plugins()
-    for pl,val in plugins.items():
-        #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
-        cmd="/"+pl.lower()
-        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
+
     # secret level
     #dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
     '''
