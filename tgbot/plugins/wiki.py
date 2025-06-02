@@ -1,8 +1,6 @@
-# Plugin Новости из ленты rss
-# Name Plugin: NEWS
-    # - NEWS:
-    #     - blocked = 1
-    #     - desc = Сервис агрегации новостей 
+# Name Plugin: WIKI
+    # - WIKI:
+    #     - desc = Получить статью из википедии по поисковой фразе. Например /wiki Сублимация
 
 from django.utils.timezone import now
 from telegram import ParseMode, Update
@@ -15,13 +13,13 @@ from tgbot.handlers.utils.decorators import check_blocked_user
 from users.models import User
 
 # Добавить проверку на роль ''
-plugin_news = get_plugins('').get('NEWS')
+plugin_news = get_plugins('').get('WIKI')
 
 @check_blocked_user
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     telecmd, upms = get_tele_command(update)
-    text = CRLF+f' news '+telecmd
+    text = CRLF+f' wiki '+telecmd
     context.bot.send_message(
         chat_id=u.user_id,
         text=text,

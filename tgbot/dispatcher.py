@@ -18,7 +18,7 @@ from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
-from tgbot.plugins import reports_gitlab, servers_iris, giga_chat
+from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wiki
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -36,8 +36,13 @@ def setup_dispatcher(dp):
     for pl,val in plugins.items():
         #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
         cmd="/"+pl.lower()
-        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))  #(update=Update,context=CallbackContext,plug=cmd)))
-    
+        if (str(pl)=='NEWS'):
+            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), news_rss.commands))
+        if (pl=='WIKI'):
+            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
+        else:
+            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
+
     # Если есть доступ к плагину IRIS
     if servers_iris.plugins_iris:
         dp.add_handler(CommandHandler("servers", servers_iris.command_servers)) 

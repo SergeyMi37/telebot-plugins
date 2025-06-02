@@ -17,16 +17,17 @@ from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_blocked_user
 
 @check_blocked_user
-def command_dispatcher(update: Update, context: CallbackContext, plug: str = '') -> None:
+def command_dispatcher(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
     telecmd, upms = get_tele_command(update)
     plugins = get_plugins(u.roles)
-    text = CRLF+f' dispatcher {plug} '+telecmd
+    text = CRLF+f' dispatcher '+telecmd
     context.bot.send_message(
         chat_id=u.user_id,
         text=text,
         parse_mode=ParseMode.HTML
     )
+    
 @check_blocked_user
 def command_help(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
