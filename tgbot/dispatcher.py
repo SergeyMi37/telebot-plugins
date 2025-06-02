@@ -32,14 +32,19 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
     dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
  
+    # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
+
     plugins = get_plugins()
     for pl,val in plugins.items():
         #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
         cmd="/"+pl.lower()
         if (str(pl)=='NEWS'):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), news_rss.commands))
+            dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), news_rss.commands))
         if (pl=='WIKI'):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
+            dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), wiki.commands))
         else:
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
 
@@ -129,10 +134,6 @@ if data == 'button_1':
     dp.add_handler(MessageHandler(
         Filters.document, files.save_file_id,
     ))
-
-    # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_text_message))
-
     # handling errors
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
 
@@ -149,19 +150,6 @@ if data == 'button_1':
     # ))
 
     return dp
-
-# Функция-обработчик для текстовых сообщений
-from tgbot.handlers.utils.decorators import check_blocked_user
-
-@check_blocked_user
-def handle_text_message(update, context):
-    user = update.effective_user
-    text = update.message.text
-    # Логика обработки сообщения
-    resp = giga_chat.ask_giga(text)
-    # Ответ пользователю
-    #print(f"User {user.first_name} На вопрос: {text}\n Получил ответ:{resp}")
-    update.message.reply_text(f"Ответ Гиги: {resp} \n /help")
 
 n_workers = 0 if DEBUG else 4
 dispatcher = setup_dispatcher(Dispatcher(bot, update_queue=None, workers=n_workers, use_context=True))

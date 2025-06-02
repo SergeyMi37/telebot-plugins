@@ -32,3 +32,9 @@ python-telegram-bot==13.15  # last sync version
 
 # for plugin giga-chat 
 langchain-gigachat
+
+# for plugin wiki 
+wikipedia-api
+
+# for plugin news rss
+feedparser

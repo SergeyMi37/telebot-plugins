@@ -16,11 +16,14 @@
 #	👤 Инициатор:
 #	👥 Ответственный(е):
 #	🔄 Изменения:#	⬇️
-
+from telegram import ParseMode, Update
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_gigachat.chat_models import GigaChat
 from dtb.settings import get_plugins
 from dtb.settings import logger
+from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils.info import get_tele_command
+from users.models import User
 
 # Добавить проверку на роль 
 try:
@@ -52,52 +55,15 @@ def ask_giga(prompt):
     except Exception as e:
         return e.args.__repr__()
 
+@check_blocked_user
+def text_message(update, context):
+    u = User.get_user(update, context)
+    telecmd, upms = get_tele_command(update)
+    resp = ask_giga(telecmd)
+    # Ответ пользователю
 
-'''
-"""Пример работы с чатом"""
-from gigachat import GigaChat
-from gigachat.models import Chat, Messages, MessagesRole
-
-payload = Chat(
-    messages=[
-        Messages(
-            role=MessagesRole.SYSTEM,
-            content="Ты внимательный бот-психолог, который помогает пользователю решить его проблемы."
-        )
-    ],
-    temperature=0.7,
-    max_tokens=100,
-)
-
-# Используйте токен, полученный в личном кабинете из поля Авторизационные данные
-with GigaChat(credentials=..., verify_ssl_certs=False) as giga:
-    while True:
-        user_input = input("User: ")
-        payload.messages.append(Messages(role=MessagesRole.USER, content=user_input))
-        response = giga.chat(payload)
-        payload.messages.append(response.choices[0].message)
-        print("Bot: ", response.choices[0].message.content)
-
-
-# Пример использования  python tgbot/handlers/admin/giga_chat.py 
-if __name__ == "__main__":
-    giga = GigaChat(
-        # Для авторизации запросов используйте ключ, полученный в проекте GigaChat API
-        credentials=GIGA_TOKEN,
-        verify_ssl_certs=False,
+    context.bot.send_message(
+        chat_id=u.user_id,
+        text=f"Ответ Гиги: {resp} \n\r /help /plugins",
+        parse_mode=ParseMode.HTML
     )
-    messages = [
-        SystemMessage(
-            content="Ты бот-собеседник, который помогает пользователю провести время с пользой."
-        )
-    ]
-    print('--------',GIGA_TOKEN,"- Что бы выйти - введи 'пока'")
-    while(True):
-        user_input = input("Пользователь: ")
-        if user_input == "пока":
-            break
-        messages.append(HumanMessage(content=user_input))
-        res = giga.invoke(messages)
-        messages.append(res)
-        print("GigaChat: ", res.content)
-'''
