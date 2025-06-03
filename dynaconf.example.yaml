@@ -47,7 +47,7 @@ dev:
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0
-        - desc = Сервис агрегации rss новостей /news
+        - desc = Сервис агрегации rss новостей. Выводятся 10 новостей /news15 - пятнадцать. /newlist - список СМИ
         - rss_vz = https://vz.ru/rss.xml
         - rss_rg = https://rg.ru/xml/index.xml
         - rss_vz = https://www.pnp.ru/rss/index.xml

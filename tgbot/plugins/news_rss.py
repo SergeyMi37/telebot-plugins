@@ -72,11 +72,14 @@ def commands(update: Update, context: CallbackContext) -> None:
     sorted_news.sort(key=lambda x: x['published'], reverse=True)
 
     for news_item in sorted_news[:count]:  # выводим первые 10 новостей
-        text +=f"\n👉{news_item['title']} 🎯{news_item['source']} 📆({news_item['published']})"
+        #text +=f"\n👉{news_item['title']} 🎯{news_item['source']} 📆({news_item['published']})"
+        text +=f"\n👉{news_item['title']} 📆({news_item['published'][:16]})"
         text +=f"\n\t 🔍{news_item['link']}"  # выводить ссылку отдельно
-    
+    po=''
+    if len(text)>4081:
+        po = '...'
     context.bot.send_message(
         chat_id=u.user_id,
-        text=text,
+        text=text[:4081]+po+"\n/help",
         parse_mode=ParseMode.HTML
     )

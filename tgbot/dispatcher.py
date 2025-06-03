@@ -30,7 +30,7 @@ def setup_dispatcher(dp):
     # onboarding
     dp.add_handler(CommandHandler("start", onboarding_handlers.command_start))
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
-    dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
+    #dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
  
     plugins = get_plugins()
     for pl,val in plugins.items():

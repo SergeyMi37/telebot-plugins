@@ -40,8 +40,8 @@ def command_help(update: Update, context: CallbackContext) -> None:
     plugins = get_plugins(u.roles)
     #print(u.roles,plugins)
     text += CRLF+'/start: Кнопки ссылок'
-    if plugins:
-        text += CRLF+'/plugins: список приложений - плагинов'
+    #if plugins:
+    #    text += CRLF+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
         # Если есть доступ к плпгину IRIS
         text += CRLF+'👉----plugin-IRIS---------'
@@ -71,7 +71,8 @@ def command_help(update: Update, context: CallbackContext) -> None:
     if plugins.get('GIGA'):
         # Если есть доступ к плпгину GIGA
         text += CRLF+'👉----plugin-GIGA---------'
-        text += CRLF + 'Задавайте вопросы к Гига-ИИ'+CRLF
+        text += CRLF+plugins.get('GIGA').get('desc')
+        text += CRLF + '/giga - список опций модели или задавайте вопросы без команд. Модель пока не помнит контекста'+CRLF
     Roles=u.roles
     for pl,val in plugins.items():
         if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
@@ -84,6 +85,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += CRLF+'/ask_location: Отправить локацию 📍'
         text += CRLF+'/broadcast Текст рассылаемого сообщения'
         text += CRLF+'/export_users: Экспорт users.csv 👥'
+        text += CRLF+'/admin - информация о состоянии бота'
     
     text += CRLF+CRLF+'/help: Перечень команд'
     context.bot.send_message(
