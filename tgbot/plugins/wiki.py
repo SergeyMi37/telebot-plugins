@@ -21,7 +21,7 @@ def button_wiki(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     u = User.get_user(update, context)
     text = "Введите слово или фразу..."
-    text += '\n\r/help /wiki /plugins'
+    text += '\n\r/help /wiki'
     '''
     context.bot.send_message(
         chat_id=u.user_id,
@@ -61,8 +61,8 @@ def commands(update: Update, context: CallbackContext) -> None:
     if _input:
        code, _output = fetch_page_data(_input)
     else:
-        _output = "Введите слово или фразу, после ключевого wiki например:\n\r /wikiКвинта или wikiСамурай"
-    _output += '\n\r/help /wiki /plugins'
+        _output = "Введите слово или фразу, после ключевого wiki например:\n\r /wikiRainbow или wikiЗвездочет"
+    _output += '\n\r/help /wiki'
     context.bot.send_message(
         chat_id=u.user_id,
         text=_output,
