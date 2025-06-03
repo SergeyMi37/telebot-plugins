@@ -23,7 +23,7 @@ def admin(update: Update, context: CallbackContext) -> None:
     text = static_text.users_amount_stat.format(
         user_count=User.objects.count(),  # count may be ineffective if there are a lot of users.
         active_24=User.objects.filter(updated_at__gte=now() - timedelta(hours=24)).count()
-    )
+    )+f'\n😎 chat_id: {u.user_id}\n {update} '
     ''' при редактировании не работает
     update.message.reply_text(
         text,
@@ -33,7 +33,7 @@ def admin(update: Update, context: CallbackContext) -> None:
     '''
     context.bot.send_message(
         chat_id=u.user_id,
-        text=text+'+++',
+        text=text,
         parse_mode=ParseMode.HTML
     )
 
