@@ -18,15 +18,23 @@ def admin2(update: Update, context: CallbackContext) -> None:
 @check_blocked_user
 @superadmin_only
 def admin(update: Update, context: CallbackContext) -> None:
+    u = User.get_user(update, context)
     """ Show help info about all secret admins commands """
     text = static_text.users_amount_stat.format(
         user_count=User.objects.count(),  # count may be ineffective if there are a lot of users.
         active_24=User.objects.filter(updated_at__gte=now() - timedelta(hours=24)).count()
     )
+    ''' при редактировании не работает
     update.message.reply_text(
         text,
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
+    )
+    '''
+    context.bot.send_message(
+        chat_id=u.user_id,
+        text=text+'+++',
+        parse_mode=ParseMode.HTML
     )
 
 @check_blocked_user

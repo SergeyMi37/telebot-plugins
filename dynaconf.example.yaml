@@ -2,7 +2,7 @@ dynaconf_merge: true
 default:
   ADMIN_IDS:
     - 1111111111
-  ERRORS_CHAT_ID: 
+  TELEGRAM_LOGS_CHAT_ID: 
   ERRORS_THREAD_ID:
   UPDATES_PATH: "/updates"
   DOWNLOADS_PATH: "/downloads"

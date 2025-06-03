@@ -39,7 +39,7 @@ settings = Dynaconf(
     settings_files=["dynaconf.yaml"],
     validators=[
         Validator("ADMIN_IDS", must_exist=True),
-        Validator("ERRORS_CHAT_ID", must_exist=True),
+        Validator("TELEGRAM_LOGS_CHAT_ID", must_exist=True),
         Validator("UPDATES_PATH", default="/updates"),
         Validator("WEBHOOK_DOMAIN", must_exist=True),
         Validator("YAML_FILE_PATH", default="strings"),
@@ -56,6 +56,7 @@ settings = Dynaconf(
     ],
 )
 DATABASE_URL = settings.get("DATABASE_URL")
+TELEGRAM_LOGS_CHAT_ID = settings.get("TELEGRAM_LOGS_CHAT_ID","") 
 
 logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF","")))
 logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
@@ -238,8 +239,6 @@ if TELEGRAM_TOKEN is None:
         "Example of .env file: https://github.com/ohld/django-telegram-bot/blob/main/.env_example"
     )
     sys.exit(1)
-
-TELEGRAM_LOGS_CHAT_ID = os.getenv("TELEGRAM_LOGS_CHAT_ID", default=None)
 
 # -----> SENTRY
 # import sentry_sdk

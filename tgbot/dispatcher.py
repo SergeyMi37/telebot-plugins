@@ -32,9 +32,6 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
     dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
  
-    # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
-
     plugins = get_plugins()
     for pl,val in plugins.items():
         #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
@@ -45,8 +42,12 @@ def setup_dispatcher(dp):
         if (pl=='WIKI'):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
             dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), wiki.commands))
+            dp.add_handler(CallbackQueryHandler(wiki.button_wiki, pattern=f"^button_wiki"))
         else:
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
+
+    # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
 
     # Если есть доступ к плагину IRIS
     if servers_iris.plugins_iris:

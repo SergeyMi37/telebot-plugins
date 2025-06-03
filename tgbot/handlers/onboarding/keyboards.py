@@ -13,7 +13,7 @@ def make_keyboard_for_start_command(roles) -> InlineKeyboardMarkup:
     row = []  # Текущий ряд кнопок
     for pl,val in plugins.items():
         if pl in roles.split(',') or "All" in roles.split(','):
-            row.append(InlineKeyboardButton(f"{pl.lower()} - {val.get('desc')}", callback_data=str(pl.lower())))
+            row.append(InlineKeyboardButton(f"{pl.lower()} - {val.get('desc')}", callback_data=f'button_{pl.lower()}'))
             if len(row) == columns:
                 keyboard.append(row)
                 row = []

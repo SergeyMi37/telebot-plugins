@@ -16,6 +16,27 @@ import wikipediaapi
 # Добавить проверку на роль ''
 plugin_wiki = get_plugins('').get('WIKI')
 
+@check_blocked_user
+def button_wiki(update: Update, context: CallbackContext) -> None:
+    #user_id = extract_user_data_from_update(update)['user_id']
+    u = User.get_user(update, context)
+    text = "Введите слово или фразу..."
+    text += '\n\r/help /wiki /plugins'
+    '''
+    context.bot.send_message(
+        chat_id=u.user_id,
+        text=text,
+        parse_mode=ParseMode.HTML
+    )
+    '''
+    context.bot.edit_message_text(
+        text=text,
+        chat_id=u.user_id,
+        message_id=update.callback_query.message.message_id,
+        parse_mode=ParseMode.HTML
+    )
+
+
 def fetch_page_data(page_title):
     # Создаем объект API с использованием русского раздела Wikipedia
     wiki_api = wikipediaapi.Wikipedia(

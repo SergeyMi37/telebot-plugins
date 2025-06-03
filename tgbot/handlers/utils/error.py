@@ -28,15 +28,15 @@ def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None
     user_message = """
 😔 Что-то сломалось внутри бота.
 Мы уже получили всю информацию по устранению проблемы.
-Если ошибка повториться, то напишите в техподдержку https://t.me/jff_stp_bot
-Список команд /help
+    Список команд /help
 """
+    #Если ошибка повториться, то напишите в техподдержку https://t.me/jff_stp_bot
     context.bot.send_message(
         chat_id=u.user_id,
         text=user_message,
     )
 
-    admin_message = f"⚠️⚠️⚠️ for {u.tg_str}:\n{message}"[:4090]
+    admin_message = f"🚨 for {u.tg_str}:\n{message}"[:4090]
     if TELEGRAM_LOGS_CHAT_ID:
         context.bot.send_message(
             chat_id=TELEGRAM_LOGS_CHAT_ID,
