@@ -62,8 +62,11 @@ logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF",""))
 logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
 
 def get_plugins(Roles = ''):
-    plug = settings.get("PLUGINS")
     retpl = {}
+    if Roles is None:
+        return retpl
+    plug = settings.get("PLUGINS")
+    
     for pl in plug:
         pldict=dict(pl)
         for name_plug,val in pldict.items():

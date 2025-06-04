@@ -92,7 +92,10 @@ def commands(update: Update, context: CallbackContext) -> None:
         if key[0:4]=='rss_':
             rss_dict.setdefault(key,val)
 
-    arg = telecmd.split('/news_')[1]
+    if '/news_' in telecmd:
+        arg = telecmd.split('/news_')[1]
+    else:
+        arg = telecmd.split('/news')[1]
     if 'rss_' in arg:
         rd = {}
         key = 'rss_'+arg.split('rss_')[1]

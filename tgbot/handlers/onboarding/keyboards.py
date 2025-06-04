@@ -4,7 +4,7 @@ from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
 from tgbot.handlers.onboarding.static_text import github_button_text, secret_level_button_text
 from dtb.settings import get_plugins
 
-def make_keyboard_for_start_command(roles) -> InlineKeyboardMarkup:
+def make_keyboard_for_start_command(roles="") -> InlineKeyboardMarkup:
     plugins = get_plugins(roles)
     # Количество колонок (количество кнопок в одном ряду)
     columns = 4
@@ -12,7 +12,7 @@ def make_keyboard_for_start_command(roles) -> InlineKeyboardMarkup:
     keyboard = []
     row = []  # Текущий ряд кнопок
     for pl,val in plugins.items():
-        if pl in roles.split(',') or "All" in roles.split(','):
+        if roles is not None and (pl in roles.split(',') or "All" in roles.split(',')):
             row.append(InlineKeyboardButton(f"{pl.lower()} - {val.get('desc')}", callback_data=f'button_{pl.lower()}'))
             if len(row) == columns:
                 keyboard.append(row)

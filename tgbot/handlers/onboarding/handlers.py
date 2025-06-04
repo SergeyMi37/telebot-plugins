@@ -36,9 +36,14 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-
+    # if u.roles==None:
+    #     context.bot.send_message(
+    #     chat_id=u.user_id,
+    #     text='Администратор не присвоил вам ни одной роли',
+    #     parse_mode=ParseMode.HTML
+    #     )
+    #     return
     plugins = get_plugins(u.roles)
-    #print(u.roles,plugins)
     text += CRLF+'/start: Кнопки ссылок'
     #if plugins:
     #    text += CRLF+'/plugins: список приложений - плагинов'
@@ -55,9 +60,10 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += CRLF+'/yesterday: Отчет вчерашний по меткам проекта'
         text += CRLF+CRLF
         _i = 0
+        
         if reports_gitlab.PROJ_RU:
             for _ru in reports_gitlab.PROJ_RU.split(','):
-                if _ru in u.roles or "All" in u.roles:
+                if u.roles is not None and (_ru in u.roles or "All" in u.roles):
                     _en = reports_gitlab.PROJ_EN.split(',')[_i]
                     text += CRLF+f'/yesterday_{_en}: Отчет за вчера по метке "{_ru}"'
                     text += CRLF+f'/daily_{_en}: Отчет за сегодня по метке "{_ru}"'
@@ -73,10 +79,10 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += CRLF+'👉----plugin-GIGA---------'
         text += CRLF+plugins.get('GIGA').get('desc')
         text += CRLF + '/giga - список опций модели или задавайте вопросы без команд. Модель пока не помнит контекста'+CRLF
-    Roles=u.roles
+
     for pl,val in plugins.items():
         if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
-            if pl in Roles.split(',') or "All" in Roles.split(','):
+            if u.roles is not None and (pl in u.roles.split(',') or "All" in u.roles.split(',')):
                 text += CRLF + f'👉----plugin-{pl}---------'
                 text += CRLF + f"/{pl.lower()} {val.get('desc')}{CRLF}"
     if u.is_superadmin:

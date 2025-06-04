@@ -37,6 +37,7 @@ def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None
     )
 
     admin_message = f"🚨 for {u.tg_str}:\n{message}"[:4090]
+    #print(admin_message)
     if TELEGRAM_LOGS_CHAT_ID:
         context.bot.send_message(
             chat_id=TELEGRAM_LOGS_CHAT_ID,
