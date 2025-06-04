@@ -23,7 +23,7 @@ plugin_news = get_plugins('').get('NEWS')
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     u = User.get_user(update, context)
-    text = "/newslist - получить список СМИ /news100 /news200 /news300"
+    text = "/news_list - получить список лент СМИ /news_100 /news_200 /news_300"
     text += '\n\r/help '
     context.bot.edit_message_text(
         text=text,
@@ -31,7 +31,6 @@ def button(update: Update, context: CallbackContext) -> None:
         message_id=update.callback_query.message.message_id,
         parse_mode=ParseMode.HTML
     )
-
 
 def fetch_news(url):
     """Получение списка новостей из RSS-канала"""
@@ -50,7 +49,6 @@ def fetch_news(url):
                 'published': published,
                 'source': feed.feed.title
             })
-    
     return news_list
 
 def write_news(rss_dict,count,context,u,title="по всем лентам"):
@@ -73,13 +71,14 @@ def write_news(rss_dict,count,context,u,title="по всем лентам"):
     for news_item in sorted_news[:count]:  # выводим первые 10 новостей
         #text +=f"\n👉{news_item['title']} 🎯{news_item['source']} 📆({news_item['published']})"
         num += 1
-        it = f"\n{num}.🔍<a href=\"{news_item['link']}\">{news_item['title']} 📆({news_item['published'][:16]})</a>"
+        #it = f"\n{num}.🔍<a href=\"{news_item['link']}\">{news_item['title']} 📆({news_item['published'][:16]})</a>"
+        it = f"\n{num}.🔷<a href=\"{news_item['link']}\">{news_item['title']}🔹({news_item['source']})</a>"
         if len(text+it)>4081:
             context.bot.send_message( chat_id=u.user_id, text=text, parse_mode=ParseMode.HTML)
             text=it
         else:
             text = text + it
-    msg = text[:4081]+"...\n/help /newslist /news25"
+    msg = text[:4081]+"...\n/help /news_list /news_25"
     context.bot.send_message( chat_id=u.user_id, text=msg, parse_mode=ParseMode.HTML )
 
 @check_blocked_user
@@ -93,10 +92,10 @@ def commands(update: Update, context: CallbackContext) -> None:
         if key[0:4]=='rss_':
             rss_dict.setdefault(key,val)
 
-    arg = telecmd.split('/news')[1]
-    if '_rss_' in arg:
+    arg = telecmd.split('/news_')[1]
+    if 'rss_' in arg:
         rd = {}
-        key = 'rss_'+arg.split('_rss_')[1]
+        key = 'rss_'+arg.split('rss_')[1]
         if plugin_news.get(key):
             rd.setdefault(key,plugin_news.get(key))
             write_news(rd,300,context,u,"по ленте "+key)

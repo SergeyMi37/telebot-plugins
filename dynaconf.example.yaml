@@ -54,10 +54,10 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0
-        - desc = Сервис агрегации rss новостей. Выводятся 10 новостей /news100 - сто. /newlist - список СМИ
+        - desc = Сервис агрегации rss новостей. Выводятся 10 новостей /news_100 - сто. /new_list - список лент СМИ
         - rss_vz = https://vz.ru/rss.xml
         - rss_rg = https://rg.ru/xml/index.xml
-        - rss_vz = https://www.pnp.ru/rss/index.xml
+        - rss_pg = https://www.pnp.ru/rss/index.xml
         - rss_lenta_news = https://lenta.ru/rss/news
         - rss_lenta_top7 = https://lenta.ru/rss/top7
         - rss_lenta_last24 = https://lenta.ru/rss/last24

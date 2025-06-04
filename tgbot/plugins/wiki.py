@@ -57,11 +57,11 @@ def fetch_page_data(page_title):
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     telecmd, upms = get_tele_command(update)
-    _input = telecmd.split('wiki')[1]
+    _input = telecmd.split('wiki')[1].replace("_"," ")
     if _input:
        code, _output = fetch_page_data(_input)
     else:
-        _output = "Введите слово или фразу, после ключевого wiki например:\n\r /wikiRainbow или wikiЗвездочет"
+        _output = "Введите слово или фразу, после ключевого wiki например:\n\r /wiki_Rainbow или wiki_Звездочет"
     _output += '\n\r/help /wiki'
     context.bot.send_message(
         chat_id=u.user_id,
