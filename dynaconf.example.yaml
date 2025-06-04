@@ -34,9 +34,14 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
   TELEGRAM_TOKEN: "<token>"
   DATABASE_URL: sqlite:///db.sqlite3
   PLUGINS:
+    - WIKI:
+        - desc = Получить статью из википедии по поисковой фразе. Например /wiki Программа
     - IRIS:
+        - blocked = 1
+        - desc = Сервис мониторинга серверов IRIS там, где установлен проект AppTools 
         - URL_DEMO = https://superuser:Dev@appadmin.demo.community.intersystems.com/apptoolsrest/products/    # Демо
     - GITLAB:
+        - blocked = 1
         - ACCESS_TOKEN = <glpat-sdfsdfsdfsdfsffs>
         - GRAPHQL_URL = https://gitlab.com/api/graphql
         - GITLAB_URL = https://gitlab.com/api/v4/projects/23890341/issues
@@ -44,6 +49,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - PROJ_RU = Периметр,Ветер,Спектр
         - PROJ_EN = perimetr,wind,spectr
     - GIGA:
+        - blocked = 1
+        - desc = Сервис собеседние на основе нейронки GigaChain. Введи текст вопроса без команд
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0
@@ -58,4 +65,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - rss_rbc = http://static.feed.rbc.ru/rbc/logical/footer/rbcdaily_last_issue.rss
         - rss_rt = https://russian.rt.com/rss
         - rss_rusvesna = https://rusvesna.su/rss.xml
-        - rss_computerra = https://www.computerra.ru/feed/ 
+        - rss_computerra = https://www.computerra.ru/feed/
+    - WEATHER:
+        - desc = Погода  Москве на день и 10 дней. Введи команду, например /weater moscow 10
+        - url = https://open-meteo.com/en/docs#location_and_time
+        - url2 = https://habr.com/ru/articles/898174/ #Погода без API-ключа - может, есть желающие оформить в виде плагина 
