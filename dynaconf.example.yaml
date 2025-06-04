@@ -30,7 +30,7 @@ prod:
     - GIGA:
         - GIGA_CHAT = <token==>
 
-dev:
+dev:  # https://api.telegram.org/bot<token>/getUpdates
   TELEGRAM_TOKEN: "<token>"
   DATABASE_URL: sqlite:///db.sqlite3
   PLUGINS:
@@ -47,7 +47,7 @@ dev:
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0
-        - desc = Сервис агрегации rss новостей. Выводятся 10 новостей /news15 - пятнадцать. /newlist - список СМИ
+        - desc = Сервис агрегации rss новостей. Выводятся 10 новостей /news100 - сто. /newlist - список СМИ
         - rss_vz = https://vz.ru/rss.xml
         - rss_rg = https://rg.ru/xml/index.xml
         - rss_vz = https://www.pnp.ru/rss/index.xml

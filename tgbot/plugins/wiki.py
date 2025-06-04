@@ -1,6 +1,6 @@
 # Name Plugin: WIKI
     # - WIKI:
-    #     - desc = Получить статью из википедии по поисковой фразе. Например /wiki Сублимация
+    #     - desc = Получить статью из википедии по поисковой фразе. Например /wiki Соль
 
 from django.utils.timezone import now
 from telegram import ParseMode, Update
@@ -17,7 +17,7 @@ import wikipediaapi
 plugin_wiki = get_plugins('').get('WIKI')
 
 @check_blocked_user
-def button_wiki(update: Update, context: CallbackContext) -> None:
+def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     u = User.get_user(update, context)
     text = "Введите слово или фразу..."

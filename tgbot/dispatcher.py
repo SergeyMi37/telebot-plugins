@@ -39,10 +39,11 @@ def setup_dispatcher(dp):
         if (str(pl)=='NEWS'):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), news_rss.commands))
             dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), news_rss.commands))
+            dp.add_handler(CallbackQueryHandler(news_rss.button, pattern=f"^button_news"))
         if (pl=='WIKI'):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
             dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), wiki.commands))
-            dp.add_handler(CallbackQueryHandler(wiki.button_wiki, pattern=f"^button_wiki"))
+            dp.add_handler(CallbackQueryHandler(wiki.button, pattern=f"^button_wiki"))
         else:
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
 
