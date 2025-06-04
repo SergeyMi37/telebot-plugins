@@ -106,7 +106,7 @@ def commands(update: Update, context: CallbackContext) -> None:
     elif arg=='list':
         text=""
         for key, val in rss_dict.items():
-            text += f"\n/news_{key} 🔍{val}"
+            text += f"\n🔍 /news_{key}"
         context.bot.send_message( chat_id=u.user_id, text=text+'\n/help', parse_mode=ParseMode.HTML )
         return
     elif arg: # колчество новосте вывести в чат с ботом

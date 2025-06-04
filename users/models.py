@@ -48,7 +48,6 @@ class User(CreateUpdateTracker):
                 payload = context.args[0]
                 if str(payload).strip() != str(data["user_id"]).strip():  # you can't invite yourself
                     u.deep_link = payload
-                    u.roles="NEWS,WEATHER,WIKI"
                     u.save()
 
         return u, created

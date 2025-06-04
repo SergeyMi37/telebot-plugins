@@ -12,7 +12,7 @@ from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import CRLF
 from tgbot.plugins import reports_gitlab
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
-from dtb.settings import get_plugins
+from dtb.settings import get_plugins, settings
 from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_blocked_user
 
@@ -36,13 +36,11 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-    # if u.roles==None:
-    #     context.bot.send_message(
-    #     chat_id=u.user_id,
-    #     text='Администратор не присвоил вам ни одной роли',
-    #     parse_mode=ParseMode.HTML
-    #     )
-    #     return
+
+    if u.roles==None or u.roles=="": # Роли по умолчанию присвоим
+        u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI")
+        u.save()
+
     plugins = get_plugins(u.roles)
     text += CRLF+'/start: Кнопки ссылок'
     #if plugins:
