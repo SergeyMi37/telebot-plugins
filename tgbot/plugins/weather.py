@@ -70,53 +70,65 @@ def decode_weather(code):
 
 def print_forecast(forecast, city_name):
     """Вывод прогноза погоды в читаемом формате"""
+    out=""
     if not forecast or "daily" not in forecast:
-        print(f"\nДанные для {city_name} недоступны")
-        return
+        out += (f"\nДанные для {city_name} недоступны")
+        return out
 
-    print(f"\n{'='*40}")
-    print(f"Прогноз погоды для: {city_name}")
-    print(f"Часовой пояс: {forecast['timezone_abbreviation']} (UTC{forecast['utc_offset_seconds']//3600:+d})")
+    out += (f"\n{'='*40}")
+    out += (f"\nПрогноз погоды для: {city_name}")
+    out += (f"\nЧасовой пояс: {forecast['timezone_abbreviation']} (UTC{forecast['utc_offset_seconds']//3600:+d})")
     
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
-        print(f"\n{dt.strftime('%d.%m.%Y')} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
-        print(f"Погода: {decode_weather(forecast['daily']['weathercode'][i])}")
-        print(f"Макс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
-        print(f"Мин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
-        print(f"Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
-    print("="*40)
+        out += (f"\n{dt.strftime('%d.%m.%Y')} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
+        out += (f"\nПогода: {decode_weather(forecast['daily']['weathercode'][i])}")
+        out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
+        out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
+        out += (f"\nОсадки: {forecast['daily']['precipitation_sum'][i]} мм")
+    out += ("\n")
+    return out
+
 
 # Координаты городов
-cities = {
-    "Москва": (55.7558, 37.6173),
-    "Санкт-Петербург": (59.9343, 30.3351),
-    "Людвигсхафен": (49.4811, 8.4353)
-}
+def decode_cities(name):
+    cities = {
+        "Москва": (55.7558, 37.6173),
+        "Санкт-Петербург": (59.9343, 30.3351),
+        "Людвигсхафен": (49.4811, 8.4353)
+    }
+    return cities.get(name, "Неизвестный пока город")
 
-# Получение и вывод прогноза для каждого города
-for city, (lat, lon) in cities.items():
-    # Прогноз на завтра (2 дня: сегодня+завтра)
-    forecast_tomorrow = get_weather_forecast(lat, lon, days=2)
-    # Прогноз на 7 дней
-    forecast_7days = get_weather_forecast(lat, lon, days=7)
-    
-    # Выводим только завтрашний день из первого прогноза
-    if forecast_tomorrow and "daily" in forecast_tomorrow:
-        tomorrow_forecast = {
-            "timezone_abbreviation": forecast_tomorrow["timezone_abbreviation"],
-            "utc_offset_seconds": forecast_tomorrow["utc_offset_seconds"],
-            "daily": {
-                key: [value[1]]  # Берем только данные за завтра (индекс 1)
-                for key, value in forecast_tomorrow["daily"].items()
+def get_forecast(name):
+    cities = {
+        "Москва": (55.7558, 37.6173),
+        "Санкт-Петербург": (59.9343, 30.3351),
+        "Людвигсхафен": (49.4811, 8.4353)
+    }
+    ou=""
+    # Получение и вывод прогноза для каждого города
+    for city, (lat, lon) in cities.items():
+        # Прогноз на завтра (2 дня: сегодня+завтра)
+        forecast_tomorrow = get_weather_forecast(lat, lon, days=2)
+        # Прогноз на 7 дней
+        forecast_7days = get_weather_forecast(lat, lon, days=7)
+        
+        # Выводим только завтрашний день из первого прогноза
+        if forecast_tomorrow and "daily" in forecast_tomorrow:
+            tomorrow_forecast = {
+                "timezone_abbreviation": forecast_tomorrow["timezone_abbreviation"],
+                "utc_offset_seconds": forecast_tomorrow["utc_offset_seconds"],
+                "daily": {
+                    key: [value[1]]  # Берем только данные за завтра (индекс 1)
+                    for key, value in forecast_tomorrow["daily"].items()
+                }
             }
-        }
-        print_forecast(tomorrow_forecast, f"{city} (Завтра)")
-    
+            ou += print_forecast(tomorrow_forecast, f"{city} (Завтра)")
+        
     # Выводим 7-дневный прогноз
     if forecast_7days:
-        print_forecast(forecast_7days, f"{city} (7 дней)")
-
+        ou += print_forecast(forecast_7days, f"{city} (7 дней)")
+    return ou
 
 @check_blocked_user
 def button(update: Update, context: CallbackContext) -> None:
@@ -136,14 +148,15 @@ def button(update: Update, context: CallbackContext) -> None:
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     telecmd, upms = get_tele_command(update)
-    _input = telecmd.split('wiki')[1]
-    if _input:
-       code, _output = fetch_page_data(_input)
+    cmd = 1 #telecmd.split('weather')[1]
+    if cmd:
+       _out = get_forecast(cmd)
     else:
-        _output = "Введите слово или фразу, после ключевого wiki например:\n\r /wiki_Rainbow или wiki_Звездочет"
-    _output += '\n\r/help /wiki'
+        _out = "Введите слово 1"
+    print(_out)
+    _out += '\n\r/help /weather'
     context.bot.send_message(
         chat_id=u.user_id,
-        text=_output,
+        text=_out,
         parse_mode=ParseMode.HTML
     )

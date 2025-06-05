@@ -18,7 +18,7 @@ from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
-from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wiki
+from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wiki, weather
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -44,6 +44,10 @@ def setup_dispatcher(dp):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
             dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), wiki.commands))
             dp.add_handler(CallbackQueryHandler(wiki.button, pattern=f"^button_wiki"))
+        if (pl=='WEATHER'):
+            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), weather.commands))
+            dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), weather.commands))
+            dp.add_handler(CallbackQueryHandler(wiki.button, pattern=f"^button_weather"))
         else:
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
 
