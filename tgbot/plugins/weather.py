@@ -155,8 +155,12 @@ def commands(update: Update, context: CallbackContext) -> None:
     telecmd, upms = get_tele_command(update)
     cmd = telecmd.split('weather')[1]
     #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
-    if cmd=='_Moscow' or cmd=='':
+    if cmd=='_Moscow':
        _out = get_forecast("Moscow")
+    elif cmd=='':
+       _out = 'у вас нет геолокации, для посылки команда /ask_for_location'
+    elif cmd=='_list':
+       _out = 'todo'
     elif cmd=='_Piter':
        _out = get_forecast("Piter")
     elif cmd=='_Eburg':
