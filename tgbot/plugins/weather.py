@@ -97,15 +97,22 @@ def decode_cities(name):
     }
     return cities.get(name, "Неизвестный пока город")
 
-def get_forecast(name):
-    cities = {
-        "Москва": (55.7558, 37.6173),
-        #"Санкт-Петербург": (59.9343, 30.3351),
-        #"Людвигсхафен": (49.4811, 8.4353)
-    }
+def get_forecast(city):
     ou=""
+    cities = {
+        "Moscow": (55.7558, 37.6173),
+        "Piter": (59.9343, 30.3351),
+        "Eburg": (56,8519, 60,6122),
+        "Ludwigshafen": (49.4811, 8.4353)
+    }
+    if cities.get(city,'')=='':
+        ou += "По городу {cmd} еще нет геолокации."
+        return ou
     # Получение и вывод прогноза для каждого города
-    for city, (lat, lon) in cities.items():
+    else:
+        lat = cities[city][0]
+        lon = cities[city][1]
+    #for city, (lat, lon) in cities.items():
         # Прогноз на завтра (2 дня: сегодня+завтра)
         forecast_tomorrow = get_weather_forecast(lat, lon, days=2)
         # Прогноз на 7 дней
@@ -146,11 +153,18 @@ def button(update: Update, context: CallbackContext) -> None:
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     telecmd, upms = get_tele_command(update)
-    cmd = 1 #telecmd.split('weather')[1]
-    if cmd:
-       _out = get_forecast(cmd)
+    cmd = telecmd.split('weather')[1]
+    #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
+    if cmd=='_Moscow' or cmd=='':
+       _out = get_forecast("Moscow")
+    elif cmd=='_Piter':
+       _out = get_forecast("Piter")
+    elif cmd=='_Eburg':
+       _out = get_forecast("Eburg")
+    elif cmd=='_Ludwigshafen':
+       _out = get_forecast("Ludwigshafen")
     else:
-        _out = "Введите слово 1"
+        _out = f"По городу {cmd} еще нет геолокации"
     #print(_out)
     _out += '\n\r/help /weather'
     context.bot.send_message(
