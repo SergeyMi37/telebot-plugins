@@ -75,20 +75,18 @@ def print_forecast(forecast, city_name):
         out += (f"\nДанные для {city_name} недоступны")
         return out
 
-    out += (f"\n{'='*40}")
-    out += (f"\nПрогноз погоды для: {city_name}")
-    out += (f"\nЧасовой пояс: {forecast['timezone_abbreviation']} (UTC{forecast['utc_offset_seconds']//3600:+d})")
+    out += (f"\n🌞Прогноз погоды для: {city_name}")
+    out += (f"\n🕐Часовой пояс: {forecast['timezone_abbreviation']} (UTC{forecast['utc_offset_seconds']//3600:+d})")
     
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
-        out += (f"\n{dt.strftime('%d.%m.%Y')} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
+        out += (f"\n📆{dt.strftime('%d.%m.%Y')} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
         out += (f"\nПогода: {decode_weather(forecast['daily']['weathercode'][i])}")
         out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
         out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
         out += (f"\nОсадки: {forecast['daily']['precipitation_sum'][i]} мм")
     out += ("\n")
     return out
-
 
 # Координаты городов
 def decode_cities(name):
@@ -102,8 +100,8 @@ def decode_cities(name):
 def get_forecast(name):
     cities = {
         "Москва": (55.7558, 37.6173),
-        "Санкт-Петербург": (59.9343, 30.3351),
-        "Людвигсхафен": (49.4811, 8.4353)
+        #"Санкт-Петербург": (59.9343, 30.3351),
+        #"Людвигсхафен": (49.4811, 8.4353)
     }
     ou=""
     # Получение и вывод прогноза для каждого города
@@ -153,7 +151,7 @@ def commands(update: Update, context: CallbackContext) -> None:
        _out = get_forecast(cmd)
     else:
         _out = "Введите слово 1"
-    print(_out)
+    #print(_out)
     _out += '\n\r/help /weather'
     context.bot.send_message(
         chat_id=u.user_id,
