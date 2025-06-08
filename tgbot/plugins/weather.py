@@ -82,8 +82,9 @@ def print_forecast(forecast, city_name):
         dt = datetime.fromisoformat(date)
         out += (f"\n📆{dt.strftime('%d.%m.%Y')} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
         out += (f"\nПогода: {decode_weather(forecast['daily']['weathercode'][i])}")
-        out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
-        out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
+        #out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
+        #out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
+        out += (f"\nТемпература: {forecast['daily']['temperature_2m_min'][i]} - {forecast['daily']['temperature_2m_max'][i]} °C")
         out += (f"\nОсадки: {forecast['daily']['precipitation_sum'][i]} мм")
     out += ("\n")
     return out
@@ -114,21 +115,21 @@ def get_forecast(city):
         lon = cities[city][1]
     #for city, (lat, lon) in cities.items():
         # Прогноз на завтра (2 дня: сегодня+завтра)
-        forecast_tomorrow = get_weather_forecast(lat, lon, days=2)
+        #forecast_tomorrow = get_weather_forecast(lat, lon, days=2)
         # Прогноз на 7 дней
         forecast_7days = get_weather_forecast(lat, lon, days=7)
         
         # Выводим только завтрашний день из первого прогноза
-        if forecast_tomorrow and "daily" in forecast_tomorrow:
-            tomorrow_forecast = {
-                "timezone_abbreviation": forecast_tomorrow["timezone_abbreviation"],
-                "utc_offset_seconds": forecast_tomorrow["utc_offset_seconds"],
-                "daily": {
-                    key: [value[1]]  # Берем только данные за завтра (индекс 1)
-                    for key, value in forecast_tomorrow["daily"].items()
-                }
-            }
-            ou += print_forecast(tomorrow_forecast, f"{city} (Завтра)")
+        # if forecast_tomorrow and "daily" in forecast_tomorrow:
+        #     tomorrow_forecast = {
+        #         "timezone_abbreviation": forecast_tomorrow["timezone_abbreviation"],
+        #         "utc_offset_seconds": forecast_tomorrow["utc_offset_seconds"],
+        #         "daily": {
+        #             key: [value[1]]  # Берем только данные за завтра (индекс 1)
+        #             for key, value in forecast_tomorrow["daily"].items()
+        #         }
+        #     }
+        #     ou += print_forecast(tomorrow_forecast, f"{city} (Завтра)")
         
     # Выводим 7-дневный прогноз
     if forecast_7days:
@@ -155,17 +156,17 @@ def commands(update: Update, context: CallbackContext) -> None:
     telecmd, upms = get_tele_command(update)
     cmd = telecmd.split('weather')[1]
     #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
-    if cmd=='_Moscow':
+    if cmd.lower()=='_moscow':
        _out = get_forecast("Moscow")
     elif cmd=='':
        _out = 'у вас нет геолокации, для посылки команда /ask_for_location'
     elif cmd=='_list':
        _out = 'todo'
-    elif cmd=='_Piter':
+    elif cmd.lower()=='_piter':
        _out = get_forecast("Piter")
-    elif cmd=='_Eburg':
+    elif cmd.lower()=='_eburg':
        _out = get_forecast("Eburg")
-    elif cmd=='_Ludwigshafen':
+    elif cmd.lower()=='_ludwigshafen':
        _out = get_forecast("Ludwigshafen")
     else:
         _out = f"По городу {cmd} еще нет геолокации"

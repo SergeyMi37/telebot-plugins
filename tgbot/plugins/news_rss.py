@@ -91,7 +91,6 @@ def commands(update: Update, context: CallbackContext) -> None:
     for key, val in plugin_news.items():
         if key[0:4]=='rss_':
             rss_dict.setdefault(key,val)
-
     if '/news_' in telecmd:
         arg = telecmd.split('/news_')[1]
     else:
