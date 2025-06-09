@@ -55,18 +55,23 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0
-        - desc = Сервис агрегации rss новостей. Выводятся 10 новостей /news_100 - сто. /new_list - список лент СМИ
-        - rss_vz = https://vz.ru/rss.xml
-        - rss_rg = https://rg.ru/xml/index.xml
-        - rss_pg = https://www.pnp.ru/rss/index.xml
+        - func = news_rss.commands
+        - rss_Vzglyd = https://vz.ru/rss.xml
+        #- rss_AiF =  https://aif.ru/rss/all.php # другой формат ?
+        #- rss_izvestia = https://iz.ru/xml/rss/all.xml  # формат ?
+        - rss_RosGaz = https://rg.ru/xml/index.xml
+        - rss_ParlGaz = https://www.pnp.ru/rss/index.xml
         - rss_lenta_news = https://lenta.ru/rss/news
-        - rss_lenta_top7 = https://lenta.ru/rss/top7
-        - rss_lenta_last24 = https://lenta.ru/rss/last24
+        - rss_Tass = https://tass.ru/rss/v2.xml
+        #rss_lenta_top7 = https://lenta.ru/rss/top7
+        #rss_lenta_last24 = https://lenta.ru/rss/last24
+        #rss_rbc = http://static.feed.rbc.ru/rbc/logical/footer/rbcdaily_last_issue.rss № старости ?
         - rss_ria = https://ria.ru/export/rss2/archive/index.xml
-        - rss_rbc = http://static.feed.rbc.ru/rbc/logical/footer/rbcdaily_last_issue.rss
-        - rss_rt = https://russian.rt.com/rss
+        - rss_russiantd = https://russian.rt.com/rss
         - rss_rusvesna = https://rusvesna.su/rss.xml
-        - rss_computerra = https://www.computerra.ru/feed/
+        - rss_oreanda = https://www.oreanda-news.com/rss01/rss01.txt
+        - rss_hightech = https://hightech.plus/feed.rss
+        - rss_computerra = https://www.computerra.ru/feed/ 
     - WEATHER:
         - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg /weather_Ludwigshafen Людвигсхафен-ам-Райн
         - url = https://open-meteo.com/en/docs#location_and_time

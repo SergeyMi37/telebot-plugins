@@ -72,7 +72,7 @@ def write_news(rss_dict,count,context,u,title="по всем лентам"):
         #text +=f"\n👉{news_item['title']} 🎯{news_item['source']} 📆({news_item['published']})"
         num += 1
         #it = f"\n{num}.🔍<a href=\"{news_item['link']}\">{news_item['title']} 📆({news_item['published'][:16]})</a>"
-        it = f"\n{num}.🔷<a href=\"{news_item['link']}\">{news_item['title']}</a> {news_item['source']}"
+        it = f"\n{num}.🔷<a href=\"{news_item['link']}\">{news_item['title']}</a> {news_item['source'][:16]}..."
         if len(text+it)>4081:
             context.bot.send_message( chat_id=u.user_id, text=text, parse_mode=ParseMode.HTML)
             text=it
