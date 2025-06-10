@@ -6,11 +6,9 @@ from dtb.settings import get_plugins
 
 def make_keyboard_for_start_command(roles="") -> InlineKeyboardMarkup:
     plugins = get_plugins(roles)
-    # Количество колонок (количество кнопок в одном ряду)
-    columns = 4
-    # Создание клавиатуры
-    keyboard = []
-    row = []  # Текущий ряд кнопок
+    columns = 1  # 4 Количество колонок (количество кнопок в одном ряду)
+    keyboard = []     # Создание клавиатуры
+    row = []    # Текущий ряд кнопок
     for pl,val in plugins.items():
         if roles is not None and (pl in roles.split(',') or "All" in roles.split(',')):
             row.append(InlineKeyboardButton(f"{pl.lower()} - {val.get('desc')}", callback_data=f'button_{pl.lower()}'))
