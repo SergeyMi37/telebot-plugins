@@ -10,6 +10,7 @@ from tgbot.handlers.utils.decorators import admin_only, send_typing_action, supe
 from users.models import User
 from tgbot.plugins import reports_gitlab
 from dtb.settings import TELEGRAM_LOGS_CHAT_ID
+from tgbot.handlers.admin.utils import GetExtInfo
 
 @admin_only
 def admin2(update: Update, context: CallbackContext) -> None:
@@ -24,10 +25,8 @@ def admin(update: Update, context: CallbackContext) -> None:
     text = static_text.users_amount_stat.format(
         user_count=User.objects.count(),  # count may be ineffective if there are a lot of users.
         active_24=User.objects.filter(updated_at__gte=now() - timedelta(hours=24)).count()
-    )+f'\n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID}'
+    )+f'\n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetGitInfo()} '
     
-    #\n {update} '
-
     ''' при редактировании не работает
     update.message.reply_text(
         text,
