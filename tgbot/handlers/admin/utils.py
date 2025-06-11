@@ -1,13 +1,10 @@
-import io
-import csv
 
 from datetime import datetime
 from django.db.models import QuerySet
 from typing import Dict
-
-import os
 from pathlib import Path
-from dtb.settings import DATABASE_URL
+from dtb.settings import DATABASE_URL, DEBUG
+import os, socket, platform, requests, io, csv
 
 
 def _get_csv_from_qs_values(queryset: QuerySet[Dict], filename: str = 'users'):
@@ -54,14 +51,39 @@ class GetExtInfo:
         dir = str(Path(os.getcwd()).resolve()) # .parent)
         # Найти файл с информацией о ветках проекта
         fn = os.path.join(dir + "/.git", "config")
-        print(fn)
-    
+        fnind = os.path.join(dir + "/.git", "index")
+       
         if os.path.exists(fn):
             with open(fn, 'r') as file:
                 # получить время последней модификации файла
-                fn_datatime = f"📆 **{ (datetime.fromtimestamp(os.path.getmtime(fn)) )}**"
+                fn_datatime = f"📆 { (datetime.fromtimestamp(os.path.getmtime(fnind)) )}"
                 content = file.read()
-                dir += f"\n 🌴 **Последняя ветка** [{content.split('[branch ')[content.count('[branch ')]}  {fn_datatime}"
-        return f"\n 🚧 **Режим отладки.**\n 🅿 DATABASE_URL : //{DATABASE_URL}\n 📂 **Каталог проекта** {dir}"
-    
-    
+                dir += f"\n 🌴 Последняя ветка [{content.split('[branch ')[content.count('[branch ')]}  {fn_datatime}"
+        return f"\n 🚧 Режим отладки: {DEBUG}\n 🅿 DATABASE_URL :{DATABASE_URL}\n 📂 Каталог проекта {dir}"
+
+    @staticmethod
+    def GetHostInfo():
+        """Получить расширенную информацию о хосте и IP"""
+        # Получаем имя хоста
+        hostname = socket.gethostname()
+        # Получаем локальный IP адрес (IPv4)
+        ip_address = socket.gethostbyname(hostname)
+        #print(f'IP адрес: {ip_address}')
+        return f"\n 🔳 Имя хоста: {hostname}\n 🔳 IP адрес: {ip_address}"
+
+    @staticmethod
+    def GetExtIp():
+        """Получить внешний IP"""
+        # Получаем глобального адреса
+        url = 'https://api.ipify.org/'
+        response = requests.get(url,verify=False) #,headers=headers,timeout=timeout,auth=auth)
+        #print(response.text)
+        return f"\n 🌐 IP адрес: {response.text}"
+
+    @staticmethod
+    def GetOS():
+        """Получить информацию о ОС"""
+        # Получаем имя и версию ОС
+        os_name = platform.system()
+        os_version = platform.release()
+        return (f"\n⭕ ОС: {os_name}, версия: {os_version}")
