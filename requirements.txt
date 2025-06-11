@@ -38,3 +38,6 @@ wikipedia-api
 
 # for plugin news rss
 feedparser
+
+# for plugin weather
+geopy

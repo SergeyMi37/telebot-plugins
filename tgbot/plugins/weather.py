@@ -13,9 +13,31 @@ from tgbot.handlers.utils.decorators import check_blocked_user
 from users.models import User
 import requests
 from datetime import datetime, timedelta
+from geopy.geocoders import Nominatim
+from tgbot.plugins import wiki
 
 # Добавить проверку на роль ''
 plugin_wiki = get_plugins('').get('WEATHER')
+
+def get_coordinates(place_name):
+    # Создаем объект-геокодера OpenStreetMap (Nominatim)
+    geolocator = Nominatim(user_agent="geo_query")
+    try:
+        location = geolocator.geocode(place_name)
+      
+        if location is None:
+            res = (f"Место '{place_name}' не найдено.")
+            return res, 0, 0 
+        else:
+            latitude = location.latitude
+            longitude = location.longitude
+            return 200, latitude, longitude 
+            #print(f"Координаты {place_name}: широта={latitude}, долгота={longitude}")
+    
+    except Exception as e:
+        #print("Возникла ошибка:", str(e))
+        return str(e), 0, 0 
+
 
 def get_weather_forecast(latitude, longitude, days=1):
     """Получение прогноза погоды на указанное количество дней"""
@@ -107,8 +129,10 @@ def get_forecast(city):
         "Ludwigshafen": (49.4811, 8.4353)
     }
     if cities.get(city,'')=='':
-        ou += "По городу {cmd} еще нет геолокации."
-        return ou
+        st, lat, lon = get_coordinates(city)
+        if not st == 200:
+            ou += f"По городу {city} нет геолокации. {st}"
+            return ou
     # Получение и вывод прогноза для каждого города
     else:
         lat = cities[city][0]
@@ -116,8 +140,9 @@ def get_forecast(city):
     #for city, (lat, lon) in cities.items():
         # Прогноз на завтра (2 дня: сегодня+завтра)
         #forecast_tomorrow = get_weather_forecast(lat, lon, days=2)
+        
         # Прогноз на 7 дней
-        forecast_7days = get_weather_forecast(lat, lon, days=7)
+    forecast_7days = get_weather_forecast(lat, lon, days=7)
         
         # Выводим только завтрашний день из первого прогноза
         # if forecast_tomorrow and "daily" in forecast_tomorrow:
@@ -130,10 +155,16 @@ def get_forecast(city):
         #         }
         #     }
         #     ou += print_forecast(tomorrow_forecast, f"{city} (Завтра)")
-        
+    
+    url = f"https://yandex.ru/maps/?ll={lon}%2C{lat}&z=17&l=map"
+    st, summ, link = wiki.fetch_page_data(city)
+    wikiname = f"<a href=\"{link}\">{city}</a>" if st == 200 else city
+    links = f"{wikiname} 🌎<a href=\"{url}\">({lat},{lon})</a>"
     # Выводим 7-дневный прогноз
     if forecast_7days:
-        ou += print_forecast(forecast_7days, f"{city} (7 дней)")
+        ou += print_forecast(forecast_7days, f"{links} (7 дней)")
+    else:
+        ou += f"{links})"
     return ou
 
 @check_blocked_user
@@ -169,7 +200,8 @@ def commands(update: Update, context: CallbackContext) -> None:
     elif cmd.lower()=='_ludwigshafen':
        _out = get_forecast("Ludwigshafen")
     else:
-        _out = f"По городу {cmd} еще нет геолокации"
+        _out = get_forecast(cmd.replace('_',''))
+        #_out = f"По городу {cmd} еще нет геолокации"
     #print(_out)
     _out += '\n\r/help /weather'
     context.bot.send_message(
