@@ -47,13 +47,13 @@ def command_help(update: Update, context: CallbackContext) -> None:
     #    text += CRLF+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
         # Если есть доступ к плпгину IRIS
-        text += CRLF+'👉----plugin-IRIS---------'
+        text += CRLF+'👉---модуль-IRIS---------'
         text += CRLF+'/servers: Смотреть статус всех серверов IRIS'
         text += CRLF+'/s_TEST: Смотреть продукции сервера TEST'
         text += CRLF
     if plugins.get('GITLAB'):
         # Если есть доступ к плагину GITLAB
-        text += CRLF+'👉----plugin-GITLAB---------'
+        text += CRLF+'👉---модуль-GITLAB---------'
         text += CRLF+'/daily: Отчет ежедневный по меткам проекта'
         text += CRLF+'/yesterday: Отчет вчерашний по меткам проекта'
         text += CRLF+CRLF
@@ -74,14 +74,14 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += CRLF + reports_wrong_format
     if plugins.get('GIGA'):
         # Если есть доступ к плпгину GIGA
-        text += CRLF+'👉----plugin-GIGA---------'
+        text += CRLF+'👉---модуль-GIGA---------'
         text += CRLF+plugins.get('GIGA').get('desc')
         text += CRLF + '/giga - список опций модели или задавайте вопросы без команд. Модель пока не помнит контекста'+CRLF
 
     for pl,val in plugins.items():
         if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
             if u.roles is not None and (pl in u.roles.split(',') or "All" in u.roles.split(',')):
-                text += CRLF + f'👉----plugin-{pl}---------'
+                text += CRLF + f'👉---модуль-{pl}---------'
                 text += CRLF + f"/{pl.lower()} {val.get('desc')}{CRLF}"
     if u.is_superadmin:
         text += CRLF+'👉----Super admin options--------'
