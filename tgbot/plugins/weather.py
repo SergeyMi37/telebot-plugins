@@ -1,8 +1,7 @@
 # Name Plugin: 
     # - WEATHER:
     #     desc = Погода  Москве на день и 10 дней. Введи команду, например /weater moscow 10
-
-from django.utils.timezone import now
+from django.utils import timezone
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 from dtb.settings import get_plugins
@@ -10,7 +9,7 @@ from dtb.settings import logger
 from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_blocked_user
-from users.models import User
+from users.models import User, Location
 import requests
 from datetime import datetime, timedelta
 from geopy.geocoders import Nominatim
@@ -120,7 +119,7 @@ def decode_cities(name):
     }
     return cities.get(name, "Неизвестный пока город")
 
-def get_forecast(city):
+def get_forecast(city,latitude=None,longitude=None):
     ou=""
     cities = {
         "Moscow": (55.7558, 37.6173),
@@ -128,7 +127,10 @@ def get_forecast(city):
         "Eburg": (56,8519, 60,6122),
         "Ludwigshafen": (49.4811, 8.4353)
     }
-    if cities.get(city,'')=='':
+    if latitude:
+        lat = latitude
+        lon = longitude
+    elif cities.get(city,'')=='':
         st, lat, lon = get_coordinates(city)
         if not st == 200:
             ou += f"По городу {city} нет геолокации. {st}"
@@ -156,7 +158,9 @@ def get_forecast(city):
         #     }
         #     ou += print_forecast(tomorrow_forecast, f"{city} (Завтра)")
     
-    url = f"https://yandex.ru/maps/?ll={lon}%2C{lat}&z=11&l=map" # (8-20км, 10-6км 12-2км, 15-200м 17-60м,).
+    #url = f"https://yandex.ru/maps/?ll={lon}%2C{lat}&z=11&l=map" # (8-20км, 10-6км 12-2км, 15-200м 17-60м,).
+    url = f"https://yandex.ru/maps/?pt={lon},{lat}&z=11&l=map" # (8-20км, 10-6км 12-2км, 15-200м 17-60м,).
+    # ?pt=37.393269,55.029111;37.5,55.75
     st, summ, link = wiki.fetch_page_data(city)
     wikiname = f"<a href=\"{link}\">{city}</a>" if st == 200 else city
     links = f"{wikiname} 🌎<a href=\"{url}\">({str(lat)[:5]},{str(lon)[:5]})</a>"
@@ -180,7 +184,6 @@ def button(update: Update, context: CallbackContext) -> None:
         parse_mode=ParseMode.HTML
     )
 
-
 @check_blocked_user
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
@@ -190,7 +193,12 @@ def commands(update: Update, context: CallbackContext) -> None:
     if cmd.lower()=='_moscow':
        _out = get_forecast("Moscow")
     elif cmd=='':
-       _out = 'у вас нет геолокации, для посылки команда /ask_for_location'
+       # Предположим, что мы хотим получить последнюю запись для пользователя с id=some_user_id
+       last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
+       if last_location:
+          _out = get_forecast("Ваше местоположение",last_location.latitude,last_location.longitude)
+       else:
+          _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
     elif cmd=='_list':
        _out = 'todo'
     elif cmd.lower()=='_piter':

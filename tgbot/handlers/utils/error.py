@@ -22,7 +22,7 @@ def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None
     # You might need to add some logic to deal with messages longer than the 4096 character limit.
     message = (
         f'An exception was raised while handling an update\n'
-        f'<pre>{html.escape(tb_string)}</pre>'
+        f'{html.escape(tb_string)}'
     )
 
     user_message = """

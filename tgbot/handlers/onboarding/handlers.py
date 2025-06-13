@@ -86,10 +86,10 @@ def command_help(update: Update, context: CallbackContext) -> None:
     if u.is_superadmin:
         text += CRLF+'👉----Super admin options--------'
         # Если есть доступ к роли суперадмин
-        text += CRLF+'/ask_location: Отправить локацию 📍'
-        text += CRLF+'/broadcast Текст рассылаемого сообщения'
-        text += CRLF+'/export_users: Экспорт users.csv 👥'
-        text += CRLF+'/admin - информация о состоянии бота'
+        text += CRLF+' 📍/ask_location: Отправить локацию'
+        text += CRLF+' /broadcast Текст рассылаемого сообщения'
+        text += CRLF+' 👥/export_users: Экспорт users.csv'
+        text += CRLF+' /admin - информация о состоянии бота'
     
     text += CRLF+CRLF+'/help: Перечень команд'
     context.bot.send_message(
