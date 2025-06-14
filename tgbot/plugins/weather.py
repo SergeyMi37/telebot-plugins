@@ -17,14 +17,31 @@ from tgbot.plugins import wiki
 from tgbot.handlers.admin.utils import get_day_of_week
 
 # Добавить проверку на роль ''
-plugin_wiki = get_plugins('').get('WEATHER')
+plugin_weather = get_plugins('').get('WEATHER')
+
+# https://dadata.ru/api/geolocate/
+# https://github.com/hflabs/dadata-py
+from dadata import Dadata
+
+# https://www.openstreetmap.org/  «Дадата» берет координаты домов и улиц из OpenStreetMap. 
+def get_adress(lat,lon):
+    token = plugin_weather.get('dadata_token','')
+    if not token:
+        return ''
+    dadata = Dadata(token)
+    result = dadata.geolocate(name="address", lat=lat, lon=lon)
+    if result:
+        val = result[0]['value'] # первый ближайший адрес
+        print('---',val)
+    else:
+        val = ''
+    return val
 
 def get_coordinates(place_name):
     # Создаем объект-геокодера OpenStreetMap (Nominatim)
     geolocator = Nominatim(user_agent="geo_query")
     try:
         location = geolocator.geocode(place_name)
-      
         if location is None:
             res = (f"Место '{place_name}' не найдено.")
             return res, 0, 0 
@@ -41,8 +58,12 @@ def get_coordinates(place_name):
 
 def get_weather_forecast(latitude, longitude, days=1):
     """Получение прогноза погоды на указанное количество дней"""
+    uri  = plugin_weather.get('url','')
+    if not uri:
+        print(f"Пустой параметр url в настройках dynaconf")
+        return None
     url = (
-        f"https://api.open-meteo.com/v1/forecast?"
+        f"{uri}?"
         f"latitude={latitude}&longitude={longitude}"
         f"&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum"
         f"&timezone=auto"
@@ -200,7 +221,8 @@ def commands(update: Update, context: CallbackContext) -> None:
        #last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
         if Location.objects.filter(user_id=u.user_id).exists():
             last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
-            _out = get_forecast(".",last_location.latitude,last_location.longitude,"Ваше местоположение ")
+            place = get_adress(last_location.latitude,last_location.longitude)
+            _out = get_forecast(".",last_location.latitude,last_location.longitude,"Ваше местоположение "+place)
             _out +=  "Если это ваше старое местоположение, то обновите командой \r\n📍/ask_location"
         else:
             _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'

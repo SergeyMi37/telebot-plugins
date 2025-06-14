@@ -41,3 +41,4 @@ feedparser
 
 # for plugin weather
 geopy
+dadata

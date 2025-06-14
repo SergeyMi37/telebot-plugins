@@ -13,10 +13,13 @@ def get_tele_command(update: Update) -> str:
       return update.edited_message.text, update.edited_message
 
 def extract_user_data_from_update(update: Update) -> Dict:
-    """ python-telegram-bot's Update instance --> User info """
-    user = update.effective_user.to_dict()
-
-    return dict(
+   """ python-telegram-bot's Update instance --> User info """
+   try:
+      user = update.effective_user.to_dict()
+   except Exception as e:
+      print(f'-----Произошла ошибка----effective_user--{e}',update)
+   
+   return dict(
         user_id=user["id"],
         #is_blocked_bot=False,   # был сброс блокировки
         **{
