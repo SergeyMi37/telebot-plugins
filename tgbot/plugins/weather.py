@@ -14,6 +14,7 @@ import requests
 from datetime import datetime, timedelta
 from geopy.geocoders import Nominatim
 from tgbot.plugins import wiki
+from tgbot.handlers.admin.utils import get_day_of_week
 
 # Добавить проверку на роль ''
 plugin_wiki = get_plugins('').get('WEATHER')
@@ -101,7 +102,9 @@ def print_forecast(forecast, city_name):
     
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
-        out += (f"\n📆{dt.strftime('%d.%m.%Y')} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
+        ddmmyyyy = dt.strftime('%d.%m.%Y')
+        out += (f"\n📆{ddmmyyyy} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
+        out += f'<b> {get_day_of_week(ddmmyyyy)}</b>'
         out += (f"\n  {decode_weather(forecast['daily']['weathercode'][i])}")
         #out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
         #out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
@@ -119,7 +122,7 @@ def decode_cities(name):
     }
     return cities.get(name, "Неизвестный пока город")
 
-def get_forecast(city,latitude=None,longitude=None):
+def get_forecast(city,latitude=None,longitude=None,title=""):
     ou=""
     cities = {
         "Moscow": (55.7558, 37.6173),
@@ -163,7 +166,7 @@ def get_forecast(city,latitude=None,longitude=None):
     # ?pt=37.393269,55.029111;37.5,55.75
     st, summ, link = wiki.fetch_page_data(city)
     wikiname = f"<a href=\"{link}\">{city}</a>" if st == 200 else city
-    links = f"{wikiname} 🌎<a href=\"{url}\">({str(lat)[:5]},{str(lon)[:5]})</a>"
+    links = f"{wikiname} 🌎<a href=\"{url}\">({title} {str(lat)[:5]},{str(lon)[:5]})</a>"
     # Выводим 7-дневный прогноз
     if forecast_7days:
         ou += print_forecast(forecast_7days, f"{links} (7 дней)")
@@ -193,14 +196,16 @@ def commands(update: Update, context: CallbackContext) -> None:
     if cmd.lower()=='_moscow':
        _out = get_forecast("Moscow")
     elif cmd=='':
-       # Предположим, что мы хотим получить последнюю запись для пользователя с id=some_user_id
-       last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
-       if last_location:
-          _out = get_forecast("Ваше местоположение",last_location.latitude,last_location.longitude)
-       else:
-          _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
-    elif cmd=='_list':
-       _out = 'todo'
+       #  получить последнюю запись для пользователя
+       #last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
+        if Location.objects.filter(user_id=u.user_id).exists():
+            last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
+            _out = get_forecast(".",last_location.latitude,last_location.longitude,"Ваше местоположение ")
+            _out +=  "Если это ваше старое местоположение, то обновите командой \r\n📍/ask_location"
+        else:
+            _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
+    elif cmd.lower()=='_list':
+       _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg /weather_Серпухов /weather_Екатеринбург /weather_Нея"
     elif cmd.lower()=='_piter':
        _out = get_forecast("Piter")
     elif cmd.lower()=='_eburg':

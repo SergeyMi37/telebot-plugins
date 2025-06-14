@@ -6,6 +6,17 @@ from pathlib import Path
 from dtb.settings import DATABASE_URL, DEBUG
 import os, socket, platform, requests, io, csv
 
+def get_day_of_week(date_string):
+    """ Преобразование строки даты в объект datetime 
+        Пример использования:
+        print(get_day_of_week("2023-10-25"))  # Выведет "Среда"
+        print(get_day_of_week("26.10.2023"))  # Выведет "Четверг"
+    """
+    date_obj = datetime.strptime(date_string, "%d.%m.%Y") if "." in date_string else datetime.strptime(date_string, "%Y-%m-%d")
+    # Список русских названий дней недели
+    days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    # Возвращаем день недели по индексу
+    return days[date_obj.weekday()]
 
 def _get_csv_from_qs_values(queryset: QuerySet[Dict], filename: str = 'users'):
     keys = queryset[0].keys()
