@@ -153,7 +153,8 @@ def print_forecast(forecast, city_name):
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
         ddmmyyyy = dt.strftime('%d.%m.%Y')
-        out += (f"\n📆{ddmmyyyy} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
+        mark = "🔴" if get_day_of_week(ddmmyyyy,1) in [5,6] else "⚪️"
+        out += (f"\n{mark}📆{ddmmyyyy} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
         out += f'<b> {get_day_of_week(ddmmyyyy)}</b>'
         out += (f"\n  {decode_weather(forecast['daily']['weathercode'][i])}")
         #out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
@@ -257,7 +258,7 @@ def commands(update: Update, context: CallbackContext) -> None:
             else:
                 print(place2)
             _out = get_forecast(".",last_location.latitude,last_location.longitude,f"Ваше местоположение {place}")
-            _out +=  "Если это ваше старое местоположение, то обновите командой \r\n📍/ask_location"
+            _out +=  "Обновить местоположение командой 📍/ask_location"
         else:
             _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
     elif cmd.lower()=='_list':
