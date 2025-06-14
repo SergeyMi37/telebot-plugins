@@ -32,10 +32,39 @@ def get_adress(lat,lon):
     result = dadata.geolocate(name="address", lat=lat, lon=lon)
     if result:
         val = result[0]['value'] # первый ближайший адрес
-        print('---',val)
+        #print('---',val)
     else:
         val = ''
     return val
+
+def reverse_geocode(lat, lon):
+    # Базовая ссылка API Nominatim
+    base_url = 'https://nominatim.openstreetmap.org/reverse'
+    # Параметры запроса
+    params = {
+        'format': 'json',       # Формат результата — JSON
+        'lat': lat,             # Широта точки
+        'lon': lon,             # Долгота точки
+        'zoom': 18,             # Уровень детализации карты
+        'addressdetails': 1     # Возвращение детальной адресной информации
+    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    #response = requests.get(url, headers=headers)
+    try:
+        response = requests.get(base_url, params=params, headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            address = data['address']
+            result = f"{address.get('road', '')}, {address.get('village', '')}, {address.get('city', '')}, {address.get('state', '')}, {address.get('country', '')}"
+            return 200, result.strip(', ')
+        else:
+            return response.status_code, (f'Ошибка: {response.status_code}')
+
+    except Exception as e:
+        return 1, (f'Ошибка обработки запроса: {e}')
+
 
 def get_coordinates(place_name):
     # Создаем объект-геокодера OpenStreetMap (Nominatim)
@@ -222,7 +251,12 @@ def commands(update: Update, context: CallbackContext) -> None:
         if Location.objects.filter(user_id=u.user_id).exists():
             last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
             place = get_adress(last_location.latitude,last_location.longitude)
-            _out = get_forecast(".",last_location.latitude,last_location.longitude,"Ваше местоположение "+place)
+            st, place2 = reverse_geocode(last_location.latitude,last_location.longitude)
+            if st==200:
+                place += f"---{place2}"
+            else:
+                print(place2)
+            _out = get_forecast(".",last_location.latitude,last_location.longitude,f"Ваше местоположение {place}")
             _out +=  "Если это ваше старое местоположение, то обновите командой \r\n📍/ask_location"
         else:
             _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
