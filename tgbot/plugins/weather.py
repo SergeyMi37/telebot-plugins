@@ -28,12 +28,14 @@ def get_adress(lat,lon):
     token = plugin_weather.get('dadata_token','')
     if not token:
         return ''
-    dadata = Dadata(token)
-    result = dadata.geolocate(name="address", lat=lat, lon=lon)
-    if result:
-        val = result[0]['value'] # первый ближайший адрес
-        #print('---',val)
-    else:
+    try:
+        dadata = Dadata(token)
+        result = dadata.geolocate(name="address", lat=lat, lon=lon)
+        if result:
+            val = result[0]['value'] # первый ближайший адрес
+        else:
+            val = ''
+    except Exception as e:
         val = ''
     return val
 
@@ -254,7 +256,7 @@ def commands(update: Update, context: CallbackContext) -> None:
             place = get_adress(last_location.latitude,last_location.longitude)
             st, place2 = reverse_geocode(last_location.latitude,last_location.longitude)
             if st==200:
-                place += f"---{place2}"
+                place += f".{place2}"
             else:
                 print(place2)
             _out = get_forecast(".",last_location.latitude,last_location.longitude,f"Ваше местоположение {place}")

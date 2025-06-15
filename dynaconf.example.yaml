@@ -74,5 +74,4 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - rss_computerra = https://www.computerra.ru/feed/ 
     - WEATHER:
         - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg /weather_Ludwigshafen Людвигсхафен-ам-Райн
-        - url = https://open-meteo.com/en/docs#location_and_time
-        - dadata_token = <> # Взять здксь https://dadata.ru/api/geolocate/
+        - url = https://api.open-meteo.com/v1/forecast # https://open-meteo.com/en/docs#location_and_time
