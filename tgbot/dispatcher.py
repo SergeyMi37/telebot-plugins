@@ -61,7 +61,7 @@ def setup_dispatcher(dp):
         if (pl=='WEATHER'):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), weather.commands))
             dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), weather.commands))
-            dp.add_handler(CallbackQueryHandler(wiki.button, pattern=f"^button_weather"))
+            dp.add_handler(CallbackQueryHandler(weather.button, pattern=f"^button_weather"))
         else:
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
 

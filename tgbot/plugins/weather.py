@@ -231,8 +231,8 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     u = User.get_user(update, context)
-    text = "Введите слово или фразу..."
-    text += '\n\r/help /wiki'
+    text = "Введите команду прогноза погоды"
+    text += '\n\r/help /weather'
     context.bot.edit_message_text(
         text=text,
         chat_id=u.user_id,

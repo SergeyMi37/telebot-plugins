@@ -36,7 +36,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
   DATABASE_URL: sqlite:///db.sqlite3
   PLUGINS:
     - WIKI:
-        - desc = Получить статью из википедии по поисковой фразе. Например /wiki Программа
+        - desc = Получить статью из википедии по поисковой фразе. Например /wiki_Snow или <code>/wiki_Снег</code> или <code>wiki_Снеговик</code>
     - IRIS:
         - blocked = 1
         - desc = Сервис мониторинга серверов IRIS там, где установлен проект AppTools 
