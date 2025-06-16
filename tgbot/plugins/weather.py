@@ -216,7 +216,7 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
     
     #url = f"https://yandex.ru/maps/?ll={lon}%2C{lat}&z=11&l=map" # (8-20км, 10-6км 12-2км, 15-200м 17-60м,).
     url = f"https://yandex.ru/maps/?pt={lon},{lat}&z=11&l=map" # (8-20км, 10-6км 12-2км, 15-200м 17-60м,).
-    # ?pt=37.393269,55.029111;37.5,55.75
+    # ?pt=37.393269,55.029111;37.5,55.75  # ~ через тильду
     st, summ, link = wiki.fetch_page_data(city)
     wikiname = f"<a href=\"{link}\">{city}</a>" if st == 200 else city
     links = f"{wikiname} 🌎<a href=\"{url}\">({title} {str(lat)[:5]},{str(lon)[:5]})</a>"
@@ -269,6 +269,9 @@ def commands(update: Update, context: CallbackContext) -> None:
        _out = get_forecast("Piter")
     elif cmd.lower()=='_eburg':
        _out = get_forecast("Екатеринбург")
+    elif cmd.lower()=='_test':
+       link="https://yandex.ru/maps/?l=map&pt=55.7558,37.6173,Москва1111111~59.9343,30.3351,Санкт22222222" # &rtm_layer=&rtm_source=constructorLink"
+       _out = f"<a href=\"{link}\">тест</a>"
     else:
         _out = get_forecast(cmd.replace('_',''))
         #_out = f"По городу {cmd} еще нет геолокации"

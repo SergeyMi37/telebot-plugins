@@ -12,6 +12,7 @@ from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCA
 from tgbot.handlers.broadcast_message.static_text import broadcast_command,reports_command
 #from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
 
+from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils import files, error
 from tgbot.handlers.admin import handlers as admin_handlers
 from tgbot.handlers.location import handlers as location_handlers
@@ -22,6 +23,19 @@ from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wik
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
+
+def universal_message_handler(update, context):
+    telecmd, upms = get_tele_command(update)
+    message = upms
+    if message.text:
+        print(f"!Пользователь отправил текст: {message.text}")
+    elif message.document:
+        print(f"!Пользователь прислал документ: {message.document.file_name}")
+    elif message.audio or message.voice:
+        print(f"!Пользователь прислал голосовое сообщение")
+    else:
+        print(f"!Поступило другое событие: {message}")
+
 
 def setup_dispatcher(dp):
     """
@@ -52,7 +66,7 @@ def setup_dispatcher(dp):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
 
     # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
+    #dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
 
     # Если есть доступ к плагину IRIS
     if servers_iris.plugins_iris:
@@ -136,13 +150,16 @@ if data == 'button_1':
         Filters.animation, files.show_file_id,
     ))
 
-    dp.add_handler(MessageHandler(        Filters.document.txt, files.save_file_id,    ))
-    dp.add_handler(MessageHandler(
-        Filters.document, files.save_file_id,
-    ))
+    dp.add_handler(MessageHandler(  Filters.document.txt, files.save_file_id,    ))
+    dp.add_handler(MessageHandler(  Filters.document, files.save_file_id,    ))
+    
     # handling errors
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
 
+    # Универсальный обработчик для любых типов сообщений и файлов
+    #dp.add_handler(MessageHandler(Filters.all & ~Filters.command, universal_message_handler))
+    dp.add_handler(MessageHandler(Filters.all, universal_message_handler))
+    
     # EXAMPLES FOR HANDLERS
     # dp.add_handler(MessageHandler(Filters.text, <function_handler>))
     # dp.add_handler(MessageHandler(
