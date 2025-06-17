@@ -339,7 +339,8 @@ def get_report(label: str = "Табель", fromDate: datetime="", toDate: datet
 def put_report(update: Update, label: str = "", fromDate: datetime="", toDate: datetime="", mode: str='name'):
 
     txt, pref, week = get_report(fromDate=fromDate,toDate=toDate,label=label,mode=mode)
-    telecmd, upms = get_tele_command(update)
+    upms, chat, from_user = get_tele_command(update)
+    telecmd = upms.text
     CONST = 4090
     ot=0
     do=CONST

@@ -45,7 +45,8 @@ def ask_giga(prompt):
 @check_blocked_user
 def text_message(update, context):
     u = User.get_user(update, context)
-    telecmd, upms = get_tele_command(update)
+    upms, chat, from_user = get_tele_command(update)
+    telecmd = upms.text
     resp = ask_giga(telecmd)
     # Ответ пользователю
 

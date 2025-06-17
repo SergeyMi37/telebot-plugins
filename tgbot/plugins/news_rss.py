@@ -74,17 +74,25 @@ def write_news(rss_dict,count,context,u,title="по всем лентам"):
         #it = f"\n{num}.🔍<a href=\"{news_item['link']}\">{news_item['title']} 📆({news_item['published'][:16]})</a>"
         it = f"\n{num}.🔷<a href=\"{news_item['link']}\">{news_item['title']}</a> {news_item['source'][:16]}..."
         if len(text+it)>4081:
-            context.bot.send_message( chat_id=u.user_id, text=text, parse_mode=ParseMode.HTML)
+            context.bot.send_message(
+                 chat_id=u.user_id, 
+                text=text, 
+                disable_web_page_preview=True,
+                parse_mode=ParseMode.HTML)
             text=it
         else:
             text = text + it
     msg = text[:4081]+"...\n\n/help /news_list /news_25"
-    context.bot.send_message( chat_id=u.user_id, text=msg, parse_mode=ParseMode.HTML )
+    context.bot.send_message( 
+        chat_id=u.user_id, text=msg, 
+        disable_web_page_preview=True,
+        parse_mode=ParseMode.HTML )
 
 @check_blocked_user
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
-    telecmd, upms = get_tele_command(update)
+    upms, chat, from_user = get_tele_command(update)
+    telecmd = upms.text
     count = 10
     # Список всех ссылок на RSS-каналы
     rss_dict = {}

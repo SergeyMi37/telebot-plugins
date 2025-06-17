@@ -36,7 +36,8 @@ def is_permiss(user: User,roleslist: list):
 def server(update: Update, context: CallbackContext):
     """ Работа с серверами ИРИС """
     u = User.get_user(update, context)
-    telecmd, upms = reports_gitlab.get_tele_command(update)
+    upms, chat, from_user = reports_gitlab.get_tele_command(update)
+    telecmd = upms.text
     if not is_permiss(u,['iris']):
         upms.reply_text(
             text="В этом режиме можно работать только после одобрения Администратора",
@@ -58,8 +59,8 @@ def server(update: Update, context: CallbackContext):
 
 def reports(update: Update, context: CallbackContext):
     """ Reports."""
-    telecmd, upms = reports_gitlab.get_tele_command(update)
-
+    upms, chat, from_user = reports_gitlab.get_tele_command(update)
+    telecmd = upms.text
     u = User.get_user(update, context)
     if not u.is_admin:
         upms.reply_text(
@@ -128,7 +129,8 @@ def reports(update: Update, context: CallbackContext):
 def broadcast_command_with_message(update: Update, context: CallbackContext):
     """ Type /broadcast <some_text>. Then check your message in HTML format and broadcast to users."""
     u = User.get_user(update, context)
-    telecmd, upms = reports_gitlab.get_tele_command(update)
+    upms, chat, from_user = reports_gitlab.get_tele_command(update)
+    telecmd = upms.text
     if not u.is_superadmin:
         upms.reply_text(
             text=broadcast_no_access,

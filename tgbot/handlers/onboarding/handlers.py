@@ -19,7 +19,8 @@ from tgbot.handlers.utils.decorators import check_blocked_user
 @check_blocked_user
 def command_dispatcher(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
-    telecmd, upms = get_tele_command(update)
+    upms, chat, from_user = get_tele_command(update)
+    telecmd = upms.text
     plugins = get_plugins(u.roles)
     text = CRLF+f' dispatcher '+telecmd
     context.bot.send_message(

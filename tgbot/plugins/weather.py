@@ -243,7 +243,8 @@ def button(update: Update, context: CallbackContext) -> None:
 @check_blocked_user
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
-    telecmd, upms = get_tele_command(update)
+    upms, chat, from_user = get_tele_command(update)
+    telecmd = upms.text
     cmd = telecmd.split('weather')[1]
     #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
     if cmd.lower()=='_moscow':
@@ -280,5 +281,6 @@ def commands(update: Update, context: CallbackContext) -> None:
     context.bot.send_message(
         chat_id=u.user_id,
         text=_out,
+        disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )

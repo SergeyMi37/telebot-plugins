@@ -1,16 +1,24 @@
 from typing import Dict
 from telegram import Update
 
+
 def get_tele_command(update: Update) -> str:
-   #print('---update:---',update)
+   #print('----get_tele_command---',update)
    try:
-      if update.message.text:
-         return update.message.text, update.message
+      if update.message:
+         upms = update.message
+      elif update.edited_message:
+         upms = update.edited_message
       else:
-         return update.edited_message.text, update.message
+         upms = update.callback_query.message
    except Exception as err:
-      #print("---err-get_tele_command-",err)
-      return update.edited_message.text, update.edited_message
+      upms = update.edited_message
+   #text = upms.text
+   chat = upms.chat
+   from_user = upms.from_user
+   # todo send log
+   return upms, chat, from_user
+
 
 def extract_user_data_from_update(update: Update) -> Dict:
    """ python-telegram-bot's Update instance --> User info """

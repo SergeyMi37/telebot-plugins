@@ -25,14 +25,14 @@ from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 
 def universal_message_handler(update, context):
-    telecmd, upms = get_tele_command(update)
+    upms, chat, from_user = get_tele_command(update)
     message = upms
     if message.text:
-        print(f"!Пользователь отправил текст: {message.text}")
+        print(f"Из {chat.id} Пользователь {from_user.id} отправил текст: {message.text}")
     elif message.document:
-        print(f"!Пользователь прислал документ: {message.document.file_name}")
+        print(f"Из {chat.id} Пользователь {from_user.id}  прислал документ: {message.document.file_name}")
     elif message.audio or message.voice:
-        print(f"!Пользователь прислал голосовое сообщение")
+        print(f"Из {chat.id} Пользователь {from_user.id}  прислал голосовое сообщение")
     else:
         print(f"!Поступило другое событие: {message}")
 
