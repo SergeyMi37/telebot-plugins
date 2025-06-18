@@ -15,6 +15,10 @@ def get_tele_command(update: Update) -> str:
    except Exception as err:
       upms = update.edited_message
    # todo send log
+
+   # if upms.chat.id<0: # публичные группы имеют отрицательный номер
+   #    return None
+   
    return upms # upms.chat, upms.from_user
 
 

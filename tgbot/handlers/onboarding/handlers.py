@@ -91,7 +91,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += CRLF+' 📍/ask_location: Отправить локацию'
         text += CRLF+' /broadcast Текст рассылаемого сообщения'
         text += CRLF+' 👥/export_users: Экспорт users.csv'
-        text += CRLF+' /admin - информация о состоянии бота'
+        text += CRLF+' /ask_info - информация о состоянии бота'
     
     text += CRLF+CRLF+'/help: Перечень команд'
     context.bot.send_message(
