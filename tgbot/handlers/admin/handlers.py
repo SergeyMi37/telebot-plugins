@@ -24,7 +24,7 @@ def admin(update: Update, context: CallbackContext) -> None:
         user_count=User.objects.count(),  # count may be ineffective if there are a lot of users.
         active_24=User.objects.filter(updated_at__gte=now() - timedelta(hours=24)).count()
         )
-    text += f'{GetExtInfo.GetOS()} \n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} '
+    text += f' /export_users {GetExtInfo.GetOS()} \n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} '
     text += f'\n\n/help: Перечень команд'
     '''
     upms.reply_text(

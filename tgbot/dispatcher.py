@@ -19,7 +19,7 @@ from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
-from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wiki, weather
+from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wiki, weather, admin
 from dtb.settings import logger
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -147,7 +147,9 @@ def setup_dispatcher(dp):
     
     # handling errors
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
-  
+    
+    dp.add_handler(MessageHandler(Filters.all, admin.universal_message_handler))
+    
     # EXAMPLES FOR HANDLERS
     # dp.add_handler(MessageHandler(Filters.text, <function_handler>))
     # dp.add_handler(MessageHandler(
