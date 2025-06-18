@@ -20,22 +20,28 @@ from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
 from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wiki, weather
-
+from dtb.settings import logger
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
+import pprint as pp
 
 def universal_message_handler(update, context):
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     message = upms
+    #pp.pprint(update.to_dict())
     if message.text:
-        print(f"Из {chat.id} Пользователь {from_user.id} отправил текст: {message.text}")
+        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} ")
+        logger.info(log)
     elif message.document:
-        print(f"Из {chat.id} Пользователь {from_user.id}  прислал документ: {message.document.file_name}")
+        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал документ: {message.document.file_name}")
+        logger.info(log)
     elif message.audio or message.voice:
-        print(f"Из {chat.id} Пользователь {from_user.id}  прислал голосовое сообщение")
+        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал голосовое сообщение")
+        logger.info(log)
     else:
-        print(f"!Поступило другое событие: {message}")
-
+        log = (f"!Поступило другое событие: {message}")
+        logger.info(log)
+    #pp.pprint(upms.to_dict())
 
 def setup_dispatcher(dp):
     """
@@ -62,11 +68,11 @@ def setup_dispatcher(dp):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), weather.commands))
             dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), weather.commands))
             dp.add_handler(CallbackQueryHandler(weather.button, pattern=f"^button_weather"))
+        if (pl=='GIGA'): 
+            # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
+            dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
         else:
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
-
-    # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
-    #dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
 
     # Если есть доступ к плагину IRIS
     if servers_iris.plugins_iris:

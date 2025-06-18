@@ -23,12 +23,12 @@ plugin_news = get_plugins('').get('NEWS')
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     text = "/news_list - получить список лент СМИ /news_100 /news_200 /news_300"
     text += '\n\r/help '
     context.bot.edit_message_text(
         text=text,
-        chat_id=chat.id,
+        chat_id=upms.chat.id,
         message_id=update.callback_query.message.message_id,
         parse_mode=ParseMode.HTML
     )
@@ -76,7 +76,7 @@ def write_news(rss_dict,count,context,chat,title="по всем лентам"):
         it = f"\n{num}.🔷<a href=\"{news_item['link']}\">{news_item['title']}</a> {news_item['source'][:16]}..."
         if len(text+it)>4081:
             context.bot.send_message(
-                chat_id=chat.id, 
+                chat_id=upms.chat.id,
                 text=text, 
                 disable_web_page_preview=True,
                 parse_mode=ParseMode.HTML)
@@ -92,7 +92,7 @@ def write_news(rss_dict,count,context,chat,title="по всем лентам"):
 @check_blocked_user
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     telecmd = upms.text
     count = 10
     # Список всех ссылок на RSS-каналы
@@ -109,14 +109,14 @@ def commands(update: Update, context: CallbackContext) -> None:
         key = 'rss_'+arg.split('rss_')[1]
         if plugin_news.get(key):
             rd.setdefault(key,plugin_news.get(key))
-            write_news(rd,300,context,chat,"по ленте "+key)
+            write_news(rd,300,context,upms ,"по ленте "+key)
         return        
     elif arg=='list':
         text=""
         for key, val in rss_dict.items():
             text += f"\n🔍 /news_{key}"
         context.bot.send_message( 
-            chat_id=chat.id,
+            chat_id=upms.chat.id,
             text=text+'\n/help', parse_mode=ParseMode.HTML )
         return
     elif arg: # колчество новосте вывести в чат с ботом
@@ -125,7 +125,7 @@ def commands(update: Update, context: CallbackContext) -> None:
         except Exception as e:
             err = f'Введите число. {e.args.__repr__()}'
             context.bot.send_message(
-                chat_id=chat.id,
+                chat_id=upms.chat.id,
                 text=err, parse_mode=ParseMode.HTML )
             return
-    write_news(rss_dict,count,context,chat)
+    write_news(rss_dict ,count ,context ,upms)

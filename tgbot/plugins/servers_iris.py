@@ -42,7 +42,7 @@ def command_servers(update: Update, context: CallbackContext) -> None:
     if not u.is_admin:
         update.message.reply_text(static_text.only_for_admins)
         return
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
 
     result=''
     for key in plugins_iris:

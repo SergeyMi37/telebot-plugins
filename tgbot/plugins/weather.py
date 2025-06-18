@@ -231,12 +231,12 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     text = "Введите команду прогноза погоды"
     text += '\n\r/help /weather'
     context.bot.edit_message_text(
         text=text,
-        chat_id=chat.id,
+        chat_id=upms.chat.id,
         message_id=update.callback_query.message.message_id,
         parse_mode=ParseMode.HTML
     )
@@ -244,7 +244,7 @@ def button(update: Update, context: CallbackContext) -> None:
 @check_blocked_user
 def commands(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     telecmd = upms.text
     cmd = telecmd.split('weather')[1]
     #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
@@ -280,7 +280,7 @@ def commands(update: Update, context: CallbackContext) -> None:
     #print(_out)
     _out += '\n\r/help /weather'
     context.bot.send_message(
-        chat_id=chat.id,
+        chat_id=upms.chat.id,
         text=_out,
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML

@@ -44,14 +44,13 @@ def ask_giga(prompt):
 
 @check_blocked_user
 def text_message(update, context):
-    u = User.get_user(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     telecmd = upms.text
     resp = ask_giga(telecmd)
     # Ответ пользователю
 
     context.bot.send_message(
-        chat_id=chat.id,
+        chat_id=upms.chat.id,
         text=f"Ответ Гиги: {resp} \n\r /help",
         parse_mode=ParseMode.HTML
     )

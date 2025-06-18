@@ -19,12 +19,12 @@ from tgbot.handlers.utils.decorators import check_blocked_user
 @check_blocked_user
 def command_dispatcher(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     telecmd = upms.text
     plugins = get_plugins(u.roles)
     text = CRLF+f' dispatcher '+telecmd
     context.bot.send_message(
-        chat_id=chat.id,
+        chat_id=upms.chat.id,
         text=text,
         parse_mode=ParseMode.HTML
     )
@@ -32,7 +32,7 @@ def command_dispatcher(update: Update, context: CallbackContext) -> None:
 @check_blocked_user
 def command_help(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     #user_id = extract_user_data_from_update(update)['user_id']
     if created:
         text = static_text.start_created.format(first_name=u.first_name)
@@ -85,7 +85,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
             if u.roles is not None and (pl in u.roles.split(',') or "All" in u.roles.split(',')):
                 text += CRLF + f'👉---модуль-{pl}---------'
                 text += CRLF + f"/{pl.lower()} {val.get('desc')}{CRLF}"
-    if u.is_superadmin and (chat.id==u.user_id): # если суперадмин и мы в личном чате с ним
+    if u.is_superadmin and (upms.chat.id==u.user_id): # если суперадмин и мы в личном чате с ним
         text += CRLF+'👉----Super admin options--------'
         # Если есть доступ к роли суперадмин
         text += CRLF+' 📍/ask_location: Отправить локацию'
@@ -95,7 +95,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
     
     text += CRLF+CRLF+'/help: Перечень команд'
     context.bot.send_message(
-        chat_id=chat.id,
+        chat_id=upms.chat.id,
         text=text,
         parse_mode=ParseMode.HTML
     )

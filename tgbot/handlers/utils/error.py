@@ -11,7 +11,7 @@ from tgbot.handlers.utils.info import get_tele_command
 
 def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
-    upms, chat, from_user = get_tele_command(update)
+    upms = get_tele_command(update)
     logging.error("Exception while handling an update:", exc_info=context.error)
 
     tb_list = traceback.format_exception(None, context.error, context.error.__traceback__)
@@ -30,7 +30,7 @@ def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None
         Список команд /help
     """
     context.bot.send_message(
-        chat_id=chat.id,
+        chat_id=upms.chat.id,
         text=user_message,
     )
 

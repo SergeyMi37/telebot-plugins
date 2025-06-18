@@ -5,7 +5,11 @@ Currently supported plug-ins:
 - Interlocutor Giga Chat
 - Monitoring of IRIS servers
 - Reporter on issue from GitLab
-- 
+- Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней
+    на основе погодного сервиса https://open-meteo.com/en/docs#location_and_time
+    и сервиса обратного геокодирования https://nominatim.openstreetmap.org/reverse
+- Сервис получения статьи из википедии. Например /wiki_Snow или <code>/wiki_Снег</code> или <code>wiki_Снеговик</code>
+- Сервис агрегации rss новостей. /news_list - список лент 
 
 ``` bash
 git clone https://github.com/SergeyMi37/telebot-plugins

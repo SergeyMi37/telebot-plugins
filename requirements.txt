@@ -5,6 +5,7 @@ openpyxl
 ipython==8.5.0  # enhanced python interpreter
 dynaconf>=3.2.7
 
+
 # Django
 django==3.2.9
 django-cors-headers==3.13.0

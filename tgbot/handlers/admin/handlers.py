@@ -46,7 +46,7 @@ def admin(update: Update, context: CallbackContext) -> None:
 @send_typing_action
 def export_users(update: Update, context: CallbackContext) -> None:
     # in values argument you can specify which fields should be returned in output csv
-    upms, chat, from_user = reports_gitlab.get_tele_command(update)
+    upms = reports_gitlab.get_tele_command(update)
     # Если команда редакрирован, то upms
     users = User.objects.all().values()
     csv_users = _get_csv_from_qs_values(users)

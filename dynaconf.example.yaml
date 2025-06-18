@@ -51,6 +51,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - PROJ_EN = perimetr,wind,spectr
     - GIGA:
         - blocked = 1
+        - only_private_chat = 1 # 1 - Только в приветных чатах, или список ids чатов, где будет работать
         - desc = Сервис собеседние на основе нейронки GigaChain. Введи текст вопроса без команд
         - GIGA_CHAT = <token==>
     - NEWS:
@@ -75,3 +76,15 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - WEATHER:
         - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg /weather_Ludwigshafen Людвигсхафен-ам-Райн
         - url = https://api.open-meteo.com/v1/forecast # https://open-meteo.com/en/docs#location_and_time
+    - ADMIN:
+        - desc = Модуль администрирования публичных групп, в приватных чатах не работает
+        - blocked = 1
+    - TASKS:
+        - desc = Модуль создания, просмотра, уудаления, редактирования и запуска регулярных задач, в публичных группах не работает
+        - blocked = 1
+    - TODO:
+        - blocked = 1
+        - desc = Запомнить задачу в виде текста, голоса или картинки, и при необходимости о ней напоминить 
+    - MP4GEN:
+        - blocked = 1
+        - desc = Сервис генерации видео роликов на основе коллекций фотокартинок и музыки
