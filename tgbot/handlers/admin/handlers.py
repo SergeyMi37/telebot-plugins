@@ -26,18 +26,20 @@ def admin(update: Update, context: CallbackContext) -> None:
         )
     text += f'{GetExtInfo.GetOS()} \n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} '
     text += f'\n\n/help: Перечень команд'
-    ''' при редактировании не работает
-    update.message.reply_text(
-        text,
-        parse_mode=ParseMode.HTML,
-        disable_web_page_preview=True,
-    )
+    '''
+    upms.reply_text(
+          text = text,
+          parse_mode=ParseMode.HTML,
+          disable_web_page_preview=True,
+          )
     '''
     context.bot.send_message(
-        chat_id=u.user_id,
+        chat_id=u.user_id, # вернуть личный чат сурепадмина
         text=text,
+        disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
+    
 
 @check_blocked_user
 @superadmin_only

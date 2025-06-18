@@ -22,12 +22,13 @@ plugin_news = get_plugins('').get('NEWS')
 @check_blocked_user
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
-    u = User.get_user(update, context)
+    #u = User.get_user(update, context)
+    upms, chat, from_user = get_tele_command(update)
     text = "/news_list - получить список лент СМИ /news_100 /news_200 /news_300"
     text += '\n\r/help '
     context.bot.edit_message_text(
         text=text,
-        chat_id=u.user_id,
+        chat_id=chat.id,
         message_id=update.callback_query.message.message_id,
         parse_mode=ParseMode.HTML
     )
@@ -51,7 +52,7 @@ def fetch_news(url):
             })
     return news_list
 
-def write_news(rss_dict,count,context,u,title="по всем лентам"):
+def write_news(rss_dict,count,context,chat,title="по всем лентам"):
     unique_titles = set()  # Для отслеживания уникальных заголовков
     sorted_news = []       # Итоговый список новостей
 
@@ -75,7 +76,7 @@ def write_news(rss_dict,count,context,u,title="по всем лентам"):
         it = f"\n{num}.🔷<a href=\"{news_item['link']}\">{news_item['title']}</a> {news_item['source'][:16]}..."
         if len(text+it)>4081:
             context.bot.send_message(
-                 chat_id=u.user_id, 
+                chat_id=chat.id, 
                 text=text, 
                 disable_web_page_preview=True,
                 parse_mode=ParseMode.HTML)
@@ -84,7 +85,7 @@ def write_news(rss_dict,count,context,u,title="по всем лентам"):
             text = text + it
     msg = text[:4081]+"...\n\n/help /news_list /news_25"
     context.bot.send_message( 
-        chat_id=u.user_id, text=msg, 
+        chat_id=chat.id, text=msg, 
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML )
 
@@ -108,19 +109,23 @@ def commands(update: Update, context: CallbackContext) -> None:
         key = 'rss_'+arg.split('rss_')[1]
         if plugin_news.get(key):
             rd.setdefault(key,plugin_news.get(key))
-            write_news(rd,300,context,u,"по ленте "+key)
+            write_news(rd,300,context,chat,"по ленте "+key)
         return        
     elif arg=='list':
         text=""
         for key, val in rss_dict.items():
             text += f"\n🔍 /news_{key}"
-        context.bot.send_message( chat_id=u.user_id, text=text+'\n/help', parse_mode=ParseMode.HTML )
+        context.bot.send_message( 
+            chat_id=chat.id,
+            text=text+'\n/help', parse_mode=ParseMode.HTML )
         return
     elif arg: # колчество новосте вывести в чат с ботом
         try:
             count=int(arg)
         except Exception as e:
             err = f'Введите число. {e.args.__repr__()}'
-            context.bot.send_message( chat_id=u.user_id, text=err, parse_mode=ParseMode.HTML )
+            context.bot.send_message(
+                chat_id=chat.id,
+                text=err, parse_mode=ParseMode.HTML )
             return
-    write_news(rss_dict,count,context,u)
+    write_news(rss_dict,count,context,chat)

@@ -1,7 +1,6 @@
 import re
 from dtb.settings import logger
-import telegram
-from telegram import ParseMode, Update
+from telegram import ParseMode, Update, error
 from telegram.ext import CallbackContext
 
 from dtb.settings import DEBUG
@@ -47,7 +46,7 @@ def server(update: Update, context: CallbackContext):
             # user typed only command without text for the message.
             upms.reply_text(
                 text="Команду нужно ввести в правильном формате, наприме /s_TEST_SYS",
-                parse_mode=telegram.ParseMode.HTML,
+                parse_mode=ParseMode.HTML,
             )
             return
         cmd = upms.text.replace(f'/s_', '')+"_____" # Добавим подчеркивание чтоб не ломалось по несуществующему элементу списка _
@@ -71,7 +70,7 @@ def reports(update: Update, context: CallbackContext):
             # user typed only command without text for the message.
             upms.reply_text(
                 text=reports_wrong_format,
-                parse_mode=telegram.ParseMode.HTML,
+                parse_mode=ParseMode.HTML,
             )
             return
         if f'{reports_command} ' in telecmd:
@@ -140,7 +139,7 @@ def broadcast_command_with_message(update: Update, context: CallbackContext):
             # user typed only command without text for the message.
             upms.reply_text(
                 text=broadcast_wrong_format,
-                parse_mode=telegram.ParseMode.HTML,
+                parse_mode=ParseMode.HTML,
             )
             return
 
@@ -150,13 +149,13 @@ def broadcast_command_with_message(update: Update, context: CallbackContext):
         try:
             upms.reply_text(
                 text=text,
-                parse_mode=telegram.ParseMode.HTML,
+                parse_mode=ParseMode.HTML,
                 reply_markup=markup,
             )
-        except telegram.error.BadRequest as e:
+        except error.BadRequest as e:
             upms.reply_text(
                 text=error_with_html.format(reason=e),
-                parse_mode=telegram.ParseMode.HTML,
+                parse_mode=ParseMode.HTML,
             )
 
 

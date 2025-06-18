@@ -230,12 +230,13 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
 @check_blocked_user
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
-    u = User.get_user(update, context)
+    #u = User.get_user(update, context)
+    upms, chat, from_user = get_tele_command(update)
     text = "Введите команду прогноза погоды"
     text += '\n\r/help /weather'
     context.bot.edit_message_text(
         text=text,
-        chat_id=u.user_id,
+        chat_id=chat.id,
         message_id=update.callback_query.message.message_id,
         parse_mode=ParseMode.HTML
     )
@@ -279,7 +280,7 @@ def commands(update: Update, context: CallbackContext) -> None:
     #print(_out)
     _out += '\n\r/help /weather'
     context.bot.send_message(
-        chat_id=u.user_id,
+        chat_id=chat.id,
         text=_out,
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML

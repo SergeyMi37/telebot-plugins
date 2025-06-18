@@ -2,17 +2,16 @@ import logging
 import traceback
 import html
 
-import telegram
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from dtb.settings import TELEGRAM_LOGS_CHAT_ID
 from users.models import User
-
+from tgbot.handlers.utils.info import get_tele_command
 
 def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
-
+    upms, chat, from_user = get_tele_command(update)
     logging.error("Exception while handling an update:", exc_info=context.error)
 
     tb_list = traceback.format_exception(None, context.error, context.error.__traceback__)
@@ -26,13 +25,12 @@ def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None
     )
 
     user_message = """
-😔 Что-то сломалось внутри бота.
-Мы уже получили всю информацию по устранению проблемы.
-    Список команд /help
-"""
-    #Если ошибка повториться, то напишите в техподдержку https://t.me/jff_stp_bot
+    😔 Произошла ошибка внутри бота.
+    Мы уже получили всю информацию по устранению проблемы.
+        Список команд /help
+    """
     context.bot.send_message(
-        chat_id=u.user_id,
+        chat_id=chat.id,
         text=user_message,
     )
 
@@ -42,7 +40,7 @@ def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None
         context.bot.send_message(
             chat_id=TELEGRAM_LOGS_CHAT_ID,
             text=admin_message,
-            parse_mode=telegram.ParseMode.HTML,
+            parse_mode=ParseMode.HTML,
         )
     else:
         logging.error(admin_message)
