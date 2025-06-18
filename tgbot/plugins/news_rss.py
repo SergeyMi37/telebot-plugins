@@ -52,7 +52,7 @@ def fetch_news(url):
             })
     return news_list
 
-def write_news(rss_dict,count,context,chat,title="по всем лентам"):
+def write_news(rss_dict,count,context,upms,title="по всем лентам"):
     unique_titles = set()  # Для отслеживания уникальных заголовков
     sorted_news = []       # Итоговый список новостей
 
@@ -85,7 +85,7 @@ def write_news(rss_dict,count,context,chat,title="по всем лентам"):
             text = text + it
     msg = text[:4081]+"...\n\n/help /news_list /news_25"
     context.bot.send_message( 
-        chat_id=chat.id, text=msg, 
+        chat_id=upms.chat.id, text=msg, 
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML )
 
