@@ -3,8 +3,28 @@ from typing import Callable
 
 from telegram import Update, ChatAction, ParseMode
 from telegram.ext import CallbackContext
-
+from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
+from dtb.settings import logger
+import pprint as pp
+
+def universal_message_handler(update, context):
+    upms = get_tele_command(update)
+    message = upms
+    #pp.pprint(update.to_dict())
+    if message.text:
+        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} ")
+        logger.info(log)
+    elif message.document:
+        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал документ: {message.document.file_name}")
+        logger.info(log)
+    elif message.audio or message.voice:
+        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал голосовое сообщение")
+        logger.info(log)
+    else:
+        log = (f"!Поступило другое событие: {message}")
+        logger.info(log)
+    #pp.pprint(upms.to_dict())
 
 def check_blocked_user(func: Callable):
     """
@@ -13,6 +33,10 @@ def check_blocked_user(func: Callable):
     """
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
+        upms = get_tele_command(update)
+        if upms.chat.id<0: # публичные группы имеют отрицательный номер
+            universal_message_handler(update, context)
+            return
         user = User.get_user(update, context)
         if user.is_blocked_bot:
             text = 'you are blocked'

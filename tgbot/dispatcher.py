@@ -25,24 +25,6 @@ from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 import pprint as pp
 
-def universal_message_handler(update, context):
-    upms = get_tele_command(update)
-    message = upms
-    #pp.pprint(update.to_dict())
-    if message.text:
-        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} ")
-        logger.info(log)
-    elif message.document:
-        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал документ: {message.document.file_name}")
-        logger.info(log)
-    elif message.audio or message.voice:
-        log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал голосовое сообщение")
-        logger.info(log)
-    else:
-        log = (f"!Поступило другое событие: {message}")
-        logger.info(log)
-    #pp.pprint(upms.to_dict())
-
 def setup_dispatcher(dp):
     """
     Adding handlers for events from Telegram
