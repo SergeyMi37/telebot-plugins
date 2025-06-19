@@ -1,7 +1,7 @@
 #!/bin/bash
-# 
-# chmod +x setup.sh
-# ./setup.sh
+#  wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vbox_ubuntu.sh
+# chmod +x vbox_ubuntu.sh
+# ./vbox_ubuntu.sh
 
 # Обновляем систему перед началом установки пакетов
 sudo apt update && sudo apt upgrade -y

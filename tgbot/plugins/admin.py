@@ -1,6 +1,6 @@
 # Plugin for ADMIN
 # Name Plugin: ADMIN
-from telegram import ParseMode, Update
+from telegram import ParseMode, Update, CallbackContext
 from dtb.settings import get_plugins
 from dtb.settings import logger
 #from tgbot.handlers.utils.decorators import check_blocked_user
@@ -31,3 +31,19 @@ def universal_message_handler(update, context, func=""):
         log = (f"!Поступило другое событие: {message}")
         logger.info(log)
     #pp.pprint(upms.to_dict())
+
+
+# Функция обработки команды delete_message
+def delete_message(update: Update, context: CallbackContext):
+    # Проверяем наличие аргументов
+    if len(context.args) != 1 or not context.args[0].isdigit():
+        update.message.reply_text("Укажите ID сообщения для удаления.")
+        return
+    message_id = int(context.args[0])
+    try:
+        # Удаление указанного сообщения
+        context.bot.deleteMessage(chat_id=update.effective_chat.id, message_id=message_id)
+        update.message.reply_text(f"Сообщение {message_id} успешно удалено!")
+    except Exception as e:
+        print(e)
+        update.message.reply_text(f"Произошла ошибка при удалении сообщения {message_id}.")

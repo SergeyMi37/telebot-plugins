@@ -1,5 +1,7 @@
 #!/bin/bash
-# wget 
+#  wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu.sh
+# chmod +x vps_ubuntu.sh
+# ./vps_ubuntu.sh
 # Обновляем систему
 sudo apt update && sudo apt upgrade -y
 
