@@ -1,6 +1,7 @@
 # Plugin for ADMIN
 # Name Plugin: ADMIN
-from telegram import ParseMode, Update, CallbackContext
+from telegram import ParseMode, Update
+from telegram.ext import CallbackContext
 from dtb.settings import get_plugins
 from dtb.settings import logger
 #from tgbot.handlers.utils.decorators import check_blocked_user
@@ -21,6 +22,17 @@ def universal_message_handler(update, context, func=""):
     if message.text:
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} функция {funcname} ")
         logger.info(log)
+        if 'яяя' in message.text:
+            if delete_message(update, context,upms.chat.id, message.message_id)==200:
+                context.bot.send_message(
+                    chat_id=upms.chat.id,
+                    text=f"удалили {message.text}",
+                    disable_web_page_preview=True,
+                    parse_mode=ParseMode.HTML
+                    )
+                return 
+        if '/help' in message.text:
+            return func(update, context)
     elif message.document:
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал документ: {message.document.file_name}")
         logger.info(log)
@@ -34,16 +46,13 @@ def universal_message_handler(update, context, func=""):
 
 
 # Функция обработки команды delete_message
-def delete_message(update: Update, context: CallbackContext):
-    # Проверяем наличие аргументов
-    if len(context.args) != 1 or not context.args[0].isdigit():
-        update.message.reply_text("Укажите ID сообщения для удаления.")
-        return
-    message_id = int(context.args[0])
+def delete_message(update: Update, context: CallbackContext,chat_id, message_id):
     try:
         # Удаление указанного сообщения
-        context.bot.deleteMessage(chat_id=update.effective_chat.id, message_id=message_id)
-        update.message.reply_text(f"Сообщение {message_id} успешно удалено!")
+        context.bot.deleteMessage(chat_id=chat_id, message_id=message_id)
+        #update.message.reply_text(f"Сообщение {message_id} успешно удалено!")
+        return 200
     except Exception as e:
         print(e)
-        update.message.reply_text(f"Произошла ошибка при удалении сообщения {message_id}.")
+        #update.message.reply_text(f"Произошла ошибка при удалении сообщения {message_id}.")
+        return f'{e}'

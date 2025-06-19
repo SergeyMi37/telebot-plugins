@@ -15,19 +15,20 @@ def check_blocked_user(func: Callable):
     """
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
-        upms = get_tele_command(update)
-        if upms.chat.id<0: # публичные группы имеют отрицательный номер
-            admin.universal_message_handler(update, context, func)
-            return
         user = User.get_user(update, context)
         if user.is_blocked_bot:
-            text = 'you are blocked'
+            text = 'вы блокированы" # you are blocked'
             context.bot.send_message(
                 chat_id=user.user_id,
                 text=text,
                 parse_mode=ParseMode.HTML
             )
             return
+        upms = get_tele_command(update)
+        if upms.chat.id<0: # публичные группы имеют отрицательный номер
+            admin.universal_message_handler(update, context, func)
+            return
+
         return func(update, context, *args, **kwargs)
     return wrapper
 

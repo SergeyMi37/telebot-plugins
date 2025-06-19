@@ -4,7 +4,7 @@ import pprint as pp
 
 def get_tele_command(update: Update) -> str:
    #print('----get_tele_command---',update)
-   pp.pprint(update.to_dict(), depth=2)
+   #pp.pprint(update.to_dict(), depth=2)
    try:
       if update.message:
          upms = update.message
