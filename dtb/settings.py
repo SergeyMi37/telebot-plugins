@@ -20,6 +20,18 @@ from dynaconf.validator import Validator
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    'x%#3&%giwv8f0+%r946en7z&d@9*rc$sl0qoql56xr%bh^w2mj',
+)
+
+
+if os.environ.get('DJANGO_DEBUG', default=False) in ['True', 'true', '1', True]:
+    DEBUG = True
+else:
+    DEBUG = False
+
 
 # Load env variables from file
 dotenv_file = BASE_DIR / ".env"
@@ -60,6 +72,7 @@ TELEGRAM_LOGS_CHAT_ID = settings.get("TELEGRAM_LOGS_CHAT_ID","")
 
 logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF","")))
 logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
+logger.info('====== DEBUG: '+str(DEBUG))
 
 def get_plugins(Roles = ''):
     retpl = {}
@@ -91,20 +104,8 @@ def get_plugins(Roles = ''):
                 retpl[name_plug] = ret
     return retpl
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv(
-    "DJANGO_SECRET_KEY",
-    'x%#3&%giwv8f0+%r946en7z&d@9*rc$sl0qoql56xr%bh^w2mj',
-)
-
-
-if os.environ.get('DJANGO_DEBUG', default=False) in ['True', 'true', '1', True]:
-    DEBUG = True
-else:
-    DEBUG = False
 
 ALLOWED_HOSTS = ["*",]  # since Telegram uses a lot of IPs for webhooks
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -221,7 +222,6 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
-
 # -----> CELERY
 REDIS_URL = os.getenv('REDIS_URL', 'redis://redis:6379')
 BROKER_URL = REDIS_URL
@@ -232,7 +232,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_DEFAULT_QUEUE = 'default'
-
 
 # -----> TELEGRAM
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN",settings.get("TELEGRAM_TOKEN",None))
