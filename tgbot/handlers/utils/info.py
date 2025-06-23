@@ -10,19 +10,24 @@ def get_tele_command(update: Update) -> str:
          upms = update.message
       elif update.edited_message:
          upms = update.edited_message
+      elif  not update:
+         upms = ''
       else:
          upms = update.callback_query.message
    except Exception as err:
+      pp.pprint('⚠️---',update)
       upms = update.edited_message
-   # todo send log
+    # todo send log
   
    return upms # upms.chat, upms.from_user
 
 
 def extract_user_data_from_update(update: Update) -> Dict:
    """ python-telegram-bot's Update instance --> User info """
+   upms = get_tele_command(update)
    try:
-      user = update.effective_user.to_dict()
+      #user = update.effective_user.to_dict()
+      user = upms.from_user.to_dict()
    except Exception as e:
       print(f'-----Произошла ошибка----effective_user--{e}',update)
    
