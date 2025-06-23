@@ -31,6 +31,34 @@ DOCKER_COMPOSE_VERSION="$(curl -s https://api.github.com/repos/docker/compose/re
 sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+# Добавляем команды в файл .bashrc
+echo "
+alias mypy='source ~/environments/my_env/bin/activate'
+alias ver='cat /etc/*-release'
+alias mc='mc -S gotar'
+alias hi='history | grep'
+alias lsrt='ls --human-readable --size -1 -S --classify'
+
+if [[ \$- == *i* ]]; then
+    bind '\"\\e[5~\": history-search-backward'
+    bind '\"\\e[6~\": history-search-forward'
+fi
+
+export HISTSIZE=10000
+export HISTFILESIZE=10000
+export HISTCONTROL=ignoreboth:erasedups
+export PROMPT_COMMAND='history -a'
+export HISTIGNORE='ls:ps:hi:pwd'
+export HISTTIMEFORMAT='%d.%m.%Y %H:%M:%S: '
+export COMPOSE_DOCKER_CLI_BUILD=1
+export DOCKER_BUILDKIT=1
+export EDITOR=mcedit
+
+alias e=\"echo -e '\\e[8;50;150;t'\"
+alias ee=\"echo -e '\\e[8;55;160;t'\"
+alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
+
+
 # Установка 3proxy
 # https://github.com/3proxy
 
