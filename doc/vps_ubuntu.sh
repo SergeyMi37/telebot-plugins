@@ -84,7 +84,7 @@ sudo systemctl restart nginx
 sudo ufw allow 'Nginx Full'
 
 # Запуск сертификации через Certbot
-sudo certbot --nginx -d yourdomain.com
+sudo certbot --nginx -d serpan.site
 
 # Сообщение о завершении процесса
 echo "Установка завершена! Перезагрузитесь, чтобы применить изменения."

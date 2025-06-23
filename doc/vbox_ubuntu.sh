@@ -1,11 +1,12 @@
 #!/bin/bash
-#  wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vbox_ubuntu.sh
+# sudo apt update
+# sudo apt install openssh-server
+# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vbox_ubuntu.sh
 # chmod +x vbox_ubuntu.sh
 # ./vbox_ubuntu.sh
 
 # Обновляем систему перед началом установки пакетов
 sudo apt update && sudo apt upgrade -y
-
 
 # Устанавливаем необходимые пакеты
 sudo apt install -y \
@@ -59,16 +60,19 @@ alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"
 alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
 
-# Настраиваем Git для доступа к вашему репозиторию на GitHub
-git config --global user.name \"somepro\"
-git config --global user.email \"your_email@example.com\"
-git config --global credential.helper store # Хранение пароля в файле
+# # Информация для входа в ваш аккаунт github
+# echo "Введите имя вашего аккаунта github:"
+# read -s gitname
+# # Настраиваем Git для доступа к вашему репозиторию на GitHub
+# git config --global user.name \"$gitname\"
+# git config --global user.email \"your_email@example.com\"
+# git config --global credential.helper store # Хранение пароля в файле
 
-# Информация для входа в ваш аккаунт github
-echo "Введите пароль от аккаунта somepro:"
-read -s password
-echo "https://$password@github.com" > ~/.git-credentials
-chmod 600 ~/.git-credentials
+# # Информация для входа в ваш аккаунт github
+# echo "Введите пароль от аккаунта somepro:"
+# read -s password
+# echo "https://$password@github.com" > ~/.git-credentials
+# chmod 600 ~/.git-credentials
 
-# Перезагружаем оболочку bash, чтобы применить изменения
+# # Перезагружаем оболочку bash, чтобы применить изменения
 exec bash
