@@ -55,6 +55,7 @@ export HISTIGNORE='ls:ps:hi:pwd'
 export HISTTIMEFORMAT='%d.%m.%Y %H:%M:%S: '
 export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_BUILDKIT=1
+export EDITOR=mcedit
 
 alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"

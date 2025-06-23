@@ -32,59 +32,15 @@ sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPO
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Установка 3proxy
-wget http://3proxy.ru/3proxy-latest.tgz
-tar xzf 3proxy-latest.tgz
-cd 3proxy*
-make -f Makefile.Linux
-sudo cp src/3proxy /usr/local/bin/
-sudo mkdir /var/log/3proxy
-sudo touch /var/log/3proxy/3proxy.log
-sudo chown root:root /var/log/3proxy/3proxy.log
-sudo chmod 755 /var/log/3proxy/3proxy.log
-cat << EOF > /etc/systemd/system/3proxy.service
-[Unit]
-Description=3Proxy Service
-After=network.target
+# https://github.com/3proxy
 
-[Service]
-Type=simple
-User=nobody
-Group=nogroup
-ExecStart=/usr/local/bin/3proxy /etc/3proxy.cfg
-Restart=on-failure
+# # Установка Nginx и сертификата Let's Encrypt
+# sudo apt install -y nginx certbot python3-certbot-nginx
+# sudo systemctl restart nginx
+# sudo ufw allow 'Nginx Full'
 
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl daemon-reload
-systemctl enable 3proxy
-systemctl start 3proxy
-
-# Настройка конфигурации 3proxy
-mkdir -p /etc
-touch /etc/3proxy.cfg
-chmod 600 /etc/3proxy.cfg
-chown nobody:nogroup /etc/3proxy.cfg
-cat << EOF >> /etc/3proxy.cfg
-nscache 65536
-auth strong
-users ${USER}:CL:${PASSWORD}
-allow *:*:${IP}
-proxy -n -a -u
-flush
-log /var/log/3proxy/3proxy.log D
-rotate W6
-daemon
-pidfile /var/run/3proxy.pid
-EOF
-
-# Установка Nginx и сертификата Let's Encrypt
-sudo apt install -y nginx certbot python3-certbot-nginx
-sudo systemctl restart nginx
-sudo ufw allow 'Nginx Full'
-
-# Запуск сертификации через Certbot
-sudo certbot --nginx -d serpan.site
+# # Запуск сертификации через Certbot
+# sudo certbot --nginx -d serpan.site
 
 # Сообщение о завершении процесса
 echo "Установка завершена! Перезагрузитесь, чтобы применить изменения."
