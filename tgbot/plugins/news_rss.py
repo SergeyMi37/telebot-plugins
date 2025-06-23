@@ -77,12 +77,12 @@ def write_news(rss_dict,count,context,upms,title="по всем лентам"):
         if len(text+it)>4081:
             context.bot.send_message(
                 chat_id=upms.chat.id,
-                text=text, 
+                text = text+"\n/help\n", 
                 disable_web_page_preview=True,
                 parse_mode=ParseMode.HTML)
             text=it
         else:
-            text = text + it
+            text += f"{it}"
     msg = text[:4081]+"...\n\n/help /news_list /news_25"
     context.bot.send_message( 
         chat_id=upms.chat.id, text=msg, 
