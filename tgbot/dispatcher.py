@@ -56,11 +56,13 @@ def setup_dispatcher(dp):
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), weather.commands))
             dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), weather.commands))
             dp.add_handler(CallbackQueryHandler(weather.button, pattern=f"^button_weather"))
-        if (pl=='GIGA'): 
-            # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
-            dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
         else:
             dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
+
+    if plugins.get('GIGA'): 
+            # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
+            dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
+            
 
     # Если есть доступ к плагину IRIS
     if servers_iris.plugins_iris:

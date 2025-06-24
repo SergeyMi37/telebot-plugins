@@ -126,7 +126,7 @@ def commands(update: Update, context: CallbackContext) -> None:
             write_news(rd,300,context,upms ,"по ленте "+key)
         return       
     elif len(arg) == 0:
-        text = f"\n🔸/help /news_all или /news_0 - все новости, /news_10 - 10 новостей, /news_Иран - поиск по контексту 'Иран'"
+        text = f"\n🔸/help /news_all или /news_0 - все новости, /news_10 - 10 новостей, <code>/news_Иран</code> - поиск по контексту 'Иран'"
         context.bot.send_message( 
             chat_id=upms.chat.id,
             text=text, parse_mode=ParseMode.HTML )
