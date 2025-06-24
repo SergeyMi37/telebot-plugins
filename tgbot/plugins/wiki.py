@@ -23,7 +23,7 @@ def button(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     #print('-------------',upms,'-------------')
     text = "Введите слово или фразу..."
-    text += '\n\r/help /wiki'
+    text += '\n\r🔸/help /wiki'
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id, #  u.user_id,
@@ -55,7 +55,7 @@ def commands(update: Update, context: CallbackContext) -> None:
        code, _output, link = fetch_page_data(_input)
     else:
         _output = "Введите слово или фразу, после ключевого wiki например:\n\r /wiki_Rainbow или <code>wiki_Звездочет</code>"
-    _output += '\n\r/help /wiki'
+    _output += '\n\r🔸/help /wiki'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,

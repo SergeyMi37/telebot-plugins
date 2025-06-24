@@ -45,6 +45,8 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
     plugins = get_plugins(u.roles)
     text += CRLF+'/start: Кнопки ссылок на модули'
+    url = "https://t.me/+__Qezxf7-E0xY2I6"
+    text += CRLF+f'<a href=\"{url}\">Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'
     #if plugins:
     #    text += CRLF+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
@@ -93,10 +95,11 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text += CRLF+' 👥/export_users: Экспорт users.csv'
         text += CRLF+' /ask_info - информация о состоянии бота'
     
-    text += CRLF+CRLF+'/help: Перечень команд'
+    text += CRLF+CRLF+'🔸/help: Перечень команд'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=text,
+        disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
 

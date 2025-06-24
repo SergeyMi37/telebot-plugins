@@ -8,11 +8,52 @@ from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
 import pprint as pp
+import string
 
 try:
     option = get_plugins('').get('ADMIN').get("option")
 except Exception as e:
     option = ''
+
+# Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
+FORBIDDEN_WORDS = {"укра", "хох", "сво", "русня","хуй","пизд","еба"}
+
+# Создаем строку с дополнительными символами пунктуации
+EXTRA_PUNCTUATION = '«»„“‟‘’‚‛”’–—…•‹›'
+ALL_PUNCTUATION = string.punctuation + EXTRA_PUNCTUATION
+
+def contains_forbidden_words(text: str, forbidden_words: set) -> bool:
+    """
+    Проверяет текст на наличие запрещенных слов.
+    
+    :param text: текст сообщения
+    :param forbidden_words: множество запрещенных слов
+    :return: True если найдено запрещенное слово, иначе False
+    """
+    # Приводим текст к нижнему регистру
+    text_lower = text.lower()
+
+    # Проверяем каждое запрещенное слово как подстроку
+    for word in forbidden_words:
+        if word in text_lower:
+            return True
+    return False
+
+    # # Разбиваем текст на слова
+    # words = text_lower.split()
+    
+    # # Очищаем слова от пунктуации
+    # cleaned_words = [
+    #     word.strip(ALL_PUNCTUATION)
+    #     for word in words
+    # ]
+    
+    # # Проверяем каждое слово
+    # for word in cleaned_words:
+    #     if word in forbidden_words:
+    #         return True
+    # return False
+
 
 def universal_message_handler(update, context, func=""):
     upms = get_tele_command(update)
@@ -22,11 +63,11 @@ def universal_message_handler(update, context, func=""):
     if message.text:
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} функция {funcname} ")
         logger.info(log)
-        if 'яяя' in message.text:
+        if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
             if delete_message(update, context,upms.chat.id, message.message_id)==200:
                 context.bot.send_message(
                     chat_id=upms.chat.id,
-                    text=f"удалили {message.text}",
+                    text=f"⚠️ Обнаружены запрещенные слова! Пожалуйста, соблюдайте правила чата.",
                     disable_web_page_preview=True,
                     parse_mode=ParseMode.HTML
                     )

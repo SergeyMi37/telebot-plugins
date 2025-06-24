@@ -233,7 +233,7 @@ def button(update: Update, context: CallbackContext) -> None:
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     text = "Введите команду прогноза погоды"
-    text += '\n\r/help /weather'
+    text += '\n\r🔸/help /weather'
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id,
@@ -278,7 +278,7 @@ def commands(update: Update, context: CallbackContext) -> None:
         _out = get_forecast(cmd.replace('_',''))
         #_out = f"По городу {cmd} еще нет геолокации"
     #print(_out)
-    _out += '\n\r/help /weather'
+    _out += '\n\r🔸/help /weather'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_out,

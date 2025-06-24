@@ -331,7 +331,7 @@ def get_report(label: str = "Табель", fromDate: datetime="", toDate: datet
             week= {**week, **_week}
         if summ==sum:
            summ=summ+' не найдено'
-        summ += CRLF+'/help'
+        summ += CRLF+'🔸/help'
         return summ, prefix, week #[:4090]
     else:
        return errno, prefix, week

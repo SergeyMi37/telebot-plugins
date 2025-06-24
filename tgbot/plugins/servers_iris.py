@@ -121,7 +121,7 @@ def command_server(cmd: str) -> None:
     _servname = cmd.split("_")[0]
     if not url:
       msg = "🔴 Нет сервера "+ _servname
-      result += f'{msg}{CRLF} /help'
+      result += f'{msg}{CRLF}🔸/help'
       return result
 
     #if cmd.split("_")[2]: #если есть параметр 1
@@ -146,7 +146,7 @@ def command_server(cmd: str) -> None:
                 elif ic=='g':
                   ic = "⚪️" 
                 result += f'{ic} {arr["text"]}\n'
-             result += "\n/help /servers /s_"+_servname
+             result += "\n🔸/help /servers /s_"+_servname
              return result
 
        elif _ns=='SYS':
@@ -167,7 +167,7 @@ def command_server(cmd: str) -> None:
                 elif ic=='g':
                   ic = "⚪️" 
                 result += f'{ic} {arr["text"]}\n'
-            result += "\n/help /servers /s_"+_servname
+            result += "\n🔸/help /servers /s_"+_servname
             #print('---===-',result)
            return result
        _url = url.replace('/products/','/productslist/')+_ns
@@ -178,7 +178,7 @@ def command_server(cmd: str) -> None:
           if ns['namespace']==_ns:
              for err in ns["errors"]:
                 result += f"📆 <b>{err['TimeLogged']}</b> {err['Text'][0:200].replace('<','(').replace('>',')')}\n"
-       result += "\n/help /servers /s_"+_servname
+       result += "\n🔸/help /servers /s_"+_servname
     else:
       err, resp = get_open(url=f'{url}1',timeout=TIMEOUT)
       #print(err, resp)
@@ -197,7 +197,7 @@ def command_server(cmd: str) -> None:
           msg = "🔴 Нет доступа"
           #
       cc = get_custom_commands(_servname,'list') # прикладные команды берем из .env
-      result += f'{msg}{cc}{CRLF} /help'
+      result += f'{msg}{cc}{CRLF}🔸/help'
     return result
 
 def get_custom_commands(servname: str, mode: str) -> None:

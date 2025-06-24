@@ -27,7 +27,7 @@ def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None
     user_message = """
     😔 Произошла ошибка внутри бота.
     Мы уже получили всю информацию по устранению проблемы.
-        Список команд /help
+        Список команд 🔸/help
     """
     context.bot.send_message(
         chat_id=upms.chat.id,

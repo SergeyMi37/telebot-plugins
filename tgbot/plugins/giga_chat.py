@@ -51,6 +51,6 @@ def text_message(update, context):
 
     context.bot.send_message(
         chat_id=upms.chat.id,
-        text=f"Ответ Гиги: {resp} \n\r /help",
+        text=f"Ответ Гиги: {resp} \n\r🔸/help",
         parse_mode=ParseMode.HTML
     )
