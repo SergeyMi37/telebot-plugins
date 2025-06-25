@@ -9,11 +9,12 @@ from dtb.settings import logger
 from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils import files
 from users.models import User, Location
 import requests
 from datetime import datetime, timedelta
 from geopy.geocoders import Nominatim
-from tgbot.plugins import wiki
+from tgbot.plugins import wiki, weather2png
 from tgbot.handlers.admin.utils import get_day_of_week
 
 # Добавить проверку на роль ''
@@ -151,20 +152,29 @@ def print_forecast(forecast, city_name):
 
     out += (f"\n🌞Прогноз погоды для: {city_name}")
     out += (f" Часовой пояс: {forecast['timezone_abbreviation']} (UTC{forecast['utc_offset_seconds']//3600:+d})")
-    
+    day_temps = []
+    night_temps = []
+    precipitations = []
+    days = []
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
         ddmmyyyy = dt.strftime('%d.%m.%Y')
         mark = "🔴" if get_day_of_week(ddmmyyyy,1) in [5,6] else ("🟠" if get_day_of_week(ddmmyyyy,1) in [4] else "⚪️")
         out += (f"\n{mark}📆{ddmmyyyy} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
         out += f'<b> {get_day_of_week(ddmmyyyy)}</b>'
+        days.append(get_day_of_week(ddmmyyyy))
         out += (f"\n  {decode_weather(forecast['daily']['weathercode'][i])}")
         #out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
         #out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
         out += (f"\n  {forecast['daily']['temperature_2m_min'][i]} - {forecast['daily']['temperature_2m_max'][i]} °C")
+        day_temps.append(forecast['daily']['temperature_2m_max'][i])
+        night_temps.append(forecast['daily']['temperature_2m_min'][i])
         out += (f"\n  Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
+        precipitations.append(forecast['daily']['precipitation_sum'][i])
     out += ("\n")
-    # create_smooth_weather_chart(day_temps, night_temps, precipitations, days, filepng)
+    filepng = files.media_dir
+    print(filepng)
+    weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days) #, filepng)
     return out
 
 # Координаты городов

@@ -99,3 +99,17 @@ def save_file_id(update: Update, context: CallbackContext) -> None:
         except Exception as e:
             update.message.reply_text(f"Произошла ошибка при скачивании файла: {e}")
 
+        # update_json = update.to_dict()
+        # #print(update_json)
+        # file_id = _get_file_id(update_json["message"])
+        # #message_id = update_json["message"]["message_id"]
+        # cid = str(update_json["message"]["chat"]['id'])
+        # file_name = update_json["message"]["document"]['file_name']
+        # bot = context.bot
+        # try:
+        #     file = bot.get_file(file_id)
+        #     #print(file,file_id,message_id)
+        #     _dir = os.path.join(media_dir, cid)
+        #     if not os.path.exists(_dir):
+        #         os.mkdir(_dir)
+        #     _file = os.path.join(_dir, f'{file_name}')
