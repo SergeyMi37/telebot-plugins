@@ -103,7 +103,7 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, filen
     # Оформление оси X и Y
     plt.xlabel("День недели")
     plt.ylabel("Температура / Количество осадков (mm)")
-    plt.ylim(-20, 30)  # Устанавливаем диапазон температур
+    plt.ylim(-30, 40)  # Устанавливаем диапазон температур
     plt.xticks(range(len(days)), days, rotation=45)
     plt.legend()
     plt.grid(True)
