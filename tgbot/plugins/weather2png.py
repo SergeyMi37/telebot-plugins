@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import make_interp_spline
-
+import io
 from matplotlib.animation import FuncAnimation
 
 def create_weather_gif(day_temp, night_temp, precipitation, filename='weather_animation.gif'):
@@ -75,7 +75,7 @@ def create_static_weather_chart(day_temp, night_temp, precipitation, days, filen
 
 def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, filename='smooth_weather_chart.png'):
     """
-    Функция строит гладкий график погоды за неделю с заданным диапазоном температур (-40..+40) и сохраняет его в виде PNG.
+    Функция строит гладкий график погоды за неделю с заданным диапазоном температур.
     :param day_temp: список чисел дневных температур
     :param night_temp: список чисел ночных температур
     :param precipitation: список чисел количества осадков
@@ -107,10 +107,18 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, filen
     plt.xticks(range(len(days)), days, rotation=45)
     plt.legend()
     plt.grid(True)
-    plt.title("Погоды за неделю")
-    # Сохранение изображения
-    plt.savefig(filename, bbox_inches='tight', dpi=100)
+    plt.title("Прогноз погоды за неделю")
+    # # Сохранение изображения
+    # plt.savefig(filename, bbox_inches='tight', dpi=100)
+    # plt.close()
+
+    # Сохраняем график в памяти
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png', bbox_inches='tight', dpi=100)
     plt.close()
+    buffer.seek(0)  # Перемещаемся обратно в начало буфера
+    return buffer
+
 
 # # Данные примера
 # days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]  # Сокращённые дни недели

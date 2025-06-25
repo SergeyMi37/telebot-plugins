@@ -42,11 +42,13 @@ alias mc='mc -S gotar'
 alias hi='history | grep'
 alias lsrt='ls --human-readable --size -1 -S --classify'
 
+# возможность по клавишам PgUp, PgDn переходить по командам истории находясь на контексте строки
 if [[ \$- == *i* ]]; then
     bind '\"\\e[5~\": history-search-backward'
     bind '\"\\e[6~\": history-search-forward'
 fi
 
+# настройки истории
 export HISTSIZE=10000
 export HISTFILESIZE=10000
 export HISTCONTROL=ignoreboth:erasedups

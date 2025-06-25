@@ -9,7 +9,7 @@ from dtb.settings import logger
 from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_blocked_user
-from tgbot.handlers.utils import files
+#from tgbot.handlers.utils import files
 from users.models import User, Location
 import requests
 from datetime import datetime, timedelta
@@ -172,10 +172,14 @@ def print_forecast(forecast, city_name):
         out += (f"\n  Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
         precipitations.append(forecast['daily']['precipitation_sum'][i])
     out += ("\n")
-    filepng = files.media_dir
-    print(filepng)
-    weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days) #, filepng)
-    return out
+    
+    # _dir = os.path.join(files.media_dir, cid)
+    # if not os.path.exists(_dir):
+    #     os.mkdir(_dir)
+    # filepng = os.path.join(_dir, f'{file_name}')
+
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days ) #, filepng)
+    return out, buf
 
 # Координаты городов
 def decode_cities(name):
@@ -201,7 +205,7 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
         st, lat, lon = get_coordinates(city)
         if not st == 200:
             ou += f"По городу {city} нет геолокации. {st}"
-            return ou
+            return ou, None
     # Получение и вывод прогноза для каждого города 🌦 
     else:
         lat = cities[city][0]
@@ -233,10 +237,12 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
     links = f"{wikiname} 🌎<a href=\"{url}\">({title} {str(lat)[:5]},{str(lon)[:5]})</a>"
     # Выводим 7-дневный прогноз
     if forecast_7days:
-        ou += print_forecast(forecast_7days, f"{links} (7 дней)")
+        _ou, buf = print_forecast(forecast_7days, f"{links} (7 дней)")
     else:
-        ou += f"{links})"
-    return ou
+        _ou = f"{links})"
+        buf = None
+    ou += _ou
+    return ou, buf
 
 @check_blocked_user
 def button(update: Update, context: CallbackContext) -> None:
@@ -258,9 +264,10 @@ def commands(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     telecmd = upms.text
     cmd = telecmd.split('weather')[1]
+    buf = None
     #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
     if cmd.lower()=='_moscow':
-       _out = get_forecast("Moscow")
+       _out, buf = get_forecast("Moscow")
     elif cmd=='':
        #  получить последнюю запись для пользователя
        #last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
@@ -272,21 +279,21 @@ def commands(update: Update, context: CallbackContext) -> None:
                 place += f".{place2}"
             else:
                 print(place2)
-            _out = get_forecast(".",last_location.latitude,last_location.longitude,f"Ваше местоположение {place}")
+            _out, buf = get_forecast(".",last_location.latitude,last_location.longitude,f"Ваше местоположение {place}")
             _out +=  "Обновить местоположение командой 📍/ask_location"
         else:
             _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
     elif cmd.lower()=='_list':
-       _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg /weather_Серпухов /weather_Екатеринбург /weather_Нея"
+       _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
     elif cmd.lower()=='_piter':
-       _out = get_forecast("Piter")
+       _out, buf = get_forecast("Piter")
     elif cmd.lower()=='_eburg':
-       _out = get_forecast("Екатеринбург")
+       _out, buf = get_forecast("Екатеринбург")
     elif cmd.lower()=='_test':
        link="https://yandex.ru/maps/?l=map&pt=55.7558,37.6173,Москва1111111~59.9343,30.3351,Санкт22222222" # &rtm_layer=&rtm_source=constructorLink"
        _out = f"<a href=\"{link}\">тест</a>"
     else:
-        _out = get_forecast(cmd.replace('_',''))
+        _out, buf = get_forecast(cmd.replace('_',''))
         #_out = f"По городу {cmd} еще нет геолокации"
     #print(_out)
     _out += '\n\r🔸/help /weather'
@@ -296,3 +303,5 @@ def commands(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
+    if buf:
+        context.bot.send_photo(chat_id=upms.chat.id, photo=buf)

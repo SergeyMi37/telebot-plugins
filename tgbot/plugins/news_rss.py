@@ -153,4 +153,4 @@ def commands(update: Update, context: CallbackContext) -> None:
     else: # поиск по контексту 
         search_string = arg
         count = 111111111111
-    write_news(rss_dict ,count ,context ,upms, "", search_string )
+    write_news(rss_dict ,count ,context ,upms, "", search_string)
