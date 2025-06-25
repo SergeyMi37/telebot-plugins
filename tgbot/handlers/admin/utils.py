@@ -72,7 +72,7 @@ class GetExtInfo:
                 fn_datatime = f"📆 { (datetime.fromtimestamp(os.path.getmtime(fnind)) )}"
                 content = file.read()
                 dir += f"\n 🌴 Последняя ветка [{content.split('[branch ')[content.count('[branch ')]}  {fn_datatime}"
-        return f"\n 🚧 Режим отладки: {DEBUG}\n 🅿 DATABASE_URL :{DATABASE_URL}\n 📂 Каталог проекта {dir}"
+        return f"\n 🅿 DATABASE_URL :{DATABASE_URL}\n 📂 Каталог проекта {dir}"
 
     @staticmethod
     def GetHostInfo():

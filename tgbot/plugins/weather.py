@@ -150,12 +150,12 @@ def print_forecast(forecast, city_name):
         return out
 
     out += (f"\n🌞Прогноз погоды для: {city_name}")
-    out += (f"\n🕐Часовой пояс: {forecast['timezone_abbreviation']} (UTC{forecast['utc_offset_seconds']//3600:+d})")
+    out += (f" Часовой пояс: {forecast['timezone_abbreviation']} (UTC{forecast['utc_offset_seconds']//3600:+d})")
     
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
         ddmmyyyy = dt.strftime('%d.%m.%Y')
-        mark = "🔴" if get_day_of_week(ddmmyyyy,1) in [5,6] else "⚪️"
+        mark = "🔴" if get_day_of_week(ddmmyyyy,1) in [5,6] else ("🟠" if get_day_of_week(ddmmyyyy,1) in [4] else "⚪️")
         out += (f"\n{mark}📆{ddmmyyyy} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
         out += f'<b> {get_day_of_week(ddmmyyyy)}</b>'
         out += (f"\n  {decode_weather(forecast['daily']['weathercode'][i])}")
@@ -164,6 +164,7 @@ def print_forecast(forecast, city_name):
         out += (f"\n  {forecast['daily']['temperature_2m_min'][i]} - {forecast['daily']['temperature_2m_max'][i]} °C")
         out += (f"\n  Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
     out += ("\n")
+    # create_smooth_weather_chart(day_temps, night_temps, precipitations, days, filepng)
     return out
 
 # Координаты городов

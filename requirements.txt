@@ -43,3 +43,7 @@ feedparser
 # for plugin weather
 geopy
 dadata
+# for plugin weather gif
+matplotlib
+numpy
+scipy

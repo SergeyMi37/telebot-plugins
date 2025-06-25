@@ -57,6 +57,7 @@ def contains_forbidden_words(text: str, forbidden_words: set) -> bool:
 
 def universal_message_handler(update, context, func=""):
     upms = get_tele_command(update)
+    # todo сохранять в бд все обновления
     message = upms
     #pp.pprint(update.to_dict())
     funcname = func.__name__ if func else ''
@@ -73,7 +74,7 @@ def universal_message_handler(update, context, func=""):
                     )
                 return 
         if '/help' in message.text:
-            return func(update, context)
+            return #func(update, context) # Ошибка и при бродкаст
     elif message.document:
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал документ: {message.document.file_name}")
         logger.info(log)
