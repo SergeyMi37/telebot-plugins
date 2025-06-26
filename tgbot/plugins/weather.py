@@ -156,21 +156,26 @@ def print_forecast(forecast, city_name):
     night_temps = []
     precipitations = []
     days = []
+    spo = ''
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
         ddmmyyyy = dt.strftime('%d.%m.%Y')
         mark = "🔴" if get_day_of_week(ddmmyyyy,1) in [5,6] else ("🟠" if get_day_of_week(ddmmyyyy,1) in [4] else "⚪️")
-        out += (f"\n{mark}📆{ddmmyyyy} ({'завтра' if i == 1 else 'сегодня' if i == 0 else date})")
+        out += (f"\n{mark}📆{ddmmyyyy} {'завтра' if i == 1 else 'сегодня' if i == 0 else ''}")
         out += f'<b> {get_day_of_week(ddmmyyyy)}</b>'
-        days.append(get_day_of_week(ddmmyyyy))
-        out += (f"\n  {decode_weather(forecast['daily']['weathercode'][i])}")
+        days.append(f'{get_day_of_week(ddmmyyyy)}\n{ddmmyyyy}')
+        if spo =='':
+            spo = f'с {ddmmyyyy}'
         #out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
         #out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
-        out += (f"\n  {forecast['daily']['temperature_2m_min'][i]} - {forecast['daily']['temperature_2m_max'][i]} °C")
+        out += (f"\n   c {forecast['daily']['temperature_2m_min'][i]} по {forecast['daily']['temperature_2m_max'][i]} °C")
+        out += (f" {decode_weather(forecast['daily']['weathercode'][i])}")
+        out += (f" Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
+        
         day_temps.append(forecast['daily']['temperature_2m_max'][i])
         night_temps.append(forecast['daily']['temperature_2m_min'][i])
-        out += (f"\n  Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
         precipitations.append(forecast['daily']['precipitation_sum'][i])
+    spo += f' по {ddmmyyyy}'
     out += ("\n")
     
     # _dir = os.path.join(files.media_dir, cid)
@@ -178,7 +183,7 @@ def print_forecast(forecast, city_name):
     #     os.mkdir(_dir)
     # filepng = os.path.join(_dir, f'{file_name}')
 
-    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days ) #, filepng)
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days, spo ) #, filepng)
     return out, buf
 
 # Координаты городов
