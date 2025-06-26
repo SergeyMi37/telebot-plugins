@@ -81,7 +81,7 @@ def broadcast_gitlb_daily_message(
         roles = user_ids[0].split('Roles(')[1].split(')')[0].split(",") # Все роли через запятую в первом ИД пользователя
         #print('--- Роли, которые должны быть у пользователей, которым посылать сообщения ',roles)
         logger.info(f"Роли, которые должны быть у пользователей, которым посылать сообщения : '{roles}")
-        _user_ids = list(User.objects.all().values_list('user_id', flat=True)) # Получим всех реальных пользователей в джанге
+        _user_ids = list(User.objects.filter(is_blocked_bot=False).values_list('user_id', flat=True)) # Получим всех реальных пользователей в джанге
         for id in _user_ids:
             u = User.get_user_by_username_or_user_id(id)
             _roles = u.roles
@@ -140,7 +140,7 @@ def broadcast_custom_message(
     if 'Roles(' in user_ids[0]: # Получение пользователей по ролям, чтоб послать сообщение
         roles = user_ids[0].split('Roles(')[1].split(')')[0].split(",")
         print('--- Роли, которые должны быть у пользователей, которым посылать сообщения ',roles)
-        _user_ids = list(User.objects.all().values_list('user_id', flat=True))
+        _user_ids = list(User.objects.filter(is_blocked_bot=False).values_list('user_id', flat=True))
         for id in _user_ids:
             u = User.get_user_by_username_or_user_id(id)
             _roles = u.roles

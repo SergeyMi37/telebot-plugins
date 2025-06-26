@@ -18,12 +18,13 @@ def check_blocked_user(func: Callable):
         user = User.get_user(update, context)
         if user.is_blocked_bot:
             text = 'вы блокированы" # you are blocked'
-            context.bot.send_message(
-                chat_id=user.user_id,
-                text=text,
-                parse_mode=ParseMode.HTML
-            )
-            return
+            print(text,user.first_name)
+            # context.bot.send_message(
+            #     chat_id=user.user_id,
+            #     text=text,
+            #     parse_mode=ParseMode.HTML
+            # )
+            #return
         upms = get_tele_command(update)
         if upms.chat.id<0: # публичные группы имеют отрицательный номер
             admin.universal_message_handler(update, context, func)

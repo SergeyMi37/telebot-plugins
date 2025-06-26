@@ -174,8 +174,12 @@ def broadcast_decision_handler(update: Update, context: CallbackContext) -> None
 
     if broadcast_decision == CONFIRM_BROADCAST:
         admin_text = message_is_sent
-        user_ids = list(User.objects.all().values_list('user_id', flat=True))
-
+        #user_ids = list(User.objects.all().values_list('user_id', flat=True))
+        user_ids = list(
+            User.objects.filter(is_blocked_bot=False)
+                    .values_list('user_id', flat=True)
+        )
+        print('---посылаем---',user_ids)
         if DEBUG:
             broadcast_message(
                 user_ids=user_ids,
