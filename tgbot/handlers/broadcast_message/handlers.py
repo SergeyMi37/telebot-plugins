@@ -13,7 +13,7 @@ from users.tasks import broadcast_message
 from datetime import datetime, timedelta
 from tgbot.plugins import servers_iris, reports_gitlab
 import os
-from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils.decorators import check_groupe_user
 
 GITLAB_LABELS = os.getenv('GITLAB_LABELS')
 
@@ -31,7 +31,7 @@ def is_permiss(user: User,roleslist: list):
                 return True
     return False
 
-@check_blocked_user
+@check_groupe_user
 def server(update: Update, context: CallbackContext):
     """ Работа с серверами ИРИС """
     u = User.get_user(update, context)
@@ -56,7 +56,7 @@ def server(update: Update, context: CallbackContext):
           disable_web_page_preview=True,
           )
 
-@check_blocked_user
+@check_groupe_user
 def reports(update: Update, context: CallbackContext):
     """ Reports."""
     upms = reports_gitlab.get_tele_command(update)
@@ -126,7 +126,7 @@ def reports(update: Update, context: CallbackContext):
         
         reports_gitlab.put_report(update=update, fromDate=fromDate,toDate=toDate,label=labels,mode=mode)
 
-@check_blocked_user
+@check_groupe_user
 def broadcast_command_with_message(update: Update, context: CallbackContext):
     """ Type /broadcast <some_text>. Then check your message in HTML format and broadcast to users."""
     u = User.get_user(update, context)
@@ -160,7 +160,7 @@ def broadcast_command_with_message(update: Update, context: CallbackContext):
                 parse_mode=ParseMode.HTML,
             )
 
-@check_blocked_user
+@check_groupe_user
 def broadcast_decision_handler(update: Update, context: CallbackContext) -> None:
     # callback_data: CONFIRM_DECLINE_BROADCAST variable from manage_data.py
     """ Entered /broadcast <some_text>.

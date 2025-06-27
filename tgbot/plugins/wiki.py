@@ -9,14 +9,14 @@ from dtb.settings import get_plugins
 from dtb.settings import logger
 from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
-from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 import wikipediaapi
 
 # Добавить проверку на роль ''
 plugin_wiki = get_plugins('').get('WIKI')
 
-@check_blocked_user
+@check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
@@ -45,7 +45,7 @@ def fetch_page_data(page_title):
     summ = page.summary[:12500] + f'\n\r{page.fullurl}\n\r{page.title}'
     return 200, summ, page.fullurl
 
-@check_blocked_user
+@check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
     #u = User.get_user(update, context)
     upms = get_tele_command(update)

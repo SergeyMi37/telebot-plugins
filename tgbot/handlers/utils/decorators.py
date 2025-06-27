@@ -8,17 +8,17 @@ from users.models import User
 from dtb.settings import logger
 from tgbot.plugins import admin
 
-def check_blocked_user(func: Callable):
+def check_groupe_user(func: Callable):
     """
-    check_blocked_user decorator
-    Used for handlers that check_blocked_user have access to
+    check_groupe_user decorator
+    Used for handlers that check_groupe_user have access to
     """
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
-        user = User.get_user(update, context)
-        if user.is_blocked_bot:
-            text = 'вы блокированы" # you are blocked'
-            print(text,user.first_name)
+        # user = User.get_user(update, context)
+        # if user.is_blocked_bot:
+        #     text = 'вы блокированы" # you are blocked'
+        #     print(text,user.first_name)
             # context.bot.send_message(
             #     chat_id=user.user_id,
             #     text=text,

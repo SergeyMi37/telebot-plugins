@@ -14,9 +14,9 @@ from tgbot.plugins import reports_gitlab
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
 from dtb.settings import get_plugins, settings
 from dtb.settings import logger
-from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils.decorators import check_groupe_user
 
-@check_blocked_user
+@check_groupe_user
 def command_dispatcher(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
     upms = get_tele_command(update)
@@ -29,7 +29,7 @@ def command_dispatcher(update: Update, context: CallbackContext) -> None:
         parse_mode=ParseMode.HTML
     )
     
-@check_blocked_user
+@check_groupe_user
 def command_help(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
     upms = get_tele_command(update)
@@ -103,7 +103,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         parse_mode=ParseMode.HTML
     )
 
-@check_blocked_user
+@check_groupe_user
 def command_start(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
 
@@ -129,7 +129,7 @@ def command_start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(text=text, reply_markup=make_keyboard_for_start_command(u.roles))
    
 # depricate
-@check_blocked_user
+@check_groupe_user
 def command_plugins(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
 
@@ -146,7 +146,7 @@ def command_plugins(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(text=text)
 
 # depricate
-@check_blocked_user
+@check_groupe_user
 def secret_level(update: Update, context: CallbackContext) -> None:
     # callback_data: SECRET_LEVEL_BUTTON variable from manage_data.py
     """ Pressed 'secret_level_button_text' after /start command"""

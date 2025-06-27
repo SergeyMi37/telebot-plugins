@@ -11,7 +11,7 @@ from dtb.settings import get_plugins
 from dtb.settings import logger
 from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
-from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 import feedparser, random
 from datetime import datetime
@@ -19,7 +19,7 @@ from datetime import datetime
 # Добавить проверку на роль ''
 plugin_news = get_plugins('').get('NEWS')
 
-@check_blocked_user
+@check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
@@ -101,7 +101,7 @@ def write_news(rss_dict, count, context,upms, title="по всем лентам"
 
 
 
-@check_blocked_user
+@check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     telecmd = upms.text

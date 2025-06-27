@@ -8,7 +8,7 @@ from tgbot.handlers.admin import static_text
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
 #from tgbot.handlers.utils.decorators import admin_only, send_typing_action
-from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils.decorators import check_groupe_user
 from tgbot.handlers.utils.date_utils import tz_to_moscow
 from users.models import User
 from tgbot.handlers.admin.static_text import CRLF
@@ -36,7 +36,7 @@ plugins_iris = get_plugins('').get('IRIS')
 #for key in plugins_iris:
   #print('-- ',key,plugins_iris[key])
 
-@check_blocked_user
+@check_groupe_user
 def command_servers(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     if not u.is_admin:

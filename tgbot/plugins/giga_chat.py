@@ -8,7 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_gigachat.chat_models import GigaChat
 from dtb.settings import get_plugins
 from dtb.settings import logger
-from tgbot.handlers.utils.decorators import check_blocked_user
+from tgbot.handlers.utils.decorators import check_groupe_user
 from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
 
@@ -42,7 +42,7 @@ def ask_giga(prompt):
     except Exception as e:
         return e.args.__repr__()
 
-@check_blocked_user
+@check_groupe_user
 def text_message(update, context):
     upms = get_tele_command(update)
     telecmd = upms.text

@@ -4,7 +4,6 @@ from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 from dtb.settings import get_plugins
 from dtb.settings import logger
-#from tgbot.handlers.utils.decorators import check_blocked_user
 from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
 import pprint as pp
