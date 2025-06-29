@@ -12,10 +12,11 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 #from tgbot.handlers.utils import files
 from users.models import User, Location
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
 from geopy.geocoders import Nominatim
 from tgbot.plugins import wiki, weather2png
 from tgbot.handlers.admin.utils import get_day_of_week
+from datetime import date, timedelta
 
 # Добавить проверку на роль ''
 plugin_weather = get_plugins('').get('WEATHER')
@@ -86,6 +87,43 @@ def get_coordinates(place_name):
     except Exception as e:
         #print("Возникла ошибка:", str(e))
         return str(e), 0, 0 
+
+def get_hourly_temperature(latitude, longitude, date ):
+    start_date = end_date = f"{date}"
+    url = f'https://api.open-meteo.com/v1/forecast'
+    params = {
+        'latitude': latitude,
+        'longitude': longitude,
+        'hourly': ['temperature_2m', 'precipitation'],
+        'start_date': start_date,
+        'end_date': end_date
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    out = ''
+    if 'hourly' in data:
+        temperatures = data['hourly']['temperature_2m']
+        precipitation = data['hourly']['precipitation']  # Осадки
+        timestamps = data['hourly']['time']
+
+        for i in range(len(timestamps)):
+            hour = timestamps[i].split('T')[1][:2]
+            out += (f' {hour} : {temperatures[i]}°C, Осадки {precipitation[i]} мм')
+    else:
+        out += 'Ошибка получения данных.'
+    return out, None
+# # Получаем сегодняшнюю дату и следующий день
+# from datetime import date, timedelta
+
+# current_date = date.today().strftime('%Y-%m-%d')  # Сегодняшняя дата
+# next_day = (date.today() + timedelta(days=1)).strftime('%Y-%m-%d')  # Следующий день
+
+# # Координаты Москвы (пример координат)
+# lat_moscow = 55.75
+# lon_moscow = 37.62
+
+# # Запускаем функцию
+# get_hourly_temperature(lat_moscow, lon_moscow)
 
 
 def get_weather_forecast(latitude, longitude, days=1):
@@ -182,8 +220,8 @@ def print_forecast(forecast, city_name):
     # if not os.path.exists(_dir):
     #     os.mkdir(_dir)
     # filepng = os.path.join(_dir, f'{file_name}')
-
-    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days, spo ) #, filepng)
+    #temps = []
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days, spo )
     return out, buf
 
 # Координаты городов
@@ -292,6 +330,14 @@ def commands(update: Update, context: CallbackContext) -> None:
        _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
     elif cmd.lower()=='_piter':
        _out, buf = get_forecast("Piter")
+    elif cmd.lower()=='_houry':
+       current_date = date.today().strftime('%Y-%m-%d')  # Сегодняшняя дата
+       next_day = (date.today() + timedelta(days=1)).strftime('%Y-%m-%d')  # Следующий день
+       lat = 55.75
+       lon = 37.62
+       _out, buf = get_hourly_temperature(lat, lon, current_date )
+       #_out2, buf = get_hourly_temperature(lat, lon, next_day )
+       _out += '\n!!!\n '+_out2
     elif cmd.lower()=='_eburg':
        _out, buf = get_forecast("Екатеринбург")
     elif cmd.lower()=='_test':

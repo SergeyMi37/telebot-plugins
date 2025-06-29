@@ -84,10 +84,16 @@ It should look similar to this:
 
 Try visit <a href="http://0.0.0.0:8000/tgadmin">Django-admin panel</a>.
 
+### To see all names of the container:
+
+``` bash
+ docker-compose ps --services
+```
+
 ### Enter django shell:
 
 ``` bash
-docker exec -it dtb_django bash
+docker exec -it dtb_bot bash
 ```
 
 ### Create superuser for Django admin panel
@@ -104,11 +110,6 @@ python manage.py createsuperuser --noinput --username adm --email adm@localhost.
 
 ``` bash
 docker logs -f
-```
-### To see all names of the container:
-
-``` bash
- docker-compose ps --services
 ```
 ### To see logs of the container bot:
 

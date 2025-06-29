@@ -51,6 +51,7 @@ def create_static_weather_chart(day_temp, night_temp, precipitation, days, filen
     :param days: список строк с названиями дней недели
     :param filename: название файла для сохранения PNG
     """
+    plt.switch_backend('Agg')
     # Настройки графики
     plt.figure(figsize=(8, 6))
 
@@ -87,15 +88,17 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo='
     spl_day = make_interp_spline(range(len(day_temp)), day_temp, k=3)  # Сплайн-аппроксимация дневных температур
     smooth_day_temp = spl_day(x_new)
 
-    spl_night = make_interp_spline(range(len(night_temp)), night_temp, k=3)  # Сплайн-аппроксимация ночных температур
-    smooth_night_temp = spl_night(x_new)
-
     # Настройки графики
+    plt.switch_backend('Agg')
     plt.figure(figsize=(8, 6))
 
     # Плавные линии дневной и ночной температуры с увеличенной толщиной линии
     plt.plot(x_new, smooth_day_temp, color="red", linewidth=4, label="Дневная температура")
-    plt.plot(x_new, smooth_night_temp, color="black", linewidth=4, label="Ночная температура")
+
+    if night_temp:
+        spl_night = make_interp_spline(range(len(night_temp)), night_temp, k=3)  # Сплайн-аппроксимация ночных температур
+        smooth_night_temp = spl_night(x_new)
+        plt.plot(x_new, smooth_night_temp, color="black", linewidth=4, label="Ночная температура")
 
     # Столбчатые осадки остаются прямыми, т.к. не имеют смысла превращать их в кривые
     plt.bar(np.arange(len(precipitation)), precipitation, width=0.4, align='center', alpha=0.7, color="blue", label="Осадки (мм)")
