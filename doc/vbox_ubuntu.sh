@@ -16,6 +16,7 @@ sudo apt install -y \
     lsb-release \
     git \
     net-tools \
+    make \
     mc
 
 # Установка Docker

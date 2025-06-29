@@ -20,11 +20,14 @@ def admin2(update: Update, context: CallbackContext) -> None:
 def admin(update: Update, context: CallbackContext) -> None:
     u = User.get_user(update, context)
     """ Show help info about all secret admins commands """
+    a24 = User.objects.filter(updated_at__gte=now() - timedelta(hours=24))
     text = static_text.users_amount_stat.format(
-        user_count=User.objects.count(),  # count may be ineffective if there are a lot of users.
-        active_24=User.objects.filter(updated_at__gte=now() - timedelta(hours=24)).count()
+        user_count = f'{User.objects.count()} /export_users',  # count may be ineffective if there are a lot of users.
+        active_24 = f"{a24.count()} {list(a24.values_list('username', flat=True))}"
         )
-    text += f' /export_users {GetExtInfo.GetOS()}\n🚧 DEBUG: {DEBUG}\n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} '
+
+    #print(list(a24.values_list('user_id', flat=True)))
+    text += f' {GetExtInfo.GetOS()}\n🚧 DEBUG: {DEBUG}\n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} '
     text += f'\n\n🔸/help: Перечень команд'
     '''
     upms.reply_text(
