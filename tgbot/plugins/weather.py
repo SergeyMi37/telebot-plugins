@@ -127,7 +127,7 @@ def get_hourly_temperature(latitude, longitude, date ):
             #out += (f' {hour} : {temperatures[i]}°C, Осадки {precipitation[i]} мм')
     else:
         out += 'Ошибка получения данных.'
-    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, hours, f' за {start_date} по часам' )
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, hours, f' за {start_date} по часам',"Часы" )
     return out, buf
 
 

@@ -1,7 +1,5 @@
 #!/bin/bash
-#  wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu.sh
-# chmod +x vps_ubuntu.sh
-# ./vps_ubuntu.sh
+#  wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu.sh && chmod +x vps_ubuntu.sh && ./vps_ubuntu.sh
 # Обновляем систему
 sudo apt update && sudo apt upgrade -y
 
@@ -11,10 +9,7 @@ sudo apt install -y \
     curl \
     gnupg \
     lsb-release \
-    git \
-    net-tools \
-    make \    
-    mc
+    git net-tools make mc
 
 # Установка Docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -61,10 +56,17 @@ alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"
 alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
 
-history -s docker\\ stop\\ $(docker\\ ps\\ -a\\ -q)\\ &&\\ docker\\ rm\\ $(docker\\ ps\\ -a\\ -q)\\ -f\\ &&\\ docker\\ system\\ prune\\ -f
-history -s docker\\ rmi\\ $(docker\\ images\\ -q)\\ -f\\ &&\\ docker\\ system\\ prune\\ -f
-history -s docker\\ compose\\ up\\ --build\\ -d
-history -s docker\\ ps
+# Переменная с командами, которые хотим добавить в историю
+commands="docker ps\\ndocker stop $(docker ps -a -q) &&  docker rm $(docker ps -a -q) -f  && docker system prune -f\\ndocker rmi $(docker images -q) -f && docker system prune -f\\ndocker compose up --build -d"
+
+# Сохраняем текущую историю в переменную
+current_history=$(cat ~/.bash_history)
+
+# Обновляем файл истории, добавив новые команды в конец
+echo "$current_history$commands" > ~/.bash_history
+
+# Загружаем обновлённую историю в текущую сессию
+history -c && history -r
 
 # Установка 3proxy
 # https://github.com/3proxy

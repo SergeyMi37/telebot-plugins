@@ -74,7 +74,7 @@ def create_static_weather_chart(day_temp, night_temp, precipitation, days, filen
     plt.savefig(filename, bbox_inches='tight', dpi=100)
     plt.close()
 
-def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo=''): # filename='smooth_weather_chart.png'):
+def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo='',footer="Дни недели"): # filename='smooth_weather_chart.png'):
     """
     Функция строит гладкий график погоды за неделю с заданным диапазоном температур.
     :param day_temp: список чисел дневных температур
@@ -104,7 +104,7 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo='
     plt.bar(np.arange(len(precipitation)), precipitation, width=0.4, align='center', alpha=0.7, color="blue", label="Осадки (мм)")
 
     # Оформление оси X и Y
-    plt.xlabel("Дни недели")
+    plt.xlabel(footer)
     plt.ylabel("Температура / Количество осадков (mm)")
     plt.ylim(-30, 40)  # Устанавливаем диапазон температур
     plt.xticks(range(len(days)), days, rotation=45)
@@ -122,13 +122,3 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo='
     plt.close()
     buffer.seek(0)  # Перемещаемся обратно в начало буфера
     return buffer
-
-
-# # Данные примера
-# days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]  # Сокращённые дни недели
-# day_temps = [-10, 15, 25, 30, 20, 10, -5]  # Температуры сильно варьируются
-# night_temps = [-20, 5, 15, 20, 10, 0, -15]
-# precipitations = [5, 3, 8, 2, 0, 4, 6]
-
-# # Создание графика
-# create_smooth_weather_chart(day_temps, night_temps, precipitations, days)
