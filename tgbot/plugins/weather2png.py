@@ -90,7 +90,7 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo='
 
     # Настройки графики
     plt.switch_backend('Agg')
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(8, 4))
 
     # Плавные линии дневной и ночной температуры с увеличенной толщиной линии
     plt.plot(x_new, smooth_day_temp, color="red", linewidth=4, label="Дневная температура")
@@ -110,7 +110,7 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo='
     plt.xticks(range(len(days)), days, rotation=45)
     plt.legend()
     plt.grid(True)
-    plt.title(f"Прогноз погоды за неделю {spo}")
+    plt.title(f"Прогноз погоды {spo}")
 
     # # Сохранение изображения
     # plt.savefig(filename, bbox_inches='tight', dpi=100)

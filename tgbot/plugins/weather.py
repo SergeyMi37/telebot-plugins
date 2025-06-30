@@ -88,8 +88,17 @@ def get_coordinates(place_name):
         #print("Возникла ошибка:", str(e))
         return str(e), 0, 0 
 
+def convert_date_format(date_str):
+    '''
+     # ДДММГГГГ --> ГГГГ-ММ-ДД
+    '''
+    day = date_str[:2]
+    month = date_str[2:4]
+    year = date_str[4:]
+    return f"{year}-{month}-{day}"
+
 def get_hourly_temperature(latitude, longitude, date ):
-    start_date = end_date = f"{date}"
+    start_date = end_date = f"{convert_date_format(date)}" # ДДММГГГГ
     url = f'https://api.open-meteo.com/v1/forecast'
     params = {
         'latitude': latitude,
@@ -101,6 +110,10 @@ def get_hourly_temperature(latitude, longitude, date ):
     response = requests.get(url, params=params)
     data = response.json()
     out = ''
+    hours = [] 
+    day_temps = []
+    night_temps = []
+    precipitations = []
     if 'hourly' in data:
         temperatures = data['hourly']['temperature_2m']
         precipitation = data['hourly']['precipitation']  # Осадки
@@ -108,22 +121,15 @@ def get_hourly_temperature(latitude, longitude, date ):
 
         for i in range(len(timestamps)):
             hour = timestamps[i].split('T')[1][:2]
-            out += (f' {hour} : {temperatures[i]}°C, Осадки {precipitation[i]} мм')
+            hours.append(hour)
+            day_temps.append(temperatures[i])
+            precipitations.append(precipitation[i])
+            #out += (f' {hour} : {temperatures[i]}°C, Осадки {precipitation[i]} мм')
     else:
         out += 'Ошибка получения данных.'
-    return out, None
-# # Получаем сегодняшнюю дату и следующий день
-# from datetime import date, timedelta
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, hours, f' за {start_date} по часам' )
+    return out, buf
 
-# current_date = date.today().strftime('%Y-%m-%d')  # Сегодняшняя дата
-# next_day = (date.today() + timedelta(days=1)).strftime('%Y-%m-%d')  # Следующий день
-
-# # Координаты Москвы (пример координат)
-# lat_moscow = 55.75
-# lon_moscow = 37.62
-
-# # Запускаем функцию
-# get_hourly_temperature(lat_moscow, lon_moscow)
 
 
 def get_weather_forecast(latitude, longitude, days=1):
@@ -181,7 +187,7 @@ def decode_weather(code):
     }
     return weather_codes.get(code, "Неизвестный код")
 
-def print_forecast(forecast, city_name):
+def print_forecast(forecast, city_name,lat,lon):
     """Вывод прогноза погоды в читаемом формате"""
     out=""
     if not forecast or "daily" not in forecast:
@@ -206,6 +212,8 @@ def print_forecast(forecast, city_name):
             spo = f'с {ddmmyyyy}'
         #out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
         #out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
+        #/weather_houry_2025v06v30_55v75_37v62
+        out += f'\n /weather_houry_{ddmmyyyy.replace(".","")}_{str(lat).replace(".","v")}_{str(lon).replace(".","v")}'
         out += (f"\n   c {forecast['daily']['temperature_2m_min'][i]} по {forecast['daily']['temperature_2m_max'][i]} °C")
         out += (f" {decode_weather(forecast['daily']['weathercode'][i])}")
         out += (f" Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
@@ -221,7 +229,7 @@ def print_forecast(forecast, city_name):
     #     os.mkdir(_dir)
     # filepng = os.path.join(_dir, f'{file_name}')
     #temps = []
-    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days, spo )
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days, ' за неделю '+spo )
     return out, buf
 
 # Координаты городов
@@ -280,7 +288,7 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
     links = f"{wikiname} 🌎<a href=\"{url}\">({title} {str(lat)[:5]},{str(lon)[:5]})</a>"
     # Выводим 7-дневный прогноз
     if forecast_7days:
-        _ou, buf = print_forecast(forecast_7days, f"{links} (7 дней)")
+        _ou, buf = print_forecast(forecast_7days, f"{links} (7 дней)",lat,lon)
     else:
         _ou = f"{links})"
         buf = None
@@ -330,14 +338,11 @@ def commands(update: Update, context: CallbackContext) -> None:
        _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
     elif cmd.lower()=='_piter':
        _out, buf = get_forecast("Piter")
-    elif cmd.lower()=='_houry':
-       current_date = date.today().strftime('%Y-%m-%d')  # Сегодняшняя дата
-       next_day = (date.today() + timedelta(days=1)).strftime('%Y-%m-%d')  # Следующий день
-       lat = 55.75
-       lon = 37.62
+    elif '_houry_' in cmd.lower(): # /weather_houry_2025v06v30_55v75_37v62
+       current_date = cmd.lower().split("_")[2] # ДДММГГГГ
+       lat = cmd.lower().split("_")[3].replace("v",".")
+       lon = cmd.lower().split("_")[4].replace("v",".")
        _out, buf = get_hourly_temperature(lat, lon, current_date )
-       #_out2, buf = get_hourly_temperature(lat, lon, next_day )
-       _out += '\n!!!\n '+_out2
     elif cmd.lower()=='_eburg':
        _out, buf = get_forecast("Екатеринбург")
     elif cmd.lower()=='_test':
