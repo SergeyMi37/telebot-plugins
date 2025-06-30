@@ -213,7 +213,8 @@ def print_forecast(forecast, city_name,lat,lon):
         #out += (f"\nМакс. температура: {forecast['daily']['temperature_2m_max'][i]}°C")
         #out += (f"\nМин. температура: {forecast['daily']['temperature_2m_min'][i]}°C")
         #/weather_houry_2025v06v30_55v75_37v62
-        out += f'\n /weather_houry_{ddmmyyyy.replace(".","")}_{str(lat).replace(".","v")}_{str(lon).replace(".","v")}'
+        if i == 1 or i == 0:
+            out += f'\n /weather_houry_{ddmmyyyy.replace(".","")}_{str(lat).replace(".","v")}_{str(lon).replace(".","v")}'
         out += (f"\n   c {forecast['daily']['temperature_2m_min'][i]} по {forecast['daily']['temperature_2m_max'][i]} °C")
         out += (f" {decode_weather(forecast['daily']['weathercode'][i])}")
         out += (f" Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
