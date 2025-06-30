@@ -61,6 +61,10 @@ alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"
 alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
 
+history -s docker\\ stop\\ $(docker\\ ps\\ -a\\ -q)\\ &&\\ docker\\ rm\\ $(docker\\ ps\\ -a\\ -q)\\ -f\\ &&\\ docker\\ system\\ prune\\ -f
+history -s docker\\ rmi\\ $(docker\\ images\\ -q)\\ -f\\ &&\\ docker\\ system\\ prune\\ -f
+history -s docker\\ compose\\ up\\ --build\\ -d
+history -s docker\\ ps
 
 # Установка 3proxy
 # https://github.com/3proxy
