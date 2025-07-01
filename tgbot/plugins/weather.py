@@ -110,6 +110,8 @@ def get_hourly_temperature(latitude, longitude, date ):
     response = requests.get(url, params=params)
     data = response.json()
     out = ''
+    ymin=0
+    ymax=10
     hours = [] 
     day_temps = []
     night_temps = []
@@ -122,12 +124,16 @@ def get_hourly_temperature(latitude, longitude, date ):
         for i in range(len(timestamps)):
             hour = timestamps[i].split('T')[1][:2]
             hours.append(hour)
+            if temperatures[i]>ymax:
+                ymax = temperatures[i]+5
+            if temperatures[i]<ymin:
+                ymin = temperatures[i]-5
             day_temps.append(temperatures[i])
             precipitations.append(precipitation[i])
             #out += (f' {hour} : {temperatures[i]}°C, Осадки {precipitation[i]} мм')
     else:
         out += 'Ошибка получения данных.'
-    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, hours, f' за {start_date} по часам',"Часы" )
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, hours, f' за {start_date} по часам',"Часы" ,ymin,ymax)
     return out, buf
 
 
@@ -201,6 +207,8 @@ def print_forecast(forecast, city_name,lat,lon):
     precipitations = []
     days = []
     spo = ''
+    ymin=0
+    ymax=20
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
         ddmmyyyy = dt.strftime('%d.%m.%Y')
@@ -218,8 +226,11 @@ def print_forecast(forecast, city_name,lat,lon):
         out += (f"\n   c {forecast['daily']['temperature_2m_min'][i]} по {forecast['daily']['temperature_2m_max'][i]} °C")
         out += (f" {decode_weather(forecast['daily']['weathercode'][i])}")
         out += (f" Осадки: {forecast['daily']['precipitation_sum'][i]} мм")
-        
+        if forecast['daily']['temperature_2m_max'][i]>ymax:
+            ymax = forecast['daily']['temperature_2m_max'][i] + 5
         day_temps.append(forecast['daily']['temperature_2m_max'][i])
+        if forecast['daily']['temperature_2m_min'][i]<ymin:
+            ymin = forecast['daily']['temperature_2m_min'][i] - 5
         night_temps.append(forecast['daily']['temperature_2m_min'][i])
         precipitations.append(forecast['daily']['precipitation_sum'][i])
     spo += f' по {ddmmyyyy}'
@@ -230,7 +241,7 @@ def print_forecast(forecast, city_name,lat,lon):
     #     os.mkdir(_dir)
     # filepng = os.path.join(_dir, f'{file_name}')
     #temps = []
-    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days, ' за неделю '+spo )
+    buf = weather2png.create_smooth_weather_chart(day_temps, night_temps, precipitations, days, ' за неделю '+spo,"Дни недели",ymin,ymax)
     return out, buf
 
 # Координаты городов
@@ -339,7 +350,7 @@ def commands(update: Update, context: CallbackContext) -> None:
        _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
     elif cmd.lower()=='_piter':
        _out, buf = get_forecast("Piter")
-    elif '_houry_' in cmd.lower(): # /weather_houry_2025v06v30_55v75_37v62
+    elif '_houry_' in cmd.lower(): # /weather_houry_01072025_55v656146_37v696125
        current_date = cmd.lower().split("_")[2] # ДДММГГГГ
        lat = cmd.lower().split("_")[3].replace("v",".")
        lon = cmd.lower().split("_")[4].replace("v",".")
