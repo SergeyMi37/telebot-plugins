@@ -63,7 +63,8 @@ python manage.py runserver
 
 Экспортировать модели
 ``` bash
-python manage.py dumpdata myapp.Location --output=location_data.json
+python manage.py dumpdata users.Location --indent=4 --output=downloads/location_data.json
+python manage.py dumpdata users.Users --indent=4 --output=downloads/users_data.json
 ```
 Загручить данные
 ``` bash
