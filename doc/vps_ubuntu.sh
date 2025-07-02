@@ -1,5 +1,5 @@
 #!/bin/bash
-#  wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu.sh && chmod +x vps_ubuntu.sh && ./vps_ubuntu.sh
+# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu.sh && chmod +x vps_ubuntu.sh && ./vps_ubuntu.sh
 # Обновляем систему
 sudo apt update && sudo apt upgrade -y
 
@@ -29,17 +29,22 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 # Добавляем команды в файл .bashrc
 echo "
-alias mypy='source ~/environments/my_env/bin/activate'
+alias myip='wget -qO myip http://www.ipchicken.com/; grep -o "[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}" myip;  rm myip'
 alias ver='cat /etc/*-release'
 alias mc='mc -S gotar'
 alias hi='history | grep'
 alias lsrt='ls --human-readable --size -1 -S --classify'
 
+# если интерактивный режим, то при введении начало команды из истории можно листать PgUp/PgDn
+# https://qastack.ru/programming/4200800/in-bash-how-do-i-bind-a-function-key-to-a-command
 # возможность по клавишам PgUp, PgDn переходить по командам истории находясь на контексте строки
 if [[ \$- == *i* ]]; then
     bind '\"\\e[5~\": history-search-backward'
     bind '\"\\e[6~\": history-search-forward'
 fi
+
+# настройки proxy
+
 
 # настройки истории
 export HISTSIZE=10000
@@ -48,25 +53,22 @@ export HISTCONTROL=ignoreboth:erasedups
 export PROMPT_COMMAND='history -a'
 export HISTIGNORE='ls:ps:hi:pwd'
 export HISTTIMEFORMAT='%d.%m.%Y %H:%M:%S: '
+
 export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_BUILDKIT=1
 export EDITOR=mcedit
+
+alias dockersrm='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) -f && docker system prune -f'
+alias dockersrmi='docker rmi $(docker images -q) -f && docker system prune -f'
+alias dcserv='docker compose ps --services'
 
 alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"
 alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
 
-# Переменная с командами, которые хотим добавить в историю
-commands="docker ps\\ndocker stop $(docker ps -a -q) &&  docker rm $(docker ps -a -q) -f  && docker system prune -f\\ndocker rmi $(docker images -q) -f && docker system prune -f\\ndocker compose up --build -d"
-
-# Сохраняем текущую историю в переменную
-current_history=$(cat ~/.bash_history)
-
-# Обновляем файл истории, добавив новые команды в конец
-echo "$current_history$commands" > ~/.bash_history
-
-# Загружаем обновлённую историю в текущую сессию
-history -c && history -r
+# # Переменная с командами, которые хотим добавить в историю
+# echo 'docker compose up --build -d' >> ~/.bash_history
+# history -s docker\\ ps
 
 # Установка 3proxy
 # https://github.com/3proxy

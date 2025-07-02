@@ -59,6 +59,16 @@ python run_polling.py
 ``` bash
 python manage.py runserver
 ```
+## Другие сервисные команды проекта
+
+Экспортировать модели
+``` bash
+python manage.py dumpdata myapp.Location --output=location_data.json
+```
+Загручить данные
+``` bash
+python manage.py loaddata location_data.json
+```
 
 ## Запустите локально с помощью docker-compose
 Если вы хотите просто запустить все локально, вы можете использовать Docker-compose, который запустит все контейнеры для вас.

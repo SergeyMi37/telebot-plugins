@@ -5,11 +5,13 @@ Currently supported plug-ins:
 - Interlocutor Giga Chat
 - Monitoring of IRIS servers
 - Reporter on issue from GitLab
-- Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней
-    на основе погодного сервиса https://open-meteo.com/en/docs#location_and_time
-    и сервиса обратного геокодирования https://nominatim.openstreetmap.org/reverse
-- Сервис получения статьи из википедии. Например /wiki_Snow или <code>/wiki_Снег</code> или <code>wiki_Снеговик</code>
-- Сервис агрегации rss новостей. /news_list - список лент 
+- Weather forecast /weather_list - list /weather_Moscow in Moscow for a day and 7 days
+  based on the weather service https://open-meteo.com/en/docs#location_and_time
+  and the reverse geocoding service https://nominatim.openstreetmap.org/reverse
+- Service for obtaining an article from Wikipedia. For example /wiki_Snow or <code>/wiki_Снег</code> or <code>wiki_Снеговик</code>
+- RSS news aggregation service. /news_list - list of feeds
+
+[Документация](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/README_ru.md)
 
 ``` bash
 git clone https://github.com/SergeyMi37/telebot-plugins
@@ -117,8 +119,7 @@ docker logs -f
  docker logs -f bot
 ```
 
-
-# Благодарности автору 
+# Thanks to the author
 
 https://github.com/ohld/django-telegram-bot
 

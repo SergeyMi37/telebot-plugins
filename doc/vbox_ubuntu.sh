@@ -1,10 +1,5 @@
 #!/bin/bash
-# sudo apt update
-# sudo apt install openssh-server
-# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vbox_ubuntu.sh
-# chmod +x vbox_ubuntu.sh
-# ./vbox_ubuntu.sh
-
+# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vbox_ubuntu.sh && chmod +x vbox_ubuntu.sh && ./vbox_ubuntu.sh
 # Обновляем систему перед началом установки пакетов
 sudo apt update && sudo apt upgrade -y
 
@@ -37,12 +32,14 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 # Добавляем команды в файл .bashrc
 echo "
-alias mypy='source ~/environments/my_env/bin/activate'
+alias myip='wget -qO myip http://www.ipchicken.com/; grep -o "[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}" myip;  rm myip'
 alias ver='cat /etc/*-release'
 alias mc='mc -S gotar'
 alias hi='history | grep'
 alias lsrt='ls --human-readable --size -1 -S --classify'
 
+# если интерактивный режим, то при введении начало команды из истории можно листать PgUp/PgDn
+# https://qastack.ru/programming/4200800/in-bash-how-do-i-bind-a-function-key-to-a-command
 # возможность по клавишам PgUp, PgDn переходить по командам истории находясь на контексте строки
 if [[ \$- == *i* ]]; then
     bind '\"\\e[5~\": history-search-backward'
@@ -60,9 +57,17 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_BUILDKIT=1
 export EDITOR=mcedit
 
+alias dockersrm='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) -f && docker system prune -f'
+alias dockersrmi='docker rmi $(docker images -q) -f && docker system prune -f'
+alias dcserv='docker compose ps --services'
+
 alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"
 alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
+
+# # Переменная с командами, которые хотим добавить в историю
+# echo 'docker compose up --build -d' >> ~/.bash_history
+# history -s docker\\ ps
 
 # # Информация для входа в ваш аккаунт github
 # echo "Введите имя вашего аккаунта github:"

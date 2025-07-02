@@ -208,7 +208,7 @@ def print_forecast(forecast, city_name,lat,lon):
     days = []
     spo = ''
     ymin=0
-    ymax=20
+    ymax=10
     for i, date in enumerate(forecast["daily"]["time"]):
         dt = datetime.fromisoformat(date)
         ddmmyyyy = dt.strftime('%d.%m.%Y')
