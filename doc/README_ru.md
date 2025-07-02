@@ -61,12 +61,12 @@ python manage.py runserver
 ```
 ## Другие сервисные команды проекта
 
-Экспортировать модели
+Экспортировать модели в файлы
 ``` bash
 python manage.py dumpdata users.Location --indent=4 --output=downloads/location_data.json
-python manage.py dumpdata users.Users --indent=4 --output=downloads/users_data.json
+python manage.py dumpdata users.User --indent=4 --output=downloads/users_data.json
 ```
-Загручить данные
+Загрузить данные из файла
 ``` bash
 python manage.py loaddata location_data.json
 ```
