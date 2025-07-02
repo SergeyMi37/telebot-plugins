@@ -23,7 +23,7 @@ def admin(update: Update, context: CallbackContext) -> None:
     a24 = User.objects.filter(updated_at__gte=now() - timedelta(hours=24))
     text = static_text.users_amount_stat.format(
         user_count = f'{User.objects.count()} /export_users',  # count may be ineffective if there are a lot of users.
-        active_24 = f"{a24.count()} {list(a24.values_list('username', flat=True))}"
+        active_24 = f"{a24.count()} {list(a24.values_list('first_name', flat=True))}"
         )
 
     #print(list(a24.values_list('user_id', flat=True)))

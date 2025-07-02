@@ -1,0 +1,2 @@
+id,password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined
+2,pbkdf2_sha256$260000$Lhv2dRDDpeXzyJL4p74fet$OAKWUGS+XvnojA32v+sIVz47HMLsnVIsvRiI7URPlSQ=,2025-05-21T13:30:40.974968+00:00,True,msw2,,,,True,True,2025-05-21T13:28:32.134945+00:00
