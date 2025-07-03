@@ -1,7 +1,5 @@
 
-![](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/logo.png)
-
-## telebot-plugins
+![](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/logo_mini.png) ## telebot-plugins
 
 Chat bot project with plug-ins and application configuration via Dynaconf
 
