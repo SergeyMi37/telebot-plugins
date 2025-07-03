@@ -1,5 +1,13 @@
 
-# Chat bot project with plug-ins and application configuration via Dynaconf
+![](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/logo.png)
+
+## telebot-plugins
+
+Chat bot project with plug-ins and application configuration via Dynaconf
+
+[Документация](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/README_ru.md)
+
+## What's new
 
 Currently supported plug-ins:
 - Interlocutor Giga Chat
@@ -11,7 +19,8 @@ Currently supported plug-ins:
 - Service for obtaining an article from Wikipedia. For example /wiki_Snow or <code>/wiki_Снег</code> or <code>wiki_Снеговик</code>
 - RSS news aggregation service. /news_list - list of feeds
 
-[Документация](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/README_ru.md)
+
+![](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/Screenshot_1.png.png)
 
 ``` bash
 git clone https://github.com/SergeyMi37/telebot-plugins

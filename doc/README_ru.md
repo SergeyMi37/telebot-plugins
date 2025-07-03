@@ -61,11 +61,16 @@ python manage.py runserver
 ```
 ## Другие сервисные команды проекта
 
-Экспортировать модели в файлы
+Экспортировать модели Location и User в файлы
 ``` bash
-python manage.py dumpdata users.Location --indent=4 --output=downloads/location_data.json
-python manage.py dumpdata users.User --indent=4 --output=downloads/users_data.json
+python manage.py dumpdata users.Location --indent=2 --output=downloads/location_data.json
+python manage.py dumpdata users.User --indent=2 --output=downloads/users_data.json
 ```
+Экспортировать все модели в файл за исключением системных Django
+``` bash
+python manage.py dumpdata --exclude auth.permission --exclude auth.user --exclude contenttypes --exclude auth.group --exclude admin.logentry --exclude sessions.session --indent 2 > db-init-telebot.json
+```
+
 Загрузить данные из файла
 ``` bash
 python manage.py loaddata location_data.json
