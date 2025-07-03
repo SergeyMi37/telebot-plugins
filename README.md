@@ -19,8 +19,9 @@ Currently supported plug-ins:
 - Service for obtaining an article from Wikipedia. For example /wiki_Snow or <code>/wiki_Снег</code> or <code>wiki_Снеговик</code>
 - RSS news aggregation service. /news_list - list of feeds
 
-
-![](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/Screenshot_1.png.png)
+<p align="left">
+    <img src="https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/Screenshot_1.png">
+</p>
 
 ``` bash
 git clone https://github.com/SergeyMi37/telebot-plugins
@@ -88,13 +89,6 @@ Check status of the containers.
 ``` bash
 docker ps -a
 ```
-It should look similar to this:
-<p align="left">
-    <img src="https://github.com/ohld/django-telegram-bot/raw/main/.github/imgs/containers_status.png">
-</p>
-
-Try visit <a href="http://0.0.0.0:8000/tgadmin">Django-admin panel</a>.
-
 ### To see all names of the container:
 
 ``` bash
