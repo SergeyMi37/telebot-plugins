@@ -1,8 +1,9 @@
 # tests/test_exporter_importer.py
 from django.test import TestCase
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
-from celery_tasks_exporter.exporter import export_tasks
-from celery_tasks_exporter.importer import import_tasks
+from django_celery_beat.models import P
+from users.management.commands.export_celery_tasks import export_tasks
+from users.management.commands.import_celery_tasks import import_tasks
 import json
 
 class ExporterImporterTestCase(TestCase):

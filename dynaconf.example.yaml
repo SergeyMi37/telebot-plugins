@@ -98,3 +98,6 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - DDGO:
         - blocked = 1
         - desc = Поиск в интернете в поисковой системе dackdackgo
+    - MEMURL:
+        - blocked = 1
+        - desc = Запомнить ссылку для последующего быстрого поиска и открытия (Например для маршрутов Яндекс карт)
