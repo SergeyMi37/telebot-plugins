@@ -92,7 +92,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - blocked = 1
         - desc = Поиск картинок, музыки и книг в локальных хранищах проекта "apptoolsrest infochest"
         - url_app_demo = https://appadmin.demo.community.intersystems.com/apptoolsrest/a/info
-    - CODE:
+    - COD:
         - blocked = 1
         - desc = Поиск Регионов РФ по госномерам, поиск страны по началу штихкода
     - DDGO:
