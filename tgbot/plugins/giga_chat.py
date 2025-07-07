@@ -1,4 +1,4 @@
-# Plugin for giga-chat bot
+# Plugin for giga-chat bot ----- нестандарный
 # Name Plugin: GIGA
 # pip install langchain-gigachat
 # https://developers.sber.ru/docs/ru/gigachain/overview

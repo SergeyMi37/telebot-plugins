@@ -1,37 +1,30 @@
-# Plugin Новости из ленты rss
+# Plugin Новости из ленты rss ----- стандарный
 # Name Plugin: NEWS
     # - NEWS:
     #     - blocked = 1
     #     - desc = Сервис агрегации новостей 
+# имя плагина NEWS должно совпадать с именем в конфигурации Dynaconf
+# имя плагина news должно быть первым полем от _ в имени файла news_rss_plugin
+# имя файла плагина должно окачиваться на _plugin
+# В модуле должна быть опрделн класс для регистрации в диспетчере
+# class NewsRSSPlugin(BasePlugin):
+#    def setup_handlers(self, dp):
 
 from django.utils.timezone import now
 from telegram import ParseMode, Update
-from telegram.ext import CallbackContext
+from telegram.ext import MessageHandler, Filters, CallbackQueryHandler, CallbackContext
 from dtb.settings import get_plugins
 from dtb.settings import logger
-from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 import feedparser, random
-from datetime import datetime
 
 # Добавить проверку на роль ''
 plugin_news = get_plugins('').get('NEWS')
 
-@check_groupe_user
-def button(update: Update, context: CallbackContext) -> None:
-    #user_id = extract_user_data_from_update(update)['user_id']
-    #u = User.get_user(update, context)
-    upms = get_tele_command(update)
-    text = "/news_list - получить список лент СМИ /news_100 /news_200 /news_300"
-    text += '\n\r🔸/help '
-    context.bot.edit_message_text(
-        text=text,
-        chat_id=upms.chat.id,
-        message_id=update.callback_query.message.message_id,
-        parse_mode=ParseMode.HTML
-    )
+# plugins/news_rss_plugin.py
+from tgbot.plugins.base_plugin import BasePlugin
 
 def fetch_news(url):
     """Получение списка новостей из RSS-канала"""
@@ -99,10 +92,36 @@ def write_news(rss_dict, count, context,upms, title="по всем лентам"
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML )
 
+class NewsRSSPlugin(BasePlugin):
+    def setup_handlers(self, dp):
+        cmd = "/news"
+        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), self.commands))
+        dp.add_handler(MessageHandler(Filters.regex(rf'^news(/s)?.*'), self.commands))
+        dp.add_handler(CallbackQueryHandler(self.button, pattern="^button_news"))
+
+    def commands(self, update, context):
+        commands_(update, context)
+    
+    def button(self, update, context):
+        button_(update, context)
+
+@check_groupe_user
+def button_(update: Update, context: CallbackContext) -> None:
+    #user_id = extract_user_data_from_update(update)['user_id']
+    #u = User.get_user(update, context)
+    upms = get_tele_command(update)
+    text = "/news_list - получить список лент СМИ /news_100 /news_200 /news_300"
+    text += '\n\r🔸/help '
+    context.bot.edit_message_text(
+        text=text,
+        chat_id=upms.chat.id,
+        message_id=update.callback_query.message.message_id,
+        parse_mode=ParseMode.HTML
+    )
 
 
 @check_groupe_user
-def commands(update: Update, context: CallbackContext) -> None:
+def commands_(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     telecmd = upms.text
     count = 10

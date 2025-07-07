@@ -1,4 +1,4 @@
-# Plugin for ADMIN
+# Plugin for ADMIN ----- нестандарный
 # Name Plugin: ADMIN
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext

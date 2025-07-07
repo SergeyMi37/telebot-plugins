@@ -1,12 +1,12 @@
-# Name Plugin: 
+# Name Plugin: ----- стандарный
     # - WEATHER:
     #     desc = Погода  Москве на день и 10 дней. Введи команду, например /weater moscow 10
-from django.utils import timezone
+# имя плагина WEATHER должно совпадать с именем в конфигурации Dynaconf
+# имя плагина weather должно быть первым полем от _ в имени файла weather_plugin
+# имя файла плагина должно окачиваться на _plugin
 from telegram import ParseMode, Update
-from telegram.ext import CallbackContext
 from dtb.settings import get_plugins
 from dtb.settings import logger
-from tgbot.handlers.admin.static_text import CRLF, only_for_admins
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
 #from tgbot.handlers.utils import files
@@ -14,9 +14,10 @@ from users.models import User, Location
 import requests
 from datetime import datetime
 from geopy.geocoders import Nominatim
-from tgbot.plugins import wiki, weather2png
+from tgbot.plugins import wiki_plugin, weather2png
 from tgbot.handlers.admin.utils import get_day_of_week
-from datetime import date, timedelta
+from telegram.ext import MessageHandler, Filters, CallbackQueryHandler, CallbackContext
+from tgbot.plugins.base_plugin import BasePlugin
 
 # Добавить проверку на роль ''
 plugin_weather = get_plugins('').get('WEATHER')
@@ -295,7 +296,7 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
     #url = f"https://yandex.ru/maps/?ll={lon}%2C{lat}&z=11&l=map" # (8-20км, 10-6км 12-2км, 15-200м 17-60м,).
     url = f"https://yandex.ru/maps/?pt={lon},{lat}&z=11&l=map" # (8-20км, 10-6км 12-2км, 15-200м 17-60м,).
     # ?pt=37.393269,55.029111;37.5,55.75  # ~ через тильду
-    st, summ, link = wiki.fetch_page_data(city)
+    st, summ, link = wiki_plugin.fetch_page_data(city)
     wikiname = f"<a href=\"{link}\">{city}</a>" if st == 200 else city
     links = f"{wikiname} 🌎<a href=\"{url}\">({title} {str(lat)[:5]},{str(lon)[:5]})</a>"
     # Выводим 7-дневный прогноз
@@ -307,22 +308,22 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
     ou += _ou
     return ou, buf
 
-@check_groupe_user
-def button(update: Update, context: CallbackContext) -> None:
-    #user_id = extract_user_data_from_update(update)['user_id']
-    #u = User.get_user(update, context)
-    upms = get_tele_command(update)
-    text = "Введите команду прогноза погоды"
-    text += '\n\r🔸/help /weather'
-    context.bot.edit_message_text(
-        text=text,
-        chat_id=upms.chat.id,
-        message_id=update.callback_query.message.message_id,
-        parse_mode=ParseMode.HTML
-    )
+#@check_groupe_user
+#def button(update: Update, context: CallbackContext) -> None:
+
+#@check_groupe_user
+#def commands(update: Update, context: CallbackContext) -> None:
+
+
+class WeatherPlugin(BasePlugin):
+    def setup_handlers(self, dp):
+        cmd = "/weather"
+        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands))
+        dp.add_handler(MessageHandler(Filters.regex(rf'^weather(/s)?.*'), commands))
+        dp.add_handler(CallbackQueryHandler(button, pattern="^button_weather"))
 
 @check_groupe_user
-def commands(update: Update, context: CallbackContext) -> None:
+def commands(update, context):
     u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
@@ -330,10 +331,10 @@ def commands(update: Update, context: CallbackContext) -> None:
     buf = None
     #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
     if cmd.lower()=='_moscow':
-       _out, buf = get_forecast("Moscow")
+        _out, buf = get_forecast("Moscow")
     elif cmd=='':
-       #  получить последнюю запись для пользователя
-       #last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
+    #  получить последнюю запись для пользователя
+    #last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
         if Location.objects.filter(user_id=u.user_id).exists():
             last_location = Location.objects.filter(user_id=u.user_id).latest('created_at')
             place = get_adress(last_location.latitude,last_location.longitude)
@@ -347,19 +348,19 @@ def commands(update: Update, context: CallbackContext) -> None:
         else:
             _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
     elif cmd.lower()=='_list':
-       _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
+        _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
     elif cmd.lower()=='_piter':
-       _out, buf = get_forecast("Piter")
+        _out, buf = get_forecast("Piter")
     elif '_houry_' in cmd.lower(): # /weather_houry_01072025_55v656146_37v696125
-       current_date = cmd.lower().split("_")[2] # ДДММГГГГ
-       lat = cmd.lower().split("_")[3].replace("v",".")
-       lon = cmd.lower().split("_")[4].replace("v",".")
-       _out, buf = get_hourly_temperature(lat, lon, current_date )
+        current_date = cmd.lower().split("_")[2] # ДДММГГГГ
+        lat = cmd.lower().split("_")[3].replace("v",".")
+        lon = cmd.lower().split("_")[4].replace("v",".")
+        _out, buf = get_hourly_temperature(lat, lon, current_date )
     elif cmd.lower()=='_eburg':
-       _out, buf = get_forecast("Екатеринбург")
+        _out, buf = get_forecast("Екатеринбург")
     elif cmd.lower()=='_test':
-       link="https://yandex.ru/maps/?l=map&pt=55.7558,37.6173,Москва1111111~59.9343,30.3351,Санкт22222222" # &rtm_layer=&rtm_source=constructorLink"
-       _out = f"<a href=\"{link}\">тест</a>"
+        link="https://yandex.ru/maps/?l=map&pt=55.7558,37.6173,Москва1111111~59.9343,30.3351,Санкт22222222" # &rtm_layer=&rtm_source=constructorLink"
+        _out = f"<a href=\"{link}\">тест</a>"
     else:
         _out, buf = get_forecast(cmd.replace('_',''))
         #_out = f"По городу {cmd} еще нет геолокации"
@@ -373,3 +374,17 @@ def commands(update: Update, context: CallbackContext) -> None:
     )
     if buf:
         context.bot.send_photo(chat_id=upms.chat.id, photo=buf)
+
+@check_groupe_user
+def button( update, context):
+    #user_id = extract_user_data_from_update(update)['user_id']
+    #u = User.get_user(update, context)
+    upms = get_tele_command(update)
+    text = "Введите команду прогноза погоды"
+    text += '\n\r🔸/help /weather'
+    context.bot.edit_message_text(
+        text=text,
+        chat_id=upms.chat.id,
+        message_id=update.callback_query.message.message_id,
+        parse_mode=ParseMode.HTML
+    )

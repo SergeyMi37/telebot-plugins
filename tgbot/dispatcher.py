@@ -19,11 +19,12 @@ from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
-from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, news_rss, wiki, weather, admin
+from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, admin #news_rss, wiki, weather,
 from dtb.settings import logger
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 import pprint as pp
+from tgbot.plugins.plugin_loader import discover_plugins
 
 def setup_dispatcher(dp):
     """
@@ -39,25 +40,36 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("start", onboarding_handlers.command_start))
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
     #dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
- 
-    plugins = get_plugins()
-    for pl,val in plugins.items():
-        #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
-        cmd="/"+pl.lower()
-        if (str(pl)=='NEWS'):
-            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), news_rss.commands))
-            dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), news_rss.commands))
-            dp.add_handler(CallbackQueryHandler(news_rss.button, pattern=f"^button_news"))
-        if (pl=='WIKI'):
-            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
-            dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), wiki.commands))
-            dp.add_handler(CallbackQueryHandler(wiki.button, pattern=f"^button_wiki"))
-        if (pl=='WEATHER'):
-            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), weather.commands))
-            dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), weather.commands))
-            dp.add_handler(CallbackQueryHandler(weather.button, pattern=f"^button_weather"))
-        else:
-            dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
+
+    # Загружаем плагины из dynaconf
+    plugins = get_plugins() 
+    # Загружаем все плагины
+    plugs = discover_plugins()
+    
+    # Регистрируем обработчики для каждого плагина
+    for plugin_name, plugin_instance in plugs.items():
+        NAME = str(plugin_name).split("_")[0].upper()
+        if get_plugins('').get(NAME):
+            print('---',f"Loading plugin: {NAME}")
+            plugin_instance.setup_handlers(dp)
+   
+    # for pl,val in plugins.items():
+    #     #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
+    #     cmd="/"+pl.lower()
+    #     if (str(pl)=='NEWS'):
+    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), news_rss.commands))
+    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), news_rss.commands))
+    #         dp.add_handler(CallbackQueryHandler(news_rss.button, pattern=f"^button_news"))
+    #     if (pl=='WIKI'):
+    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
+    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), wiki.commands))
+    #         dp.add_handler(CallbackQueryHandler(wiki.button, pattern=f"^button_wiki"))
+    #     if (pl=='WEATHER'):
+    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), weather.commands))
+    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), weather.commands))
+    #         dp.add_handler(CallbackQueryHandler(weather.button, pattern=f"^button_weather"))
+    #     else:
+    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
 
     if plugins.get('GIGA'): 
             # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе

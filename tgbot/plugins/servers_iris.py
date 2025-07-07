@@ -1,4 +1,4 @@
-# Plugin for reporting from servers IRIS
+# Plugin for reporting from servers IRIS ----- нестандарный
 # Name Plugin: IRIS
 
 from django.utils.timezone import now

@@ -1,4 +1,4 @@
-# Plugin for reporting from issue Gitlab
+# Plugin for reporting from issue Gitlab ----- нестандарный
 # Name Plugin: GITLAB
 
 #from datetime import timedelta
