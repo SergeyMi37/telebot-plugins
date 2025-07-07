@@ -76,6 +76,11 @@ python manage.py dumpdata --exclude auth.permission --exclude auth.user --exclud
 python manage.py loaddata location_data.json
 ```
 
+Запустить проверку проекта
+``` bash
+python manage.py check
+```
+
 ## Запустите локально с помощью docker-compose
 Если вы хотите просто запустить все локально, вы можете использовать Docker-compose, который запустит все контейнеры для вас.
 

@@ -43,7 +43,10 @@ if [[ \$- == *i* ]]; then
     bind '\"\\e[6~\": history-search-forward'
 fi
 
-# настройки proxy
+# Настройки прокси сервера
+# export http_proxy=http://proxyuser:pass@111.114.222.114:4999
+# export https_proxy=${http_proxy}
+# export ftp_proxy=${http_proxy}
 
 
 # настройки истории

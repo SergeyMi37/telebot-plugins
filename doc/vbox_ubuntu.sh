@@ -57,6 +57,11 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_BUILDKIT=1
 export EDITOR=mcedit
 
+# Настройки прокси сервера
+#export http_proxy=http://proxyuser:${proxypass}@${proxyip}:${proxport}
+#export https_proxy=${http_proxy}
+#export ftp_proxy=${http_proxy}
+
 alias dockersrm='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) -f && docker system prune -f'
 alias dockersrmi='docker rmi $(docker images -q) -f && docker system prune -f'
 alias dcserv='docker compose ps --services'

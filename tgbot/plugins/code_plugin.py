@@ -8,7 +8,6 @@
 # class CodPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
 
-
 from django.utils.timezone import now
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -17,26 +16,24 @@ from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
-import wikipediaapi
-# plugins/news_rss_plugin.py
 from telegram.ext import MessageHandler, Filters, CallbackQueryHandler
 from tgbot.plugins.base_plugin import BasePlugin
 
 # Добавить проверку на роль ''
-plugin_wiki = get_plugins('').get('COD')
+plugin_wiki = get_plugins('').get('CODE')
 
 class CodPlugin(BasePlugin):
     def setup_handlers(self, dp):
-        cmd = "/cod"
+        cmd = "/code"
         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands))
-        dp.add_handler(MessageHandler(Filters.regex(rf'^cod(/s)?.*'), commands))
-        dp.add_handler(CallbackQueryHandler(button, pattern="^button_cod"))
+        dp.add_handler(MessageHandler(Filters.regex(rf'^code(/s)?.*'), commands))
+        dp.add_handler(CallbackQueryHandler(button, pattern="^button_code"))
 
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     text = "Введите код региона автомобильного номера, или текст региона.."
-    text += '\n\r🔸/help /cod_92 /cod_Кры /cod_s_50  /cod_s_Нидер'
+    text += '\n\r🔸/help /code_92 /code_Кры /code_shtr_50  /cod_shtr_Нидер'
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id, #  u.user_id,
@@ -49,18 +46,20 @@ def commands(update: Update, context: CallbackContext) -> None:
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
-    _input = telecmd.split('cod')[1].replace("_"," ")
+    _input = telecmd.split('code')[1].replace("_"," ")
+    _output = "!!!"
     if _input:
        pass #code, _output, link = fetch_page_data(_input)
     else:
-        _output = "Введите слово или фразу, после ключевого cod например:\n\r /cod_01 или <code>/cod_Курс</code>"
-    _output += '\n\r🔸/help /cod'
+        _output = "Введите слово или фразу, после ключевого cod например:\n\r /code_01 или <code>/code_Курс</code>"
+    _output += '\n\r🔸/help /code'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
+
 
 
     '''
