@@ -1,8 +1,8 @@
-# Name Plugin: COD
-    # - COD:
+# Name Plugin: CODE
+    # - CODE:
     #     - desc = Поиск Регионов РФ по госномерам, поиск страны по началу штихкода на продуктах
-# имя плагина COD должно совпадать с именем в конфигурации Dynaconf
-# имя плагина cod должно быть первым полем от _ в имени файла cod_plugin
+# имя плагина CODE должно совпадать с именем в конфигурации Dynaconf
+# имя плагина code должно быть первым полем от _ в имени файла code_plugin
 # имя файла плагина должно окачиваться на _plugin
 # В модуле должна быть опрделн класс для регистрации в диспетчере
 # class CodPlugin(BasePlugin):
@@ -18,7 +18,6 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 from telegram.ext import MessageHandler, Filters, CallbackQueryHandler
 from tgbot.plugins.base_plugin import BasePlugin
-import re
 
 # Добавить проверку на роль ''
 plugin_wiki = get_plugins('').get('CODE')
@@ -273,7 +272,7 @@ def find_country(input_data):
         if prefix is not None:
             return f'<b>{prefix}</b> {COUNTRY_CODES.get(prefix, "Страна неизвестна")}'
         else:
-            return "Ошибка обработки штрих-кода."
+            return f'Штрих-код EAN, начинающийся на цифру "{input_data}", скорей всего относится к внутренней маркировке предприятия. Такие коды используются компаниями для внутреннего учета товаров и не связаны с конкретной страной-производителем. Они применяются исключительно внутри организации и не предназначены для внешнего обращения или международной торговли.'
     found=""
     for key,val in COUNTRY_CODES.items():
         #if input_data.lower() in val.lower():
