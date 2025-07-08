@@ -18,13 +18,103 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 from telegram.ext import MessageHandler, Filters, CallbackQueryHandler
 from tgbot.plugins.base_plugin import BasePlugin
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 
 # Добавить проверку на роль ''
 plugin_wiki = get_plugins('').get('CODE')
 
+CODE_INPUT = range(1)
+#CODE_INPUT_EAN = range(1)
+_code_help = "Введите команду например:\n\r /code_rf_01 или <code>/code_rf_Курс</code> - получить название региона по коду или код по началу названия" \
+        "\n\r /code_ean_46 или <code>/code_ean_Кита</code> - получить название страны по штрихкоду или код по началу названия" \
+        "\n\r /code_ean_ - получить все штрихкоды \n\r/code_rf_ - получить название всех регионов" \
+        "\n\r /code_ean - ввести контекст штрихкодов \n\r/code_rf - ввести контекст названий регионов" 
+ 
+def request_code_ean(update: Update, context):
+    """Запрашиваем код у пользователя"""
+    upms = get_tele_command(update)
+    upms.reply_text("Введите 2 или 3 цифры штрихкода или имя страны:")
+    return CODE_INPUT #_EAN
+
+def check_code_ean(update: Update, context):
+    """Проверяем введённый штрихкод """
+    upms = get_tele_command(update)
+    code = upms.text
+    _name = find_country(code)
+    if _name:
+        response = f"ШтрихКод '{code}' соответствует стране {_name}"
+    else:
+        response = f"ШтрихКод '{code}' неизвестен."
+    #upms.reply_text(response)
+    context.bot.send_message(
+        chat_id=upms.chat.id,
+        text = response + '\n\r🔸/help /code',
+        disable_web_page_preview=True,
+        parse_mode=ParseMode.HTML
+    )
+    return ConversationHandler.END
+
+def request_code(update: Update, context):
+    """Запрашиваем код у пользователя"""
+    upms = get_tele_command(update)
+    upms.reply_text("Введите 2 или 3 цифры кода или наименование региона РФ")
+    return CODE_INPUT
+
+def check_code(update: Update, context):
+    """Проверяем введённый код региона"""
+    upms = get_tele_command(update)
+    code = upms.text
+    region_name = find_region(code)
+    if region_name:
+        response = f"Код региона '{code}' соответствует городу/региону {region_name}"
+    else:
+        response = f"Код региона '{code}' неизвестен."
+    context.bot.send_message(
+        chat_id=upms.chat.id,
+        text=response + '\n\r🔸/help /code',
+        disable_web_page_preview=True,
+        parse_mode=ParseMode.HTML
+    )
+    return ConversationHandler.END
+
+def cancel(update: Update, context):
+    """Завершаем диалог"""
+    upms = get_tele_command(update)
+    upms.reply_text("Операция отменена.")
+    return ConversationHandler.END
+
+def error(update, context):
+    logger.warning('Update "%s" caused error "%s"', update, context.error)
+
 class CodPlugin(BasePlugin):
     def setup_handlers(self, dp):
         cmd = "/code"
+
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler('code_rf', request_code)],
+            states={
+                CODE_INPUT: [
+                    MessageHandler(Filters.text & (~Filters.command), check_code),
+                ],
+            },
+            fallbacks=[
+                CommandHandler('cancel', cancel),
+            ]
+        )
+        conv_handler_ean = ConversationHandler(
+            entry_points=[CommandHandler('code_ean', request_code_ean)],
+            states={
+                CODE_INPUT: [
+                    MessageHandler(Filters.text & (~Filters.command), check_code_ean),
+                ],
+            },
+            fallbacks=[
+                CommandHandler('cancel', cancel),
+            ]
+        )
+
+        dp.add_handler(conv_handler)
+        dp.add_handler(conv_handler_ean)
         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands))
         dp.add_handler(MessageHandler(Filters.regex(rf'^code(/s)?.*'), commands))
         dp.add_handler(CallbackQueryHandler(button, pattern="^button_code"))
@@ -245,9 +335,13 @@ def find_region(input_data):
     '''
     input_data = str(input_data).strip()  # Приводим входные данные к строке и удаляем пробелы
     found=""
+    _input = input_data
+    if input_data.isdigit():
+        if len(input_data) > 3:
+            _input = input_data[:3]
     for key,val in regions.items():
-        if input_data.isdigit():
-            if f',{input_data},' in f',{key},':
+        if _input.isdigit():
+            if f',{_input},' in f',{key},':
                 found += f'\n\r<b>{key}</b> {val}'
         else:
             if input_data.lower() in val.lower():
@@ -267,12 +361,16 @@ def find_country(input_data):
     # Если ввод — число (штрих-код), проверяем его диапазон
     if input_data=='46':
         input_data = '460'
+    _input = input_data
     if input_data.isdigit():
-        prefix = extract_prefix(input_data)
+        if len(input_data) > 3:
+            _input = input_data[:3]
+    if _input.isdigit():
+        prefix = extract_prefix(_input)
         if prefix is not None:
             return f'<b>{prefix}</b> {COUNTRY_CODES.get(prefix, "Страна неизвестна")}'
         else:
-            return f'Штрих-код EAN, начинающийся на цифру "{input_data}", скорей всего относится к внутренней маркировке предприятия. Такие коды используются компаниями для внутреннего учета товаров и не связаны с конкретной страной-производителем. Они применяются исключительно внутри организации и не предназначены для внешнего обращения или международной торговли.'
+            return f'Штрих-код EAN, начинающийся на цифру "{input_data}", не найден в справочнике'
     found=""
     for key,val in COUNTRY_CODES.items():
         #if input_data.lower() in val.lower():
@@ -282,12 +380,11 @@ def find_country(input_data):
         return "Страна не найдена."
     return found
 
-
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     text = "Введите код региона автомобильного номера, или текст региона. Штрихкоды стран производителей"
-    text += '\n\r🔸/help /code_rf_92 <code>/code_rf_Кры</code> /code_ean_50  <code>/code_ean_Нидер</code>'
+    text += _code_help
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id, #  u.user_id,
@@ -307,8 +404,7 @@ def commands(update: Update, context: CallbackContext) -> None:
     elif "_ean_" in _input:
         _output = find_country(_input.split('_ean_')[1])
     else:
-        _output = "Введите команду например:\n\r /code_rf_01 или <code>/code_rf_Курс</code> - получить название региона по коду или код по началу названия" \
-        "\n\r /code_ean_46 или <code>/code_ean_Кита</code> - получить название страны по штрихкоду или код по началу названия"
+        _output = _code_help
     _output += '\n\r🔸/help /code'
     context.bot.send_message(
         chat_id=upms.chat.id,
