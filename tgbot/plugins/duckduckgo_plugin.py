@@ -18,10 +18,47 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
-from duckduckgo_search import ddg
+#from duckduckgo_search import ddg
+from duckduckgo_search import DDGS
+
+def search_on_russian(query, num_results=3):
+    """
+    Поиск в DuckDuckGo с русскоязычными результатами
+    :param query: поисковый запрос
+    :param num_results: количество результатов (по умолчанию 5)
+    :return: список результатов
+    """
+    results = []
+    with DDGS() as ddgs:
+        # Добавляем "lang:ru" к запросу для русскоязычных результатов
+        search_query = f"{query} lang:ru"
+        
+        for result in ddgs.text(search_query, max_results=num_results):
+            results.append({
+                'title': result.get('title', ''),
+                'url': result.get('href', ''),
+                'description': result.get('body', '')
+            })
+    
+    return results
+
+# if __name__ == "__main__":
+#     # Пример использования
+#     search_query = "лучшие программируемые калькуляторы"
+#     search_results = search_on_russian(search_query, 3)
+    
+#     print(f"Результаты поиска для '{search_query}':\n")
+#     for i, result in enumerate(search_results, 1):
+#         print(f"{i}. {result['title']}")
+#         print(f"   Ссылка: {result['url']}")
+#         print(f"   Описание: {result['description']}\n")
 
 def get_ddg_search_results(query, num_results=10):
-    return ddg(query, max_results=num_results)
+    results = []
+    with DDGS() as ddgs:
+        for result in ddgs.text(query, max_results=num_results):
+            results.append(result)  # Collect results
+    return results
 
 # Добавить проверку на роль ''
 plugin_ddg = get_plugins('').get('DUCKDUCKGO')
@@ -55,10 +92,11 @@ def check_ddg(update: Update, context):
     upms = get_tele_command(update)
     _input = upms.text
     if _input:
-       _output = get_ddg_search_results(_input) # search_duckduckgo(_input)
+       _output = search_on_russian(_input) #get_ddg_search_results(_input) # search_duckduckgo(_input)
     else:
         _output = _ddg_help
     print(_output)
+    
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
