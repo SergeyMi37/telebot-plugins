@@ -33,6 +33,18 @@ def serialize_schedule(schedule_obj):
         }
     return None
 
+def convert_for_json(obj):
+    if isinstance(obj, (str, int, float, bool, type(None))):
+        return obj
+    elif isinstance(obj, (list, tuple)):
+        return [convert_for_json(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: convert_for_json(value) for key, value in obj.items()}
+    elif isinstance(obj, set):
+        return list(obj)
+    else:
+        return str(obj)  # или другой способ сериализации
+
 def export_tasks(task_names=None):
     tasks = PeriodicTask.objects.all()
     if task_names:
@@ -45,8 +57,8 @@ def export_tasks(task_names=None):
             'task': task.task,
             'enabled': task.enabled,
             'description': task.description,
-            'args': task.args,
-            'kwargs': task.kwargs,
+            'args': convert_for_json(task.args),
+            'kwargs': convert_for_json(task.kwargs),
             'queue': task.queue,
             'exchange': task.exchange,
             'routing_key': task.routing_key,
@@ -54,7 +66,7 @@ def export_tasks(task_names=None):
             'one_off': task.one_off,
             'start_time': task.start_time.isoformat() if task.start_time else None,
             'priority': task.priority,
-            'headers': task.headers,
+            'headers': convert_for_json(task.headers),
             'last_run_at': task.last_run_at.isoformat() if task.last_run_at else None,
             'total_run_count': task.total_run_count,
         }

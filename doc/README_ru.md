@@ -118,6 +118,21 @@ python manage.py createsuperuser
 python manage.py createsuperuser --noinput --username adm --email adm@localhost.com # .env DJANGO_SUPERUSER_PASSWORD=demo
 ```
 
+### Экспортировать модели Location и User в файлы
+``` bash
+docker exec -it dtb_django bash
+...123:/code# python manage.py dumpdata users.Location --indent=2 --output=downloads/location_data.json
+...123:/code# python manage.py dumpdata users.User --indent=2 --output=downloads/users_data.json
+```
+
+### Экспортировать\импортировать данные регулярных задач специальными командами 
+``` bash
+docker exec -it dtb_django bash
+...123:/code# python manage.py export_celery_tasks --output downloads/my_tasks.json
+...123:/code# python manage.py import_celery_tasks downloads/my_tasks.json --dry-run
+```
+
+
 ### Чтобы просмотреть логи контейнера:
 
 ``` bash
