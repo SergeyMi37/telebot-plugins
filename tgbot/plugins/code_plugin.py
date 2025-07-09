@@ -7,6 +7,7 @@
 # В модуле должна быть опрделн класс для регистрации в диспетчере
 # class CodPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
+# https://codificator.ru/code/mobile/#list - полезный сайт
 
 from django.utils.timezone import now
 from telegram import ParseMode, Update
@@ -16,9 +17,8 @@ from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
-from telegram.ext import MessageHandler, Filters, CallbackQueryHandler
 from tgbot.plugins.base_plugin import BasePlugin
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 
 # Добавить проверку на роль ''
 plugin_wiki = get_plugins('').get('CODE')
@@ -33,7 +33,7 @@ _code_help = "Введите команду например:\n\r /code_rf_01 и
 def request_code_ean(update: Update, context):
     """Запрашиваем код у пользователя"""
     upms = get_tele_command(update)
-    upms.reply_text("Введите 2 или 3 цифры штрихкода или имя страны:")
+    upms.reply_text("Введите 2 или 3 цифры штрихкода или имя страны /cancel - отмена")
     return CODE_INPUT #_EAN
 
 def check_code_ean(update: Update, context):
@@ -57,7 +57,7 @@ def check_code_ean(update: Update, context):
 def request_code(update: Update, context):
     """Запрашиваем код у пользователя"""
     upms = get_tele_command(update)
-    upms.reply_text("Введите 2 или 3 цифры кода или наименование региона РФ")
+    upms.reply_text("Введите 2 или 3 цифры кода или наименование региона РФ /cancel - отмена")
     return CODE_INPUT
 
 def check_code(update: Update, context):
@@ -412,3 +412,93 @@ def commands(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
+'''
+Вот простой пример реализации двухэтапного диалога с использованием библиотеки Python telegram.ext, демонстрирующий пошаговую передачу двух параметров от пользователя:
+
+Предположим, мы хотим собрать у пользователя название города и дату путешествия, чтобы предложить какую-нибудь полезную информацию о погоде или мероприятиях в выбранный период.
+
+Шаги диалога:
+
+Бот просит ввести город назначения.
+Затем бот просит ввести желаемую дату путешествия.
+После ввода обоих параметров, бот выводит итоговую информацию.
+
+Код примера:
+
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+
+# Константы для обозначения этапов диалога
+CITY, DATE = range(2)
+
+def start(update: Update, context: CallbackContext) -> int:
+    """Запускаем диалог"""
+    update.message.reply_text("Привет! Напиши название города.")
+    return CITY
+
+def city_input(update: Update, context: CallbackContext) -> int:
+    """Пользователь ввёл название города"""
+    user_city = update.message.text
+    context.user_data['city'] = user_city
+    update.message.reply_text(f'Город {user_city}. Теперь напиши дату твоего путешествия.')
+    return DATE
+
+def date_input(update: Update, context: CallbackContext) -> None:
+    """Пользователь ввёл дату путешествия"""
+    travel_date = update.message.text
+    context.user_data['date'] = travel_date
+    chosen_city = context.user_data.get('city')
+    update.message.reply_text(f"Твой выбор: {chosen_city}, {travel_date}. Спасибо!")
+    return ConversationHandler.END
+
+def cancel(update: Update, context: CallbackContext) -> None:
+    """Отмена диалога"""
+    update.message.reply_text("Диалог отменён.")
+    return ConversationHandler.END
+
+def main():
+    updater = Updater("ВАШ_TOKEN_БОТА")
+    dispatcher = updater.dispatcher
+
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', start)],
+        states={
+            CITY: [MessageHandler(Filters.text & ~Filters.command, city_input)],
+            DATE: [MessageHandler(Filters.text & ~Filters.command, date_input)],
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+
+    dispatcher.add_handler(conv_handler)
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
+
+Как работает?
+
+Команда /start запускает первый этап диалога, предлагая пользователю ввести название города.
+Получив название города, программа сохраняет его в памяти контекста (context.user_data) и предлагает ввести дату.
+Получив дату, программа также сохраняет её и выводит итоговую информацию.
+Для выхода из диалога предусмотрена команда /cancel.
+
+Диалог выглядит примерно так:
+
+Пользователь: /start
+Бот: Привет! Напиши название города.
+Пользователь: Москва
+Бот: Город Москва. Теперь напиши дату твоего путешествия.
+Пользователь: 1 июня
+Бот: Твой выбор: Москва, 1 июня. Спасибо!
+
+Или, если пользователь решает отменить диалог:
+
+Пользователь: /start
+Бот: Привет! Напиши название города.
+Пользователь: /cancel
+Бот: Диалог отменён.
+
+Теперь у вас есть рабочий шаблон для сбора нескольких последовательных параметров от пользователя.
+
+'''

@@ -10,15 +10,15 @@ def get_tele_command(update: Update) -> str:
          upms = update.message
       elif update.edited_message:
          upms = update.edited_message
-      elif  not update:
-         upms = ''
+      elif not update:
+         upms = None
       else:
          upms = update.callback_query.message
    except Exception as err:
       pp.pprint('⚠️---',update)
-      upms = update.edited_message
+      upms = None
     # todo send log
-  
+   
    return upms # upms.chat, upms.from_user
 
 
@@ -30,7 +30,8 @@ def extract_user_data_from_update(update: Update) -> Dict:
       user = upms.from_user.to_dict()
    except Exception as e:
       print(f'-----Произошла ошибка----effective_user--{e}',update)
-   
+   if upms is None:
+      return None
    return dict(
         user_id=user["id"],
         #is_blocked_bot=False,   # был сброс блокировки

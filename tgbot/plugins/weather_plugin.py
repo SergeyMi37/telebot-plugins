@@ -130,7 +130,7 @@ def get_hourly_temperature(latitude, longitude, date ):
             if temperatures[i]<ymin:
                 ymin = temperatures[i]-5
             day_temps.append(temperatures[i])
-            precipitations.append(precipitation[i]*4) #*4 увеличил в 4 раза для лучшей видимости
+            precipitations.append(precipitation[i]*8) #*8 увеличил в 8 раза для лучшей видимости
             #out += (f' {hour} : {temperatures[i]}°C, Осадки {precipitation[i]} мм')
     else:
         out += 'Ошибка получения данных.'
@@ -233,7 +233,7 @@ def print_forecast(forecast, city_name,lat,lon):
         if forecast['daily']['temperature_2m_min'][i]<ymin:
             ymin = forecast['daily']['temperature_2m_min'][i] - 5
         night_temps.append(forecast['daily']['temperature_2m_min'][i])
-        precipitations.append(forecast['daily']['precipitation_sum'][i]*4) # *4 увеличил в 4 раза для лучшей видимости
+        precipitations.append(forecast['daily']['precipitation_sum'][i]) # *4 увеличил в 4 раза для лучшей видимости
     spo += f' по {ddmmyyyy}'
     out += ("\n")
     
