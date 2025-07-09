@@ -18,6 +18,10 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
+from duckduckgo_search import ddg
+
+def get_ddg_search_results(query, num_results=10):
+    return ddg(query, max_results=num_results)
 
 # Добавить проверку на роль ''
 plugin_ddg = get_plugins('').get('DUCKDUCKGO')
@@ -51,11 +55,10 @@ def check_ddg(update: Update, context):
     upms = get_tele_command(update)
     _input = upms.text
     if _input:
-       _output = search_duckduckgo(_input)
+       _output = get_ddg_search_results(_input) # search_duckduckgo(_input)
     else:
         _output = _ddg_help
-    # if '🔸/help' not in _output:
-    #     _output += '\n\r🔸/help' 
+    print(_output)
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
