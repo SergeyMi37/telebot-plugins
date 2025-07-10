@@ -12,7 +12,7 @@
 
 from django.utils.timezone import now
 from telegram import ParseMode, Update
-from telegram.ext import MessageHandler, Filters, CallbackQueryHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler, CallbackContext
 from dtb.settings import get_plugins
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
@@ -22,6 +22,15 @@ import feedparser, random
 
 # Добавить проверку на роль ''
 plugin_news = get_plugins('').get('NEWS')
+
+rss_dict = {}
+for key, val in plugin_news.items():
+    if key[0:4]=='rss_':
+        rss_dict.setdefault(key,val)
+
+CODE_INPUT = range(1)
+_news_help = "\n/news_list - получить список лент СМИ " \
+    "\n/news_all или /news_0 - все новости, \n/news_10 - 10 новостей, \n/news_30 - 30 новостей, \n/news_ Ввести контекст поиска в загловков"
 
 # plugins/news_rss_plugin.py
 from tgbot.plugins.base_plugin import BasePlugin
@@ -68,9 +77,9 @@ def write_news(rss_dict, count, context,upms, title="по всем лентам"
     selected_news = random.sample(sorted_news, min(count, len(sorted_news)))
 
     if search_string:
-        text = f'<b>Новости по контексту "{search_string}" из {len(sorted_news)} {title}</b>'
+        text = f'<b>Новости по контексту "{search_string}" из {len(unique_titles)} {title}</b>'
     else:
-        text = f'<b>Новости: случайно выбрано {count} из {len(sorted_news)} {title}</b>'
+        text = f'<b>Новости: случайно выбрано {count} из {len(unique_titles)} {title}</b>'
     num=0
     for news_item in selected_news[:count]:  # выводим первые 10 новостей
         #text +=f"\n👉{news_item['title']} 🎯{news_item['source']} 📆({news_item['published']})"
@@ -86,17 +95,53 @@ def write_news(rss_dict, count, context,upms, title="по всем лентам"
             text=it
         else:
             text += f"{it}"
-    msg = text[:4081]+"...\n\n🔸/help /news_list /news_25"
+    msg = text[:4081]+"...\n\n🔸/help /news_list /news_ "
     context.bot.send_message( 
         chat_id=upms.chat.id, text=msg, 
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML )
 
+def request_news(update: Update, context):
+    """Запрашиваем у пользователя"""
+    upms = get_tele_command(update)
+    upms.reply_text("Введите контекс поиска в новостных заголовках /cancel - отмена")
+    return CODE_INPUT
+
+def check_news(update: Update, context):
+    upms = get_tele_command(update)
+    cntx = upms.text
+    write_news(rss_dict ,111111111 ,context ,upms, "", cntx)
+    # context.bot.send_message(
+    #     chat_id=upms.chat.id,
+    #     text=response + '\n\r🔸/help /code',
+    #     disable_web_page_preview=True,
+    #     parse_mode=ParseMode.HTML
+    # )
+    return ConversationHandler.END
+
+def cancel_news(update: Update, context):
+    """Завершаем диалог"""
+    upms = get_tele_command(update)
+    upms.reply_text("Отмена")
+    return ConversationHandler.END
+
+
 class NewsRSSPlugin(BasePlugin):
     def setup_handlers(self, dp):
-        cmd = "/news"
-        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), self.commands))
-        dp.add_handler(MessageHandler(Filters.regex(rf'^news(/s)?.*'), self.commands))
+
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler('news_', request_news)],
+            states={
+                CODE_INPUT: [
+                    MessageHandler(Filters.text & (~Filters.command), check_news),
+                ],
+            },
+            fallbacks=[
+                CommandHandler('cancel', cancel_news),
+            ]
+        )
+        dp.add_handler(conv_handler)
+        dp.add_handler(MessageHandler(Filters.regex(rf'^/news(/s)?.*'), self.commands))
         dp.add_handler(CallbackQueryHandler(self.button, pattern="^button_news"))
 
     def commands(self, update, context):
@@ -110,8 +155,8 @@ def button_(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
-    text = "/news_list - получить список лент СМИ /news_100 /news_200 /news_300"
-    text += '\n\r🔸/help '
+    text = _news_help
+    text += '\n\r🔸/help /news_'
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id,
@@ -145,7 +190,7 @@ def commands_(update: Update, context: CallbackContext) -> None:
             write_news(rd,300,context,upms ,"по ленте "+key)
         return       
     elif len(arg) == 0:
-        text = f"\n🔸/help /news_all или /news_0 - все новости, /news_10 - 10 новостей, <code>/news_Иран</code> - поиск по контексту 'Иран'"
+        text = _news_help
         context.bot.send_message( 
             chat_id=upms.chat.id,
             text=text, parse_mode=ParseMode.HTML )
@@ -156,7 +201,7 @@ def commands_(update: Update, context: CallbackContext) -> None:
             text += f"\n🔍 /news_{key}"
         context.bot.send_message( 
             chat_id=upms.chat.id,
-            text=text+'\n🔸/help /news', parse_mode=ParseMode.HTML )
+            text=text+'\n🔸/help /news_', parse_mode=ParseMode.HTML )
         return
     elif arg=="all" or arg=="0": # все новости
         count = 111111111111

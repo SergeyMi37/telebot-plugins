@@ -27,8 +27,8 @@ CODE_INPUT = range(1)
 #CODE_INPUT_EAN = range(1)
 _code_help = "Введите команду например:\n\r /code_rf_77 - получить название региона по коду" \
         "\n\r /code_ean_40 - получить название страны по штрихкоду" \
-        "\n\r /code_ean_ - получить все штрихкоды \n\r/code_rf_ - получить название всех регионов" \
-        "\n\r /code_ean - ввести контекст штрихкодов или странн \n\r/code_rf - ввести контекст кодов или названий регионов" 
+        "\n\r /code_ean - получить все штрихкоды \n\r/code_rf - получить название всех регионов" \
+        "\n\r /code_ean_ - ввести контекст штрихкодов или странн \n\r/code_rf_ - ввести контекст кодов или названий регионов" 
  
 def request_code_ean(update: Update, context):
     """Запрашиваем код у пользователя"""
@@ -91,7 +91,7 @@ class CodPlugin(BasePlugin):
         cmd = "/code"
 
         conv_handler = ConversationHandler(
-            entry_points=[CommandHandler('code_rf', request_code)],
+            entry_points=[CommandHandler('code_rf_', request_code)],
             states={
                 CODE_INPUT: [
                     MessageHandler(Filters.text & (~Filters.command), check_code),
@@ -102,7 +102,7 @@ class CodPlugin(BasePlugin):
             ]
         )
         conv_handler_ean = ConversationHandler(
-            entry_points=[CommandHandler('code_ean', request_code_ean)],
+            entry_points=[CommandHandler('code_ean_', request_code_ean)],
             states={
                 CODE_INPUT: [
                     MessageHandler(Filters.text & (~Filters.command), check_code_ean),
@@ -358,9 +358,10 @@ def find_country(input_data):
     https://bosla.ru/poleznaya-informatsiya/pro-shtrikh-kod/shtrikh-kod
     '''
     input_data = str(input_data).strip()  # Приводим входные данные к строке и удаляем пробелы
-    # Если ввод — число (штрих-код), проверяем его диапазон
     if input_data=='46':
         input_data = '460'
+    if input_data.isdigit() and (int(input_data) >=40 or int(input_data) <=44):
+        input_data = str(int(input_data) * 10)
     _input = input_data
     if input_data.isdigit():
         if len(input_data) > 3:
@@ -399,8 +400,12 @@ def commands(update: Update, context: CallbackContext) -> None:
     telecmd = upms.text
     _input = telecmd.split('code')[1] #.replace("_"," ")
     _output = ""
-    if "_rf_" in _input:
+    if "_rf" == _input:
+       _output = find_region("")
+    elif "_rf_" in _input:
        _output = find_region(_input.split('_rf_')[1])
+    elif "_ean" == _input:
+        _output = find_country("")
     elif "_ean_" in _input:
         _output = find_country(_input.split('_ean_')[1])
     else:
