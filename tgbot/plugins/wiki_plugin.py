@@ -70,8 +70,8 @@ def cancel(update: Update, context):
     upms.reply_text("отмена.")
     return ConversationHandler.END
 
-def error(update, context):
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
+# def error(update, context):
+#     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 class WikiPlugin(BasePlugin):
     def setup_handlers(self, dp):

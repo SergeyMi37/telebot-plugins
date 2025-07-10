@@ -16,7 +16,8 @@ from datetime import datetime
 from geopy.geocoders import Nominatim
 from tgbot.plugins import wiki_plugin, weather2png
 from tgbot.handlers.admin.utils import get_day_of_week
-from telegram.ext import MessageHandler, Filters, CallbackQueryHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
+
 from tgbot.plugins.base_plugin import BasePlugin
 
 # Добавить проверку на роль ''
@@ -314,20 +315,52 @@ def get_forecast(city,latitude=None,longitude=None,title=""):
 #@check_groupe_user
 #def commands(update: Update, context: CallbackContext) -> None:
 
+CONV_INPUT = range(1)
+
+def request_conv(update: Update, context):
+    """Запрашиваем у пользователя"""
+    upms = get_tele_command(update)
+    upms.reply_text("Введите город. /cancel - отмена")
+    return CONV_INPUT
+
+def check_conv(update: Update, context):
+    upms = get_tele_command(update)
+    u = User.get_user(update, context)
+    place_name = upms.text
+    cmd = f"_{place_name}"
+    get_forecast_cmd(upms, context, u, cmd)
+    # context.bot.send_message(
+    #     chat_id=upms.chat.id,
+    #     text=ou,
+    #     disable_web_page_preview=True,
+    #     parse_mode=ParseMode.HTML
+    # )
+    return ConversationHandler.END
+
+def cancel_conv(update: Update, context):
+    """Завершаем диалог"""
+    upms = get_tele_command(update)
+    upms.reply_text("отмена.")
+    return ConversationHandler.END
 
 class WeatherPlugin(BasePlugin):
     def setup_handlers(self, dp):
-        cmd = "/weather"
-        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands))
-        dp.add_handler(MessageHandler(Filters.regex(rf'^weather(/s)?.*'), commands))
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler('weather_', request_conv)],
+            states={
+                CONV_INPUT: [
+                    MessageHandler(Filters.text & (~Filters.command), check_conv),
+                ],
+            },
+            fallbacks=[
+                CommandHandler('cancel', cancel_conv),
+            ]
+        )
+        dp.add_handler(conv_handler)
+        dp.add_handler(MessageHandler(Filters.regex(rf'^/weather(/s)?.*'), commands))
         dp.add_handler(CallbackQueryHandler(button, pattern="^button_weather"))
 
-@check_groupe_user
-def commands(update, context):
-    u = User.get_user(update, context)
-    upms = get_tele_command(update)
-    telecmd = upms.text
-    cmd = telecmd.split('weather')[1]
+def get_forecast_cmd(upms, context, u, cmd):
     buf = None
     #/weater_Moscow в Москве на день и 7 дней. /weater_Piter /weater_Eburg /weater_Ludwigshafen
     if cmd.lower()=='_moscow':
@@ -348,7 +381,7 @@ def commands(update, context):
         else:
             _out = 'Для прогноза погоды по вашей геолокации предоставьте её командой 📍/ask_location'
     elif cmd.lower()=='_list':
-        _out = f"/weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
+        _out = f"/weather_ /weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg <code>/weather_Серпухов</code> <code>/weather_Екатеринбург</code> <code>/weather_Нея</code>"
     elif cmd.lower()=='_piter':
         _out, buf = get_forecast("Piter")
     elif '_houry_' in cmd.lower(): # /weather_houry_01072025_55v656146_37v696125
@@ -365,7 +398,7 @@ def commands(update, context):
         _out, buf = get_forecast(cmd.replace('_',''))
         #_out = f"По городу {cmd} еще нет геолокации"
     #print(_out)
-    _out += '\n\r🔸/help /weather'
+    _out += '\n\r🔸/help /weather /weather_'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_out,
@@ -376,12 +409,20 @@ def commands(update, context):
         context.bot.send_photo(chat_id=upms.chat.id, photo=buf)
 
 @check_groupe_user
+def commands(update, context):
+    u = User.get_user(update, context)
+    upms = get_tele_command(update)
+    telecmd = upms.text
+    cmd = telecmd.split('weather')[1]
+    get_forecast_cmd(upms, context, u, cmd)
+
+@check_groupe_user
 def button( update, context):
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     text = "Введите команду прогноза погоды"
-    text += '\n\r🔸/help /weather'
+    text += '\n\r🔸/help /weather /weather_'
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id,

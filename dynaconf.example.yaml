@@ -36,7 +36,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
   DATABASE_URL: sqlite:///db.sqlite3
   PLUGINS:
     - WIKI:
-        - desc = Получить статью из википедии по поисковой фразе. Например /wiki_Snow или <code>/wiki_Снег</code> или <code>wiki_Снеговик</code>
+        - blocked = 0
+        - desc = Получить статью из википедии /wiki_ по слову
     - IRIS:
         - blocked = 1
         - desc = Сервис мониторинга серверов IRIS там, где установлен проект AppTools 
@@ -56,7 +57,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0
-        - desc = Сервис агрегации rss новостей. /news_list - список СМИ /news_ - поиск по конткусту
+        - desc = Сервис агрегации rss новостей. /news_list - список СМИ /news_ - поиск по контексту
         - func = news_rss.commands
         - rss_Vzglyd = https://vz.ru/rss.xml
         #- rss_AiF =  https://aif.ru/rss/all.php # другой формат ?
@@ -75,7 +76,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - rss_hightech = https://hightech.plus/feed.rss
         - rss_computerra = https://www.computerra.ru/feed/ 
     - WEATHER:
-        - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_Piter /weather_Eburg /weather_Ludwigshafen Людвигсхафен-ам-Райн
+        - blocked = 0
+        - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_ - ввести город
         - url = https://api.open-meteo.com/v1/forecast # https://open-meteo.com/en/docs#location_and_time
     - ADMIN:
         - desc = Модуль администрирования публичных групп, в приватных чатах не работает
