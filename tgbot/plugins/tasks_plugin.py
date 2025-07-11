@@ -44,37 +44,20 @@ from tgbot.plugins.base_plugin import BasePlugin
 plugin_wiki = get_plugins('').get('WIKI')
 
 CODE_INPUT = range(1)
-_wiki_help = 'Поиск на https://ru.wikipedia.org Введите слово после ключевого wiki например:\n\r /wiki_Rainbow или ' \
+_tasks_help = 'Поиск на https://ru.wikipedia.org Введите слово после ключевого wiki например:\n\r /wiki_Rainbow или ' \
     '\n\r /wiki_ - диалог для введения слова \n\r🔸/help /wiki /wiki_'
 
-def fetch_page_data(page_title):
-    # Создаем объект API с использованием русского раздела Wikipedia
-    wiki_api = wikipediaapi.Wikipedia(
-            language='ru',     # русский язык
-            extract_format=wikipediaapi.ExtractFormat.WIKI,   # извлекаем содержимое в формате MediaWiki
-            user_agent="MswApp/1.0"  # Добавляем user agent
-    )
-    page = wiki_api.page(page_title)
-    if not page.exists():
-        return None, (f"Страница '{page_title}' не найдена."), None
-    summ = page.summary[:12500] + f'\n\r{page.fullurl}\n\r{page.title}'
-    return 200, summ, page.fullurl
 
-def request_wiki(update: Update, context):
+def request_tasks(update: Update, context):
     """Запрашиваем у пользователя"""
     upms = get_tele_command(update)
     upms.reply_text("Введите слово для поиска на сайте Википедии. /cancel - отмена")
     return CODE_INPUT
 
-def check_wiki(update: Update, context):
+def check_tasks(update: Update, context):
     upms = get_tele_command(update)
     _input = upms.text
-    if _input:
-       code, _output, link = fetch_page_data(_input)
-    else:
-        _output = _wiki_help
-    if '🔸/help' not in _output:
-        _output += '\n\r🔸/help /wiki /wiki_' 
+    _output = '!!!'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
@@ -83,43 +66,40 @@ def check_wiki(update: Update, context):
     )
     return ConversationHandler.END
 
-def cancel(update: Update, context):
+def cancel_tasks(update: Update, context):
     """Завершаем диалог"""
     upms = get_tele_command(update)
     upms.reply_text("отмена.")
     return ConversationHandler.END
 
-def error(update, context):
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
-
-class WikiPlugin(BasePlugin):
+class TasksPlugin(BasePlugin):
     def setup_handlers(self, dp):
-        cmd = "/wiki"
 
         conv_handler = ConversationHandler(
-            entry_points=[CommandHandler('wiki_', request_wiki)],
+            entry_points=[CommandHandler('tasks_new_', request_tasks)],
             states={
                 CODE_INPUT: [
-                    MessageHandler(Filters.text & (~Filters.command), check_wiki),
+                    MessageHandler(Filters.text & (~Filters.command), check_tasks),
                 ],
             },
             fallbacks=[
-                CommandHandler('cancel', cancel),
+                CommandHandler('cancel', cancel_tasks),
             ]
         )
         dp.add_handler(conv_handler)
-        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands))
-        dp.add_handler(MessageHandler(Filters.regex(rf'^wiki(/s)?.*'), commands))
-        dp.add_handler(CallbackQueryHandler(button, pattern="^button_wiki"))
+        cmd = "/tasks"
+        dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands_tasks))
+        dp.add_handler(MessageHandler(Filters.regex(rf'^wiki(/s)?.*'), commands_tasks))
+        dp.add_handler(CallbackQueryHandler(button_tasks, pattern="^button_task"))
 
 @check_groupe_user
-def button(update: Update, context: CallbackContext) -> None:
+def button_tasks(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     #print('-------------',upms,'-------------')
     text = "Введите слово или фразу..."
-    text += _wiki_help
+    #text += _wiki_help
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id, #  u.user_id,
@@ -128,18 +108,12 @@ def button(update: Update, context: CallbackContext) -> None:
     )
 
 @check_groupe_user
-def commands(update: Update, context: CallbackContext) -> None:
+def commands_tasks(update: Update, context: CallbackContext) -> None:
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
-    _input = telecmd.split('wiki')[1].replace("_"," ")
-    if _input:
-       code, _output, link = fetch_page_data(_input)
-    else:
-        _output = _wiki_help
-    
-    if '🔸/help' not in _output:
-        _output += '\n\r🔸/help /wiki' 
+    _input = telecmd.split('tasks')[1].replace("_"," ")
+    _output = '2222222'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,

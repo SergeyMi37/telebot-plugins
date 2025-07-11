@@ -44,8 +44,8 @@ Install all requirements:
 pip install -r requirements.txt
 ```
 
-Create `.env` file copy-paste this or just run `cp env_example .env` 
-Create `dynaconf.yaml` file copy-paste this or just run `cp dynaconf.example.yaml dynaconf.yaml`, don't forget to change tokens:
+Create `.env` file copy-paste this or just run `cp doc/env_example .env` 
+Create `dynaconf.yaml` file copy-paste this or just run `cp doc/dynaconf.example.yaml dynaconf.yaml`, don't forget to change tokens:
 
 
 Run migrations to setup SQLite database:

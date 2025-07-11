@@ -44,7 +44,7 @@ def fetch_page_data(page_title):
 def request_wiki(update: Update, context):
     """Запрашиваем у пользователя"""
     upms = get_tele_command(update)
-    upms.reply_text("Введите слово для поиска на сайте Википедии. /cancel - отмена")
+    upms.reply_text("Введите слово для поиска на сайте Википедии. /cancel_wiki - отмена")
     return CODE_INPUT
 
 def check_wiki(update: Update, context):
@@ -64,7 +64,7 @@ def check_wiki(update: Update, context):
     )
     return ConversationHandler.END
 
-def cancel(update: Update, context):
+def cancel_wiki(update: Update, context):
     """Завершаем диалог"""
     upms = get_tele_command(update)
     upms.reply_text("отмена.")
@@ -85,22 +85,24 @@ class WikiPlugin(BasePlugin):
                 ],
             },
             fallbacks=[
-                CommandHandler('cancel', cancel),
+                CommandHandler('cancel_wiki', cancel_wiki),
             ]
         )
         dp.add_handler(conv_handler)
         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands))
         dp.add_handler(MessageHandler(Filters.regex(rf'^wiki(/s)?.*'), commands))
-        dp.add_handler(CallbackQueryHandler(button, pattern="^button_wiki"))
+        dp.add_handler(CallbackQueryHandler(button_wiki, pattern="^button_wiki"))
 
 @check_groupe_user
-def button(update: Update, context: CallbackContext) -> None:
+def button_wiki(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
-    #print('-------------',upms,'-------------')
     text = "Введите слово или фразу..."
     text += _wiki_help
+    query = update.callback_query
+    query.answer(text=text, show_alert=True) # вывести всплывающее окно
+    
     context.bot.edit_message_text(
         text=text,
         chat_id=upms.chat.id, #  u.user_id,

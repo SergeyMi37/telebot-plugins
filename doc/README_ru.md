@@ -32,9 +32,10 @@ source env/Scripts/activate
 pip install -r requirements.txt
 ```
 
-Создайте файл `.env` скопируйте и вставьте это или просто запустите `cp env_example .env`
-Создайте файл `dynaconf.yaml` скопируйте и вставьте это или просто запустите `cp dynaconf.example.yaml dynaconf.yaml`, не забудьте изменить токены:
+Создайте файл `.env` скопируйте и вставьте это или просто запустите `cp doc/env_example .env`
+Создайте файл `dynaconf.yaml` скопируйте и вставьте это или просто запустите `cp doc/dynaconf.example.yaml dynaconf.yaml`, не забудьте изменить токены:
 В файле .env нужно определить переменную ENV_FOR_DYNACONF=dev значение которой ссылается на раздел параметров в файле dynaconf.yaml
+Иногда нужно выполнить `export ENV_FOR_DYNACONF=dev`
 
 Запустите миграции для настройки базы данных SQLite:
 ``` bash
@@ -148,34 +149,3 @@ docker-compose ps --services
 ``` bash
 docker logs -f bot
 ```
-
-# Благодарности автору
-
-https://github.com/ohld/django-telegram-bot
-
-### Проверьте пример бота, который использует код из основной ветки: [t.me/djangotelegrambot](https://t.me/djangotelegrambot)
-## Особенности
-
-* База данных: Postgres, Sqlite3, MySQL — решать вам!
-* Панель администратора (спасибо [Django](https://docs.djangoproject.com/en/3.1/intro/tutorial01/))
-* Фоновые задания с использованием [Celery](https://docs.celeryproject.org/en/stable/)
-* [Готовое к производству](https://github.com/ohld/django-telegram-bot/wiki/Production-Deployment-using-Dokku) развертывание с использованием [Dokku](https://dokku.com)
-* Использование API Telegram в режиме опроса или [webhook](https://core.telegram.org/bots/api#setwebhook)
-* Экспорт всех пользователей в `.csv`
-* Собственные команды Telegram в menu](https://github.com/ohld/django-telegram-bot/blob/main/.github/imgs/bot_commands_example.jpg)
-* Чтобы редактировать или удалять эти команды, вам нужно будет использовать метод бота `set_my_commands`, как в [tgbot.dispatcher.setup_my_commands](https://github.com/ohld/django-telegram-bot/blob/main/tgbot/dispatcher.py#L150-L156)
-
-Встроенные методы бота Telegram:
-* `/broadcast` — отправить сообщение всем пользователям (команда администратора)
-* `/export_users` — бот отправляет вам информацию о ваших пользователях в файле .csv (команда администратора)
-* `/stats` — показать базовую статистику бота
-* `/ask_for_location` — сохранить местоположение пользователя при получении и выполнить обратное геокодирование, чтобы получить страну, город и т. д.
-
-## Содержание
-
-* [Как запустить локально](https://github.com/ohld/django-telegram-bot/#how-to-run)
-* [Быстрый старт с опросом и SQLite](https://github.com/ohld/django-telegram-bot/#quickstart-polling--sqlite)
-* [Использование docker-compose](https://github.com/ohld/django-telegram-bot/#run-locally-using-docker-compose)
-* [Развертывание в производство](https://github.com/ohld/django-telegram-bot/#deploy-to-production)
-* [Использование докку](https://github.com/ohld/django-telegram-bot/#deploy-using-dokku-step-by-step) 
-* [Вебхук Telegram](https://github.com/ohld/django-telegram-bot/#https--telegram-bot-webhook)
