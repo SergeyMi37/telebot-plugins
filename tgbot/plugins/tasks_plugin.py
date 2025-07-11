@@ -9,23 +9,16 @@
 #    def setup_handlers(self, dp):
 
 # РегулярнаяПроверкаИсообщения
-
 # users.tasks.broadcast_custom_message
-
 # Positional Arguments:
-
 # [["Roles(iris) Condition(PROD_SYS_AlertsView)",504026852],
 # "Вам пришло сообщение о проблеме на сервере <b>PROD_SYS_AlertsView</b>\n команды:\n/s_PROD_SYS"
 # ]
-
-
 # Тестирование прикладной процедуры users.tasks.broadcast_custom_message
 # Роли, которые должны быть у пользователей которым посылать сообщения
-
 # [["Roles(iris) Condition(PROD_SYS_AlertsView)",504026852],
 # "Вам пришло сообщение о проблеме на сервере <b>PROD_SYS_AlertsView</b>\n команды:\n/s_PROD_SYS"
 # ]
-
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext

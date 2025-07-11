@@ -34,6 +34,7 @@ def search_on_russian(query, num_results=3):
         search_query = f"{query} lang:ru"
         
         for result in ddgs.text(search_query, max_results=num_results):
+            #print('===',result)
             results.append({
                 'title': result.get('title', ''),
                 'url': result.get('href', ''),
@@ -66,21 +67,30 @@ plugin_ddg = get_plugins('').get('DUCKDUCKGO')
 CODE_INPUT = range(1)
 _ddg_help = 'Введите поисковый запрос после :\n\r /duckduckgo_ \n\r🔸/help /duckduckgo'
 
-def search_duckduckgo(query):
-    # Параметры запроса
-    params = {
-        'q': query,
-        'format': 'json',
-        'pretty': '1'  # Для удобочитаемого вывода
-    }
-    
-    # Отправляем GET-запрос на DuckDuckGo Instant Answer API
-    response = requests.get('https://api.duckduckgo.com/', params=params)
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+def write_duckduckgo(context, upms, res, count = 100):
+    num=0
+    text=''
+    for _item in res[:count]:  # выводим первые 100 результатов
+        #text +=f"\n👉{news_item['title']} 🎯{news_item['source']} 📆({news_item['published']})"
+        #print(_item) 
+        num += 1
+        #it = f"\n{num}.🔍<a href=\"{news_item['link']}\">{news_item['title']} 📆({news_item['published'][:16]})</a>"
+        it = f"\n{num}.🔶<a href=\"{_item['url']}\">{_item['description']}</a> {_item['title'][:16]}..."
+        if len(text+it)>4081:
+            context.bot.send_message(
+                chat_id=upms.chat.id,
+                text = text+"\n🔸/help\n", 
+                disable_web_page_preview=True,
+                parse_mode=ParseMode.HTML)
+            text=it
+        else:
+            text += f"{it}"
+
+    msg = text[:4081]+"...\n\n🔸/help /duckduckgo_ "
+    context.bot.send_message( 
+        chat_id=upms.chat.id, text=msg, 
+        disable_web_page_preview=True,
+        parse_mode=ParseMode.HTML )
 
 def request_ddg(update: Update, context):
     """Запрашиваем у пользователя"""
@@ -91,8 +101,11 @@ def request_ddg(update: Update, context):
 def check_ddg(update: Update, context):
     upms = get_tele_command(update)
     _input = upms.text
+    upms.reply_text("🕒.минутку..")
     if _input:
-       _output = search_on_russian(_input) #get_ddg_search_results(_input) # search_duckduckgo(_input)
+        res = search_on_russian(_input, 50) #get_ddg_search_results(_input) # search_duckduckgo(_input)
+        write_duckduckgo(context, upms, res)
+        return ConversationHandler.END
     else:
         _output = _ddg_help
     print(_output)

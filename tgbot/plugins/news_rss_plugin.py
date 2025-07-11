@@ -109,6 +109,7 @@ def request_news(update: Update, context):
 
 def check_news(update: Update, context):
     upms = get_tele_command(update)
+    upms.reply_text(".🕒.минутку...")
     cntx = upms.text
     write_news(rss_dict ,111111111 ,context ,upms, "", cntx)
     # context.bot.send_message(
@@ -217,4 +218,5 @@ def commands_(update: Update, context: CallbackContext) -> None:
     else: # поиск по контексту 
         search_string = arg
         count = 111111111111
+    upms.reply_text("🕒.минутку...")
     write_news(rss_dict ,count ,context ,upms, "", search_string)
