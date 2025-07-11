@@ -106,7 +106,7 @@ def commands_tasks(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     telecmd = upms.text
     _input = telecmd.split('tasks')[1].replace("_"," ")
-    _output = '2222222'
+    _output = 'режим в разработке'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
