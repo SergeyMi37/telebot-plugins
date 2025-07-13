@@ -90,7 +90,7 @@ def check_ddg(update: Update, context):
         write_duckduckgo(context, upms, res)
         return ConversationHandler.END
     else:
-        _output = _ddg_help
+        _output = _inet_help
     print(_output)
     
     context.bot.send_message(
@@ -122,7 +122,7 @@ class InetPlugin(BasePlugin):
         )
         dp.add_handler(conv_handler)
         dp.add_handler(MessageHandler(Filters.regex(rf'^/inet(/s)?.*'), commands))
-        dp.add_handler(CallbackQueryHandler(button, pattern="^button_ddg"))
+        dp.add_handler(CallbackQueryHandler(button, pattern="^button_inet"))
 
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:

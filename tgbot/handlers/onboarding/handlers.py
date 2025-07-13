@@ -40,7 +40,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         text = static_text.start_not_created.format(first_name=u.first_name)
 
     if u.roles==None or u.roles=="": # Роли по умолчанию присвоим новому пользователю
-        u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI,CODE,DUCKDUCKGO,TASKS")
+        u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI,CODE,INET,TASKS")
         u.save()
 
     plugins = get_plugins(u.roles)
