@@ -98,9 +98,9 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - CODE:
         - blocked = 1
         - desc = Поиск Регионов РФ по госномерам, поиск страны по началу штихкода
-    - DUCKDUCKGO:
+    - INET:
         - blocked = 0
-        - desc = Поиск в интернете в поисковой системе DuckDuckGo. /duckduckgo_
+        - desc = Поиск в интернете в поисковых системах. /inet_ddg_ - DuckDuckGo
     - MEMURL:
         - blocked = 1
         - desc = Запомнить ссылку для последующего быстрого поиска и открытия (Например для маршрутов Яндекс карт)
