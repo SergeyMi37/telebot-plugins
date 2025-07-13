@@ -19,7 +19,7 @@ from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
-from tgbot.plugins import reports_gitlab, servers_iris, giga_chat, admin #news_rss, wiki, weather,
+from tgbot.plugins import reports_gitlab, servers_iris, admin
 from dtb.settings import logger
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -39,7 +39,6 @@ def setup_dispatcher(dp):
     # onboarding
     dp.add_handler(CommandHandler("start", onboarding_handlers.command_start))
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
-    #dp.add_handler(CommandHandler("plugins", onboarding_handlers.command_plugins)) 
 
     # Загружаем плагины из dynaconf
     plugins = get_plugins() 
@@ -53,29 +52,6 @@ def setup_dispatcher(dp):
             #    print('---',f"Loading plugin: {NAME}")
             plugin_instance.setup_handlers(dp)
    
-    # for pl,val in plugins.items():
-    #     #dp.add_handler(CommandHandler(pl.lower(), onboarding_handlers.command_dispatcher))
-    #     cmd="/"+pl.lower()
-    #     if (str(pl)=='NEWS'):
-    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), news_rss.commands))
-    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), news_rss.commands))
-    #         dp.add_handler(CallbackQueryHandler(news_rss.button, pattern=f"^button_news"))
-    #     if (pl=='WIKI'):
-    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), wiki.commands))
-    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), wiki.commands))
-    #         dp.add_handler(CallbackQueryHandler(wiki.button, pattern=f"^button_wiki"))
-    #     if (pl=='WEATHER'):
-    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), weather.commands))
-    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{pl.lower()}(/s)?.*'), weather.commands))
-    #         dp.add_handler(CallbackQueryHandler(weather.button, pattern=f"^button_weather"))
-    #     else:
-    #         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), onboarding_handlers.command_dispatcher))
-
-    if plugins.get('GIGA'): 
-            # Обработка всех текстовых сообщений. Сейчас настроен на ГигаЧат, но нужно будет и на пользователей в группе
-            dp.add_handler(MessageHandler(Filters.text & ~Filters.command, giga_chat.text_message))
-            
-
     # Если есть доступ к плагину IRIS
     if servers_iris.plugins_iris:
         dp.add_handler(CommandHandler("servers", servers_iris.command_servers)) 
@@ -102,9 +78,6 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("ask_location", location_handlers.ask_for_location))
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
 
-
-    # secret level
-    #dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
     '''
         from telegram.ext import CallbackQueryHandler
         
