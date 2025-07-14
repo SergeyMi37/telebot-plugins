@@ -24,9 +24,10 @@ import feedparser, random
 plugin_news = get_plugins('').get('NEWS')
 
 rss_dict = {}
-for key, val in plugin_news.items():
-    if key[0:4]=='rss_':
-        rss_dict.setdefault(key,val)
+if plugin_news:
+    for key, val in plugin_news.items():
+        if key[0:4]=='rss_':
+            rss_dict.setdefault(key,val)
 
 CODE_INPUT = range(1)
 _news_help = "\n/news_list - получить список лент СМИ " \
