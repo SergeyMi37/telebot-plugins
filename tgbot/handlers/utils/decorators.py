@@ -6,7 +6,7 @@ from telegram.ext import CallbackContext
 from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
 from dtb.settings import logger
-from tgbot.plugins import admin
+from tgbot import plugins
 
 def check_groupe_user(func: Callable):
     """
@@ -27,7 +27,7 @@ def check_groupe_user(func: Callable):
             #return
         upms = get_tele_command(update)
         if upms.chat.id<0: # публичные группы имеют отрицательный номер
-            admin.universal_message_handler(update, context, func)
+            plugins.admin_plugin.universal_message_handler(update, context, func)
             return
 
         return func(update, context, *args, **kwargs)

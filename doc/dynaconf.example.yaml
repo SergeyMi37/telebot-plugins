@@ -35,6 +35,9 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
   TELEGRAM_TOKEN: "<token>"
   DATABASE_URL: sqlite:///db.sqlite3
   PLUGINS:
+    - ADMIN:
+        - blocked = 0
+        - desc = Модуль администрирования публичных групп
     - WIKI:
         - blocked = 0
         - desc = Получить статью из википедии /wiki_ по слову

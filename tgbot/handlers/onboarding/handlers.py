@@ -10,7 +10,7 @@ from tgbot.handlers.utils.info import extract_user_data_from_update, get_tele_co
 from users.models import User
 from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import CRLF
-from tgbot.plugins import reports_gitlab
+from tgbot.plugins import reports_gitlab, admin_plugin
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
 from dtb.settings import get_plugins, settings
 from dtb.settings import logger
@@ -44,7 +44,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         u.save()
 
     plugins = get_plugins(u.roles)
-    text += CRLF+'/start: Кнопки ссылок на модули'
+    text += CRLF+'/start: Кнопки ссылок на модули\n'
     url = "https://t.me/+__Qezxf7-E0xY2I6"
     text += CRLF+f'<a href=\"{url}\">Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'
     #if plugins:
@@ -76,24 +76,26 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
         text += CRLF
         text += CRLF + reports_wrong_format
-    if plugins.get('GIGA'):
-        # Если есть доступ к плпгину GIGA
-        text += CRLF+'👉---модуль-GIGA---------'
-        text += CRLF+plugins.get('GIGA').get('desc')
-        text += CRLF + '/giga - список опций модели или задавайте вопросы без команд. Модель пока не помнит контекста'+CRLF
+    # if plugins.get('GIGA'):
+    #     # Если есть доступ к плпгину GIGA
+    #     text += CRLF+'👉---модуль-GIGA---------'
+    #     text += CRLF+plugins.get('GIGA').get('desc')
+    #     text += CRLF + '/giga - список опций модели или задавайте вопросы без команд. Модель пока не помнит контекста'+CRLF
 
     for pl,val in plugins.items():
         if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
             if u.roles is not None and (pl in u.roles.split(',') or "All" in u.roles.split(',')):
                 text += CRLF + f'👉---модуль-{pl}---------'
                 text += CRLF + f"/{pl.lower()} {val.get('desc')}{CRLF}"
-    if u.is_superadmin and (upms.chat.id==u.user_id): # если суперадмин и мы в личном чате с ним
-        text += CRLF+'👉----Super admin options--------'
-        # Если есть доступ к роли суперадмин
-        text += CRLF+' 📍/ask_location: Отправить локацию'
-        text += CRLF+' /broadcast Текст рассылаемого сообщения'
-        text += CRLF+' 👥/export_users: Экспорт users.csv'
-        text += CRLF+' /ask_info - информация о состоянии бота'
+
+    #if u.is_superadmin and (upms.chat.id==u.user_id): # если суперадмин и мы в личном чате с ним
+        # text += CRLF+'👉----Super admin options--------'
+        # # Если есть доступ к роли суперадмин
+        # text += admin_plugin._admin_help
+        # # text += CRLF+' 📍/ask_location: Отправить локацию'
+        # text += CRLF+' /broadcast Текст рассылаемого сообщения'
+        # text += CRLF+' 👥/export_users: Экспорт users.csv'
+        # text += CRLF+' /ask_info - информация о состоянии бота'
     
     text += CRLF+CRLF+'🔸/help: Перечень команд'
     context.bot.send_message(

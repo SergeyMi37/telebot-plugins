@@ -19,7 +19,7 @@ from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.main import bot
-from tgbot.plugins import reports_gitlab, servers_iris, admin
+from tgbot.plugins import reports_gitlab, servers_iris, admin_plugin
 from dtb.settings import logger
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -70,10 +70,10 @@ def setup_dispatcher(dp):
             dp.add_handler(CommandHandler(f"yesterday_{_en}", reports_gitlab.command_daily_rating)) 
             dp.add_handler(CommandHandler(f"weekly_{_en}", reports_gitlab.command_weekly_rating)) 
 
-    # admin commands
-    dp.add_handler(CommandHandler("ask_info", admin_handlers.admin))
-    #dp.add_handler(CommandHandler("stats", admin_handlers.stats))
-    dp.add_handler(CommandHandler('export_users', admin_handlers.export_users))
+    # # admin commands
+    # dp.add_handler(CommandHandler("ask_info", admin_handlers.admin))
+    # #dp.add_handler(CommandHandler("stats", admin_handlers.stats))
+    # dp.add_handler(CommandHandler('export_users', admin_handlers.export_users))
     # location
     dp.add_handler(CommandHandler("ask_location", location_handlers.ask_for_location))
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
@@ -135,7 +135,8 @@ def setup_dispatcher(dp):
     # handling errors
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
     
-    dp.add_handler(MessageHandler(Filters.all, admin.universal_message_handler))
+    # определение функции для работы админом в группах
+    dp.add_handler(MessageHandler(Filters.all,  admin_plugin.universal_message_handler))
     
     # EXAMPLES FOR HANDLERS
     # dp.add_handler(MessageHandler(Filters.text, <function_handler>))
