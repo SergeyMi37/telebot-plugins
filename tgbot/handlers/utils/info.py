@@ -26,10 +26,12 @@ def extract_user_data_from_update(update: Update) -> Dict:
    """ python-telegram-bot's Update instance --> User info """
    upms = get_tele_command(update)
    try:
-      #user = update.effective_user.to_dict()
-      user = upms.from_user.to_dict()
+      user = update.effective_user.to_dict()
    except Exception as e:
-      print(f'-----Произошла ошибка----effective_user--{e}',update)
+      try:
+         user = upms.from_user.to_dict()
+      except Exception as e:
+         print(f'-----Произошла ошибка----effective_user--{e}',update)
    if upms is None:
       return None
    return dict(

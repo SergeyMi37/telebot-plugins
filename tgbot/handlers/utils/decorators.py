@@ -7,6 +7,7 @@ from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
 from dtb.settings import logger
 from tgbot import plugins
+import pprint as pp
 
 def check_groupe_user(func: Callable):
     """
@@ -59,8 +60,10 @@ def superadmin_only(func: Callable):
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
         user = User.get_user(update, context)
-
+        #print('-user-',user,user.is_superadmin)
+        #pp.pprint(update.to_dict())
         if not user.is_superadmin:
+            #print('--user-',user,user.is_superadmin)
             return
 
         return func(update, context, *args, **kwargs)

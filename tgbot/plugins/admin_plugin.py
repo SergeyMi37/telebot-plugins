@@ -29,7 +29,8 @@ from tgbot.handlers.utils.decorators import check_groupe_user, superadmin_only, 
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
 
 ADMIN_INPUT = range(1)
-_admin_help = '/ask_location: Отправить локацию \n/broadcast Текст рассылаемого сообщения \n👥/admin_export_users: Экспорт users.csv\n/admin_info - информация о состоянии бота'
+_admin_help = '🌏/ask_location: Отправить локацию \n👇/broadcast Текст рассылаемого сообщения ' \
+'\n👥/admin_export_users: Экспорт users.csv\n⬇️/admin_info - информация о состоянии бота'
 
 try:
     option = get_plugins('').get('ADMIN').get("option")
@@ -59,22 +60,6 @@ def contains_forbidden_words(text: str, forbidden_words: set) -> bool:
         if word in text_lower:
             return True
     return False
-
-    # # Разбиваем текст на слова
-    # words = text_lower.split()
-    
-    # # Очищаем слова от пунктуации
-    # cleaned_words = [
-    #     word.strip(ALL_PUNCTUATION)
-    #     for word in words
-    # ]
-    
-    # # Проверяем каждое слово
-    # for word in cleaned_words:
-    #     if word in forbidden_words:
-    #         return True
-    # return False
-
 
 def universal_message_handler(update, context, func=""):
     upms = get_tele_command(update)
@@ -131,8 +116,10 @@ def admin_info(update: Update, context: CallbackContext) -> None:
         active_24 = f"{a24.count()} {list(a24.values_list('first_name', flat=True))}"
         )
     #print(list(a24.values_list('user_id', flat=True)))
-    text += f' {GetExtInfo.GetOS()}\n🚧 DEBUG: {DEBUG}\n😎 chat_id: {u.user_id}\n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} '
-    text += f'\n\n🔸/help: Перечень команд'
+    text += f' {GetExtInfo.GetOS()}\n🚧 DEBUG: {DEBUG}\n😎 chat_id: {u.user_id} \
+        \n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} \
+        {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} \
+        \n\n🔸/help: Перечень команд'
     context.bot.send_message(
         chat_id=u.user_id, # вернуть личный чат сурепадмина
         text=text,
@@ -173,12 +160,13 @@ class AdminPlugin(BasePlugin):
         #dp.add_handler(CommandHandler("stats", admin_handlers.stats))
         dp.add_handler(CommandHandler('admin_export_users', admin_export_users))
         dp.add_handler(MessageHandler(Filters.regex(rf'^/admin(/s)?.*'), commands_admin))
-        dp.add_handler(CallbackQueryHandler(button_admin, pattern="^button_admin"))
+        #dp.add_handler(CallbackQueryHandler(button, pattern="^button_admin"))
+        dp.add_handler(CallbackQueryHandler(button, pattern="^button_admin"))
 
 
 @check_groupe_user
 @superadmin_only
-def button_admin(update: Update, context: CallbackContext) -> None:
+def button(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)

@@ -49,7 +49,7 @@ def setup_dispatcher(dp):
     for plugin_name, plugin_instance in plugs.items():
         NAME = str(plugin_name).split("_")[0].upper()
         if get_plugins('').get(NAME):
-            #    print('---',f"Loading plugin: {NAME}")
+            #print('---',f"Loading plugin: {NAME}")
             plugin_instance.setup_handlers(dp)
    
     # Если есть доступ к плагину IRIS
