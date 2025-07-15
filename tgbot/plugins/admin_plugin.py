@@ -31,7 +31,7 @@ from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
 ADMIN_INPUT = range(1)
 _admin_help = '🌏/ask_location: Отправить локацию \n👇/broadcast Текст рассылаемого сообщения ' \
 '\n👥/admin_export_users: Экспорт users.csv\n⬇️/admin_info - информация о состоянии бота'
-
+            
 try:
     option = get_plugins('').get('ADMIN').get("option")
 except Exception as e:
@@ -71,8 +71,8 @@ def universal_message_handler(update, context, func=""):
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} функция {funcname} ")
         logger.info(log)
         if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
-            if delete_message(update, context,upms.chat.id, message.message_id)==200:
-                pass
+            delete_message(update, context,upms.chat.id, message.message_id)
+            delete_user(update, context,upms.chat.id, upms.from_user.id)
             context.bot.send_message(
                 chat_id=upms.chat.id,
                 text=f"⚠️ Обнаружены запрещенные слова! Пожалуйста, соблюдайте правила чата.",
@@ -103,12 +103,23 @@ def universal_message_handler(update, context, func=""):
         pp.pprint(update.to_dict())  # , depth=2)
     #pp.pprint(upms.to_dict())
 
+# Забанить пользователя
+def delete_user(update: Update, context: CallbackContext,chat_id, user_id):
+    try:
+        # Удаление пользователя
+        #TelegramDeprecationWarning: `bot.kick_chat_member` is deprecated. Use `bot.ban_chat_member` instead.
+        #context.bot.kick_chat_member(chat_id=chat_id, user_id=user_id)
+        context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+        return 200
+    except Exception as e:
+        print(e)
+        #update.message.reply_text(f"Произошла ошибка при удалении сообщения {message_id}.")
+        return f'{e}'
 
 # Функция обработки команды delete_message
 def delete_message(update: Update, context: CallbackContext,chat_id, message_id):
     try:
         # Удаление указанного сообщения
-        context.bot.kick_chat_member
         context.bot.deleteMessage(chat_id=chat_id, message_id=message_id)
         #update.message.reply_text(f"Сообщение {message_id} успешно удалено!")
         return 200
@@ -211,6 +222,7 @@ def commands_admin(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     telecmd = upms.text
     _output = _admin_help
+
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,

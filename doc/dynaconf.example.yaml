@@ -17,6 +17,8 @@ default:
   TIMESTAMP_FORMAT: "%H:%M %d.%m.%Y"
   TIME_ZONE: "Europe/Moscow"
   ROLES_DFLT: "NEWS,WEATHER,WIKI,CODE,INET,TASKS"
+  SUPPORT_GROUP: "https://t.me/+__Qezxf7-E0xY2I6"
+  DEVELOP_GROUP: "https://t.me/+LXQkVtnHqSM1ZmZi"
   PLUGINS:
     - IRIS:
         # Параметры доступа к серверам по умолчанию -------------------------------

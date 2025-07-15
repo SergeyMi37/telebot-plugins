@@ -45,8 +45,11 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
     plugins = get_plugins(u.roles)
     text += CRLF+'/start: Кнопки ссылок на модули\n'
-    url = "https://t.me/+__Qezxf7-E0xY2I6"
-    text += CRLF+f'<a href=\"{url}\">Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'
+    url = settings.get("SUPPORT_GROUP", "https://t.me/+__Qezxf7-E0xY2I6")
+    text += CRLF+f'<a href=\"{url}\">🎯Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'
+    if u.is_admin:
+        url = settings.get("DEVELOP_GROUP", "https://t.me/+LXQkVtnHqSM1ZmZi")
+        text += CRLF+f'<a href=\"{url}\">🎯Группа разработки. Обсуждаем разработку бота</a>'
     #if plugins:
     #    text += CRLF+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
