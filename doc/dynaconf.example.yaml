@@ -19,6 +19,7 @@ default:
   ROLES_DFLT: "NEWS,WEATHER,WIKI,CODE,INET,TASKS"
   SUPPORT_GROUP: "https://t.me/+__Qezxf7-E0xY2I6"
   DEVELOP_GROUP: "https://t.me/+LXQkVtnHqSM1ZmZi"
+  workers: 5 # Количество потоков в продуктовом режиме DEBUG=0
   PLUGINS:
     - IRIS:
         # Параметры доступа к серверам по умолчанию -------------------------------

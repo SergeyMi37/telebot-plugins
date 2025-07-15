@@ -6,8 +6,7 @@ from telegram.ext import (
     CommandHandler, MessageHandler,
     CallbackQueryHandler,
 )
-from dtb.settings import get_plugins
-from dtb.settings import DEBUG
+from dtb.settings import get_plugins, settings, DEBUG
 from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCAST
 from tgbot.handlers.broadcast_message.static_text import broadcast_command,reports_command
 #from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
@@ -151,5 +150,5 @@ def setup_dispatcher(dp):
 
     return dp
 
-n_workers = 0 if DEBUG else 4
+n_workers = 1 if DEBUG else int(settings.get("workers", 4))
 dispatcher = setup_dispatcher(Dispatcher(bot, update_queue=None, workers=n_workers, use_context=True))

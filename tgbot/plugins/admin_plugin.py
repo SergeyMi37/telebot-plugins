@@ -24,7 +24,7 @@ import pprint as pp
 import string
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
-from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG
+from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG, settings
 from tgbot.handlers.utils.decorators import check_groupe_user, superadmin_only, send_typing_action
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
 
@@ -152,7 +152,8 @@ def admin_info(update: Update, context: CallbackContext) -> None:
         active_24 = f"{a24.count()} {list(a24.values_list('first_name', flat=True))}"
         )
     #print(list(a24.values_list('user_id', flat=True)))
-    text += f' {GetExtInfo.GetOS()}\n🚧 DEBUG: {DEBUG}\n😎 chat_id: {u.user_id} \
+    works = 1 if DEBUG else settings.get("workers", 4)
+    text += f' {GetExtInfo.GetOS()}\n🚧 DEBUG: {DEBUG}\n Потоков: {works}\n😎 chat_id: {u.user_id} \
         \n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} \
         {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} \
         \n\n🔸/help: Перечень команд'
