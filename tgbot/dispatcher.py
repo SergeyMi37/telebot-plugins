@@ -14,7 +14,6 @@ from tgbot.handlers.broadcast_message.static_text import broadcast_command,repor
 
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils import files, error
-from tgbot.handlers.admin import handlers as admin_handlers
 from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers

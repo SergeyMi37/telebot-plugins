@@ -72,13 +72,15 @@ def universal_message_handler(update, context, func=""):
         logger.info(log)
         if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
             if delete_message(update, context,upms.chat.id, message.message_id)==200:
-                context.bot.send_message(
-                    chat_id=upms.chat.id,
-                    text=f"⚠️ Обнаружены запрещенные слова! Пожалуйста, соблюдайте правила чата.",
-                    disable_web_page_preview=True,
-                    parse_mode=ParseMode.HTML
-                    )
-                return 
+                pass
+            context.bot.send_message(
+                chat_id=upms.chat.id,
+                text=f"⚠️ Обнаружены запрещенные слова! Пожалуйста, соблюдайте правила чата.",
+                disable_web_page_preview=True,
+                parse_mode=ParseMode.HTML
+                )
+            # kick_user(update, context, upms.chat.id, upms.from_user.id)
+            return 
         if '/help' in message.text:
             return #func(update, context) # Ошибка и при бродкаст
     elif message.document:
@@ -87,9 +89,18 @@ def universal_message_handler(update, context, func=""):
     elif message.audio or message.voice:
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} прислал голосовое сообщение")
         logger.info(log)
+    elif message.new_chat_members:
+        log = (f"Добавлен член: {message.new_chat_members}")
+        logger.info(log)
+        delete_message(update, context,upms.chat.id, message.message_id)
+    elif message.left_chat_member:
+        log = (f"Член оставил группу: {message.left_chat_member}")
+        logger.info(log)
+        delete_message(update, context,upms.chat.id, message.message_id)
     else:
         log = (f"!Поступило другое событие: {message}")
         logger.info(log)
+        pp.pprint(update.to_dict())  # , depth=2)
     #pp.pprint(upms.to_dict())
 
 
@@ -97,8 +108,22 @@ def universal_message_handler(update, context, func=""):
 def delete_message(update: Update, context: CallbackContext,chat_id, message_id):
     try:
         # Удаление указанного сообщения
+        context.bot.kick_chat_member
         context.bot.deleteMessage(chat_id=chat_id, message_id=message_id)
         #update.message.reply_text(f"Сообщение {message_id} успешно удалено!")
+        return 200
+    except Exception as e:
+        print(e)
+        #update.message.reply_text(f"Произошла ошибка при удалении сообщения {message_id}.")
+        return f'{e}'
+
+# Функция Блокирования пользователя
+def kick_user(update: Update, context: CallbackContext,chat_id, user_id):
+    try:
+        # Удаление указанного сообщения
+        context.bot.kick_chat_member(chat_id=chat_id,user_id=user_id)
+        # Метод unban_chat_member автоматически делает временный бан (удаление без полного запрета)
+        #context.bot.unban_chat_member(chat_id=chat_id, user_id=user_id)
         return 200
     except Exception as e:
         print(e)

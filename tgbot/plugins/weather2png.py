@@ -101,11 +101,11 @@ def create_smooth_weather_chart(day_temp, night_temp, precipitation, days, spo='
         plt.plot(x_new, smooth_night_temp, color="black", linewidth=4, label="Ночная температура")
 
     # Столбчатые осадки остаются прямыми, т.к. не имеют смысла превращать их в кривые
-    plt.bar(np.arange(len(precipitation)), precipitation, width=0.4, align='center', alpha=0.7, color="blue", label="Осадки (мм)")
+    plt.bar(np.arange(len(precipitation)), precipitation, width=0.4, align='center', alpha=0.7, color="blue", label="Осадки (мм*8)")
 
     # Оформление оси X и Y
     plt.xlabel(footer)
-    plt.ylabel("Температура / Количество осадков (mm)")
+    plt.ylabel("Температура / Количество осадков (mm*8)")
     plt.ylim(ymin, ymax)  # Устанавливаем диапазон температур -30, 40)
     plt.xticks(range(len(days)), days, rotation=45)
     plt.legend()
