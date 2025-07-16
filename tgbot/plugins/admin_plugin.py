@@ -97,6 +97,11 @@ def universal_message_handler(update, context, func=""):
         log = (f"Член оставил группу: {message.left_chat_member}")
         logger.info(log)
         delete_message(update, context,upms.chat.id, message.message_id)
+    elif message.new_chat_photo:
+        log = (f"Изменено фото группы:  Пользователь {upms.from_user.id} {message.new_chat_photo}")
+        logger.info(log)
+        delete_message(update, context,upms.chat.id, message.message_id)
+    
     else:
         log = (f"!Поступило другое событие: {message}")
         logger.info(log)

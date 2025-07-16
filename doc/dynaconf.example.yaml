@@ -40,10 +40,10 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
   PLUGINS:
     - ADMIN:
         - blocked = 0
-        - desc = Модуль администрирования публичных групп
+        - desc = Модуль администрирования групп
     - WIKI:
         - blocked = 0
-        - desc = Получить статью из википедии /wiki_ по слову
+        - desc = Получить статью из википедии /wiki_
     - IRIS:
         - blocked = 1
         - desc = Сервис мониторинга серверов IRIS там, где установлен проект AppTools 
@@ -59,7 +59,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - CHAT:
         - blocked = 1
         - only_private_chat = 1 # 1 - Только в приветных чатах, или список ids чатов, где будет работать
-        - desc = Сервис собеседние на основе нейронки GigaChain. Введи текст вопроса без команд
+        - desc = Сервис - собеседник на основе нейронки GigaChat. Введи текст вопроса после команды /chat_giga_
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0

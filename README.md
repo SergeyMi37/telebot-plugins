@@ -17,6 +17,11 @@ Currently supported plug-ins:
   and the reverse geocoding service https://nominatim.openstreetmap.org/reverse
 - Service for obtaining an article from Wikipedia. For example /wiki_Snow or <code>/wiki_Снег</code> or <code>wiki_Снеговик</code>
 - RSS news aggregation service. /news_list - list of feeds
+- Internet search service /inet /inet_ddg_ - so far only in the DuckDuckGo search engine
+- Administration module in groups
+    deleting system information about entering and exiting groups, changing photos
+    deleting a user from a group for writing prohibited words
+- Module for obtaining information from reference books of Russian regions codes and searching for a country by the beginning of the barcode
 
 <p align="left">
     <img src="https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/Screenshot_1.png">
