@@ -55,6 +55,7 @@ Create `dynaconf.yaml` file copy-paste this or just run `cp doc/dynaconf.example
 
 Run migrations to setup SQLite database:
 ``` bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 

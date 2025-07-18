@@ -39,7 +39,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
 
-    if u.roles==None or u.roles=="": # Роли по умолчанию присвоим новому пользователю
+    if u.roles==None or u.roles==",": # Роли по умолчанию присвоим новому пользователю
         u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI,CODE,INET,TASKS")
         u.save()
 
