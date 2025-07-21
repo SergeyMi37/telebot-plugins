@@ -42,8 +42,9 @@ pip install -r requirements.txt
 В файле .env нужно определить переменную ENV_FOR_DYNACONF=dev значение которой ссылается на раздел параметров в файле dynaconf.yaml
 Иногда нужно выполнить `export ENV_FOR_DYNACONF=dev`
 
-Запустите миграции для настройки базы данных SQLite:
+Запустите миграции для настройки базы данных:
 ``` bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
@@ -76,13 +77,21 @@ python manage.py dumpdata users.User --indent=2 --output=downloads/users_data.js
 ``` bash
 python manage.py dumpdata --exclude auth.permission --exclude auth.user --exclude contenttypes --exclude auth.group --exclude admin.logentry --exclude sessions.session --indent 2 > db-init-telebot.json
 ```
-
-
-python manage.py export_group_roles downloads/output.json
-
 Загрузить данные из файла
 ``` bash
 python manage.py loaddata location_data.json
+```
+
+Выгрузить данные объектов в файл
+``` bash
+python manage.py export_group_roles doс/output.json
+python manage.py import_group_roles --file doc/group_roles.json
+```
+
+Загрузить данные объектов из файла
+``` bash
+python manage.py import_options --file doc/options.json
+python manage.py import_group_roles --file doc/group_roles.json
 ```
 
 Запустить проверку проекта

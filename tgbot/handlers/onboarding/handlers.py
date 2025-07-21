@@ -39,11 +39,9 @@ def command_help(update: Update, context: CallbackContext) -> None:
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
 
-    if u.roles==None or u.roles==",": # Роли по умолчанию присвоим новому пользователю
-        u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI,CODE,INET,TASKS")
-        u.save()
-
-    plugins = get_plugins(u.roles)
+    # Все роли пользователя
+    users_roles = u.get_all_roles()
+    plugins = get_plugins(users_roles)
     text += CRLF+'/start: Кнопки ссылок на модули\n'
     url = settings.get("SUPPORT_GROUP", "https://t.me/+__Qezxf7-E0xY2I6")
     text += CRLF+f'<a href=\"{url}\">🎯Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'
@@ -68,7 +66,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         
         if reports_gitlab.PROJ_RU:
             for _ru in reports_gitlab.PROJ_RU.split(','):
-                if u.roles is not None and (_ru in u.roles or "All" in u.roles):
+                if users_roles is not None and (_ru in users_roles or "All" in users_roles):
                     _en = reports_gitlab.PROJ_EN.split(',')[_i]
                     text += CRLF+f'/yesterday_{_en}: Отчет за вчера по метке "{_ru}"'
                     text += CRLF+f'/daily_{_en}: Отчет за сегодня по метке "{_ru}"'
@@ -87,7 +85,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
     for pl,val in plugins.items():
         if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
-            if u.roles is not None and (pl in u.roles.split(',') or "All" in u.roles.split(',')):
+            if users_roles is not None and (pl in users_roles or "All" in users_roles):
                 text += CRLF + f'👉---модуль-{pl}---------'
                 text += CRLF + f"/{pl.lower()} {val.get('desc')}{CRLF}"
 
@@ -131,7 +129,7 @@ def command_start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(text=text, reply_markup=markup)
 
     '''
-    update.message.reply_text(text=text, reply_markup=make_keyboard_for_start_command(u.roles))
+    update.message.reply_text(text=text, reply_markup=make_keyboard_for_start_command(u.get_all_roles()))
    
 # depricate
 @check_groupe_user
@@ -142,7 +140,7 @@ def command_plugins(update: Update, context: CallbackContext) -> None:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-    Roles=u.roles
+    Roles=u.get_all_roles()
     plugins = get_plugins('')
     text += f"{CRLF}Вам доступны следующие плагины:"
     for pl,val in plugins.items():

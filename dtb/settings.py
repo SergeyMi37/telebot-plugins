@@ -85,7 +85,7 @@ def get_plugins(Roles = ''):
         for name_plug,val in pldict.items():
             #print('-1-',name_plug,Roles)
             if Roles:
-               if not ("All" in Roles.split(',') or (name_plug in Roles.split(','))):
+               if not ("All" in Roles or (name_plug in Roles)):
                    continue
             #print('-2-',name_plug)
             item = pldict.get(name_plug)

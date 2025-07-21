@@ -44,8 +44,9 @@ obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
 if obj:
     FORBIDDEN_WORDS = obj.value.split(",")
 else:
-    print("Объект не найден.")
-#print(FORBIDDEN_WORDS) # При изменении словаря, нужно перезагружать бота
+    print("Объект FORBIDDEN_WORDS не найден.")
+
+print("Запрещенные слова",FORBIDDEN_WORDS) # При изменении словаря, нужно перезагружать бота
 
 # Создаем строку с дополнительными символами пунктуации
 EXTRA_PUNCTUATION = '«»„“‟‘’‚‛”’–—…•‹›'

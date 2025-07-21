@@ -9,7 +9,7 @@ from telegram.ext import CallbackContext
 
 from tgbot.handlers.utils.info import extract_user_data_from_update
 from utils.models import CreateUpdateTracker, nb, CreateTracker, GetOrNoneManager
-
+from dtb.settings import get_plugins, settings
 
 class AdminUserManager(Manager):
     def get_queryset(self):
@@ -65,7 +65,9 @@ class User(CreateUpdateTracker):
                 if str(payload).strip() != str(data["user_id"]).strip():  # you can't invite yourself
                     u.deep_link = payload
                     u.save()
-
+        if u.roles==None or u.roles==",": # Роли по умолчанию присвоим новому пользователю
+            u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI,CODE,INET,TASKS")
+            u.save()
         return u, created
 
     @classmethod
