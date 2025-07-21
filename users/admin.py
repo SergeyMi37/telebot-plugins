@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from dtb.settings import DEBUG
 
-from users.models import Location, GroupRoles, User, Options
+from users.models import Location, GroupRoles, User, Options, Updates
 from users.forms import BroadcastForm
 
 from users.tasks import broadcast_message
@@ -58,3 +58,8 @@ class GroupRolesAdmin(admin.ModelAdmin):
 @admin.register(Options)
 class OptionsAdmin(admin.ModelAdmin):
      list_display = ['name','value', 'description']
+
+
+@admin.register(Updates)
+class UpdatesAdmin(admin.ModelAdmin):
+     list_display = ['update_id','from_id', 'chat_id']

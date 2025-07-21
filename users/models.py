@@ -116,8 +116,8 @@ class Updates(CreateTracker):
     update_id = models.PositiveBigIntegerField(primary_key=True) 
     message = models.TextField(default='')
     from_id = models.BigIntegerField(**nb)
-    chat_id = models.BigIntegerField(default=0)
-    type = models.CharField(max_length=256,default='')
+    chat_id = models.BigIntegerField(default=0,null=True, blank=True)
+    json = models.TextField(default='',null=True)
     objects = GetOrNoneManager()
     def __str__(self):
         return f" {self.update_id}, {self.from_id}"
