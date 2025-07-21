@@ -10,7 +10,7 @@ def make_keyboard_for_start_command(roles="") -> InlineKeyboardMarkup:
     keyboard = []     # Создание клавиатуры
     row = []    # Текущий ряд кнопок
     for pl,val in plugins.items():
-        if roles is not None and (pl in roles.split(',') or "All" in roles.split(',')):
+        if roles is not None and (pl in roles or "All" in roles):
             row.append(InlineKeyboardButton(f"{pl.lower()} - {val.get('desc')}",
                                              callback_data=f'button_{pl.lower()}'))
             #print('---',f'button_{pl.lower()}')

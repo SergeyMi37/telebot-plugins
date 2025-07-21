@@ -144,7 +144,7 @@ def command_plugins(update: Update, context: CallbackContext) -> None:
     plugins = get_plugins('')
     text += f"{CRLF}Вам доступны следующие плагины:"
     for pl,val in plugins.items():
-        if pl in Roles.split(',') or "All" in Roles.split(','):
+        if pl in Roles or "All" in Roles:
             text += f"{CRLF}/{pl.lower()} - {val.get('desc')}{CRLF}"
     update.message.reply_text(text=text)
 
