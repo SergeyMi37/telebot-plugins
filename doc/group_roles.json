@@ -1,0 +1,22 @@
+[
+    {
+        "name": "experts",
+        "description": "Группа для тестирования новых модулей",
+        "roles": "TASKS"
+    },
+    {
+        "name": "family",
+        "description": "Семейная группа. Делюсь своими токенами для Гига Чата",
+        "roles": "GIGA"
+    },
+    {
+        "name": "dflt2",
+        "description": "Группа по умолчанию. Доступны все базовые модули",
+        "roles": "NEWS,WIKI,CODE,INET"
+    },
+    {
+        "name": "admins",
+        "description": "Группа администраторов",
+        "roles": "All"
+    }
+]

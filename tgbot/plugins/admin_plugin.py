@@ -27,18 +27,25 @@ from tgbot.plugins.base_plugin import BasePlugin
 from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG, settings
 from tgbot.handlers.utils.decorators import check_groupe_user, superadmin_only, send_typing_action
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
+from users.models import Options
 
 ADMIN_INPUT = range(1)
 _admin_help = '🌏/ask_location: Отправить локацию \n👇/broadcast Текст рассылаемого сообщения ' \
 '\n👥/admin_export_users: Экспорт users.csv\n⬇️/admin_info - информация о состоянии бота'
             
-try:
-    option = get_plugins('').get('ADMIN').get("option")
-except Exception as e:
-    option = '' # ??? нужны ли 
+# try:
+#     option = get_plugins('').get('ADMIN').get("option")
+# except Exception as e:
+#     option = '' # ??? нужны ли 
 
 # Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
-FORBIDDEN_WORDS = {"укра", "хох", "сво", "русня","хуй","пизд","еба"}
+FORBIDDEN_WORDS = ["укра", "хох", "сво", "русня"]
+obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
+if obj:
+    FORBIDDEN_WORDS = obj.value.split(",")
+else:
+    print("Объект не найден.")
+#print(FORBIDDEN_WORDS) # При изменении словаря, нужно перезагружать бота
 
 # Создаем строку с дополнительными символами пунктуации
 EXTRA_PUNCTUATION = '«»„“‟‘’‚‛”’–—…•‹›'

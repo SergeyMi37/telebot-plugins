@@ -81,6 +81,20 @@ class User(CreateUpdateTracker):
             return cls.objects.filter(user_id=int(username)).first()
         return cls.objects.filter(username__iexact=username).first()
 
+    def get_all_roles(self):
+        """
+        Метод возвращает все уникальные роли пользователя, включая собственные и унаследованные от групп.
+        :return: Список строк с уникальными ролями
+        """
+        own_roles = set(self.roles.split(',')) if self.roles else set()
+        group_roles = set()
+        
+        for group in self.groups.all():
+            group_roles.update(group.roles.split(','))
+            
+        all_roles = list((own_roles | group_roles) - {''})
+        return sorted(all_roles)
+
     @property
     def invited_users(self) -> QuerySet[User]:
         return User.objects.filter(deep_link=str(self.user_id), created_at__gt=self.created_at)
@@ -111,13 +125,46 @@ class Options(CreateTracker):
     objects = GetOrNoneManager()
     def __str__(self):
         return f" {self.name}, {self.category}"
+    
+    @classmethod
+    def get_by_name_and_category(cls, name, category=None):
+        """Получает объект по имени и дополнительной фильтрации по категории."""
+        queryset = cls.objects.filter(name=name)
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset.first()
 
 class Updates(CreateTracker):
-    update_id = models.PositiveBigIntegerField(primary_key=True) 
-    message = models.TextField(default='')
+    update_id = models.PositiveBigIntegerField(primary_key=True)
+    message = models.TextField(default='',blank=True, null=True)
     from_id = models.BigIntegerField(**nb)
     chat_id = models.BigIntegerField(default=0,null=True, blank=True)
     json = models.TextField(default='',null=True)
     objects = GetOrNoneManager()
     def __str__(self):
         return f" {self.update_id}, {self.from_id}"
+    
+    @classmethod
+    def save_from_update(cls, update: Update) -> Updates:
+        """Метод сохраняет обновление в базу данных."""
+        try:
+            # Пытаемся получить существующее обновление по update_id
+            existing_update = cls.objects.get(update_id=update.update_id)
+            return existing_update  # Вернем существующий экземпляр
+        except cls.DoesNotExist:
+            pass  # Запись отсутствует, продолжаем создание новой
+
+        # Устанавливаем text сообщения, если оно доступно
+        message_text = getattr(update.message, 'text', '')
+        if not message_text:
+            message_text = '(Нет текста)'  # Или любое другое подходящее значение по умолчанию
+
+        new_update = cls(
+            update_id=update.update_id,
+            message=message_text,
+            from_id=getattr(getattr(update.message, 'from_user', None), 'id', None),
+            chat_id=getattr(update.message, 'chat_id', None),
+            json=str(update.to_dict())
+        )
+        new_update.save()  # Создаем новый экземпляр в БД
+        return new_update

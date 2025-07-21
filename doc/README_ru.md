@@ -77,6 +77,9 @@ python manage.py dumpdata users.User --indent=2 --output=downloads/users_data.js
 python manage.py dumpdata --exclude auth.permission --exclude auth.user --exclude contenttypes --exclude auth.group --exclude admin.logentry --exclude sessions.session --indent 2 > db-init-telebot.json
 ```
 
+
+python manage.py export_group_roles downloads/output.json
+
 Загрузить данные из файла
 ``` bash
 python manage.py loaddata location_data.json

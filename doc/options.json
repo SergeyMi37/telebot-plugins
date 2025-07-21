@@ -1,0 +1,11 @@
+[
+    {
+        "name": "FORBIDDEN_WORDS",
+        "description": "Запрещенные слова",
+        "category": "sys",
+        "type": "str",
+        "value": "укра,хох,сво,русня,хуй,пизд,еба,нахуй,бля",
+        "roles": ",",
+        "enabled": true
+    }
+]
