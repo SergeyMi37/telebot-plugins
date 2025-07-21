@@ -74,7 +74,7 @@ logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF",""))
 logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
 logger.info('====== DEBUG: '+str(DEBUG))
 
-def get_plugins(Roles = ''):
+def get_plugins(Roles = None):
     retpl = {}
     if Roles is None:
         return retpl
