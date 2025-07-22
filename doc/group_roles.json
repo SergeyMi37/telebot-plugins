@@ -1,22 +1,22 @@
 [
     {
-        "name": "experts",
-        "description": "Группа для тестирования новых модулей",
-        "roles": "TASKS"
-    },
-    {
         "name": "family",
-        "description": "Семейная группа. Делюсь своими токенами для Гига Чата",
+        "description": "РЎРµРјРµР№РЅР°СЏ РіСЂСѓРїРїР°. Р”РµР»СЋСЃСЊ СЃРІРѕРёРјРё С‚РѕРєРµРЅР°РјРё РґР»СЏ Р“РёРіР° Р§Р°С‚Р°",
         "roles": "GIGA"
     },
     {
-        "name": "dflt2",
-        "description": "Группа по умолчанию. Доступны все базовые модули",
-        "roles": "NEWS,WIKI,CODE,INET"
+        "name": "experts",
+        "description": "Р“СЂСѓРїРїР° РґР»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РЅРѕРІС‹С… РјРѕРґСѓР»РµР№",
+        "roles": "TASKS"
+    },
+    {
+        "name": "dflt",
+        "description": "",
+        "roles": "NEWS,WEATHER,WIKI,CODE,INET,TASKS"
     },
     {
         "name": "admins",
-        "description": "Группа администраторов",
+        "description": "Р“СЂСѓРїРїР° Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРІ",
         "roles": "All"
     }
 ]

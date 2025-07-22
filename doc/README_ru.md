@@ -82,16 +82,16 @@ python manage.py dumpdata --exclude auth.permission --exclude auth.user --exclud
 python manage.py loaddata location_data.json
 ```
 
-Выгрузить данные объектов в файл
+Выгрузить и загрузить данные объектов group_roles в файл
 ``` bash
-python manage.py export_group_roles doс/output.json
-python manage.py import_group_roles --file doc/group_roles.json
+python manage.py export_group_roles --file doc/group_roles.json
+python manage.py import_group_roles --file doc/group_roles.json --dry-run
 ```
 
-Загрузить данные объектов из файла
+Выгрузить и загрузить данные объектов options в файл
 ``` bash
-python manage.py import_options --file doc/options.json
-python manage.py import_group_roles --file doc/group_roles.json
+python manage.py export_options --file doc/options.json
+python manage.py import_options --file doc/options.json --dry-run
 ```
 
 Запустить проверку проекта
@@ -149,6 +149,7 @@ docker exec -it dtb_django bash
 ...123:/code# python manage.py export_celery_tasks --output downloads/my_tasks.json
 ...123:/code# python manage.py import_celery_tasks downloads/my_tasks.json --dry-run
 ```
+
 
 
 ### Чтобы просмотреть логи контейнера:

@@ -19,7 +19,7 @@ class Command(BaseCommand):
         changes_count = 0
 
         try:
-            with open(input_file, 'r') as file:
+            with open(input_file, 'r',encoding='utf-8') as file:
                 data = json.load(file)
 
             for item in data:

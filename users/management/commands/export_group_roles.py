@@ -22,7 +22,7 @@ class Command(BaseCommand):
             }
             data.append(record)
         
-        with open(output_file, 'w') as file:
+        with open(output_file, 'w',encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
         
         self.stdout.write(self.style.SUCCESS(f'Данные успешно экспортированы в файл "{output_file}".'))
