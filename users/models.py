@@ -51,6 +51,8 @@ class User(CreateUpdateTracker):
 
     def __str__(self):
         return f'@{self.username}' if self.username is not None else f'{self.user_id}'
+        # _group = f'({self.groups})' if self.groups else ''
+        # return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')} {_group}"
 
     @classmethod
     def get_user_and_created(cls, update: Update, context: CallbackContext) -> Tuple[User, bool]:
@@ -113,8 +115,7 @@ class Location(CreateTracker):
     longitude = models.FloatField()
     objects = GetOrNoneManager()
     def __str__(self):
-        _group = f'({self.groups})' if self.groups else ''
-        return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')} {_group}"
+        return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
 
 class Options(CreateTracker):
     name = models.CharField(max_length=132,unique=True, **nb,help_text="Имя параметра")

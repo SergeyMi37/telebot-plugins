@@ -1,5 +1,5 @@
 # /management/commands/export_group_roles.py
-# python manage.py export_options --file downloads/optiions.json
+# python manage.py export_updates --file downloads/updates.json
 
 from django.core.management.base import BaseCommand
 from users.models import Updates
