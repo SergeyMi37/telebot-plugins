@@ -77,9 +77,10 @@ python manage.py dumpdata users.User --indent=2 --output=downloads/users_data.js
 ``` bash
 python manage.py dumpdata --exclude auth.permission --exclude auth.user --exclude contenttypes --exclude auth.group --exclude admin.logentry --exclude sessions.session --indent 2 > db-init-telebot.json
 ```
-Загрузить данные из файла
+Выгрузить и загрузить регулярные задачи
 ``` bash
-python manage.py loaddata location_data.json
+python manage.py dumpdata django_celery_beat -o doc/tasks.json
+python manage.py loaddata doc/tasks.json
 ```
 
 Выгрузить и загрузить данные объектов group_roles в файл

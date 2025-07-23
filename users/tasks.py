@@ -84,16 +84,16 @@ def broadcast_gitlb_daily_message(
         _user_ids = list(User.objects.filter(is_blocked_bot=False).values_list('user_id', flat=True)) # Получим всех реальных пользователей в джанге
         for id in _user_ids:
             u = User.get_user_by_username_or_user_id(id)
-            _roles = u.roles
+            _roles = u.get_all_roles()
             print('-ИД;',id,_roles)
             if _roles:
-                _rol = _roles.split(",")
-                print('--ИД;',id,roles,_rol,set(roles).intersection(_rol))
-                if set(roles).intersection(_rol): # Пересечение списков ролей у пользователя и Roles( должно быть не пустым 
+                #_rol = _roles.split(",")
+                #print('--ИД;',id,roles,_rol,set(roles).intersection(_rol))
+                if set(roles).intersection(_roles): # Пересечение списков ролей у пользователя и Roles( должно быть не пустым 
                     print('---OK;')
                     try:
                         # Сохраните в табеле ежедневный отчет ---  https://git.lab.nexus/ctz/lab/tabel/-/issues/?sort=updated_desc&state=opened&label_name%5B%5D={pro_ru}&first_page_size=20 --- И проверьте командой /daily_{pro_en}
-                        pro_ru = _rol[0]
+                        pro_ru = _roles[0]
                         pro_en = reports_gitlab.lab_replay(pro_ru,"ru_en")
                         msg = text.replace("{pro_ru}",pro_ru).replace("{pro_en}",pro_en)
                         print('---ИД;',msg)
@@ -143,10 +143,10 @@ def broadcast_custom_message(
         _user_ids = list(User.objects.filter(is_blocked_bot=False).values_list('user_id', flat=True))
         for id in _user_ids:
             u = User.get_user_by_username_or_user_id(id)
-            _roles = u.roles
+            _roles = u.get_all_roles
             if _roles:
-                _rol = _roles.split(",")
-                if set(roles).intersection(_rol): # Пересечение списков ролей должно быть не пустым
+                #_rol = _roles.split(",")
+                if set(roles).intersection(_roles): # Пересечение списков ролей должно быть не пустым
                     if id not in user_ids:
                         user_ids.append(id)
     print('--==-',user_ids)

@@ -21,7 +21,7 @@ def command_dispatcher(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
-    plugins = get_plugins(u.roles)
+    plugins = get_plugins(u.get_all_roles())
     text = CRLF+f' dispatcher '+telecmd
     context.bot.send_message(
         chat_id=upms.chat.id,
