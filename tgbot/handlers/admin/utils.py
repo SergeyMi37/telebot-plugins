@@ -89,9 +89,13 @@ class GetExtInfo:
         """Получить внешний IP"""
         # Получаем глобального адреса
         url = 'https://api.ipify.org/'
-        response = requests.get(url,verify=False) #,headers=headers,timeout=timeout,auth=auth)
+        try:
+            response = requests.get(url,verify=False) #,headers=headers,timeout=timeout,auth=auth)
+            text = response.text
+        except Exception as err:
+            text = f"🔥 ошибка {err}"
         #print(response.text)
-        return f"\n 🌐 IP адрес: {response.text}"
+        return f"\n 🌐 IP адрес: {text}"
 
     @staticmethod
     def GetOS():
