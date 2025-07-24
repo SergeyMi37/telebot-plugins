@@ -40,12 +40,12 @@ _admin_help = '🌏/ask_location: Отправить локацию \n👇/broad
 
 # Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
 FORBIDDEN_WORDS = ["укра", "хох", "сво", "русня"]
-obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
-if obj:
-    FORBIDDEN_WORDS = obj.value.split(",")
-else:
+try:
+    obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
+    if obj:
+        FORBIDDEN_WORDS = obj.value.split(",")
+except:
     print("Объект FORBIDDEN_WORDS не найден.")
-
 #print("Запрещенные слова",FORBIDDEN_WORDS) # При изменении словаря, нужно перезагружать бота
 
 # Создаем строку с дополнительными символами пунктуации
