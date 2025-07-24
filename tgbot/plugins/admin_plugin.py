@@ -30,7 +30,7 @@ from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
 from users.models import Options
 
 ADMIN_INPUT = range(1)
-_admin_help = '🌏/ask_location: Отправить локацию'
+_admin_help = '🌏/ask_location: Отправить локацию' \
 '\n👇/broadcast Текст рассылаемого сообщения ' \
 '\n👥/admin_export_users: Экспорт users.csv' \
 '\n⬇️/admin_info - информация о состоянии бота' \
