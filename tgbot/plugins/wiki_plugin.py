@@ -25,8 +25,10 @@ from tgbot.plugins.base_plugin import BasePlugin
 plugin_wiki = get_plugins('').get('WIKI')
 
 CODE_INPUT = range(1)
-_wiki_help = 'Поиск на https://ru.wikipedia.org Введите слово после ключевого wiki например:\n\r /wiki_Rainbow или ' \
-    '\n\r /wiki_ - диалог для введения слова \n\r🔸/help /wiki /wiki_'
+_wiki_help = 'Поиск на https://ru.wikipedia.org Введите слово после ключевого wiki ' \
+'например:\n\r /wiki_Rainbow или ' \
+'\n\r /wiki_ - диалог для введения слова ' \
+'\n\r🔸/help /wiki /wiki_'
 
 def fetch_page_data(page_title):
     # Создаем объект API с использованием русского раздела Wikipedia
