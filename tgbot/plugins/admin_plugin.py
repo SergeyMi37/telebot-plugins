@@ -38,16 +38,6 @@ _admin_help = '🌏/ask_location: Отправить локацию \n👇/broad
 # except Exception as e:
 #     option = '' # ??? нужны ли 
 
-# Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
-FORBIDDEN_WORDS = ["укра", "хох", "сво", "русня"]
-try:
-    obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
-    if obj:
-        FORBIDDEN_WORDS = obj.value.split(",")
-except:
-    print("Объект FORBIDDEN_WORDS не найден.")
-#print("Запрещенные слова",FORBIDDEN_WORDS) # При изменении словаря, нужно перезагружать бота
-
 # Создаем строку с дополнительными символами пунктуации
 EXTRA_PUNCTUATION = '«»„“‟‘’‚‛”’–—…•‹›'
 ALL_PUNCTUATION = string.punctuation + EXTRA_PUNCTUATION
@@ -74,9 +64,19 @@ def universal_message_handler(update, context, func=""):
     # todo сохранять в бд все обновления
     message = upms
     #pp.pprint(update.to_dict())
+    # Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
+    FORBIDDEN_WORDS = ["укра", "хох", "сво", "русня"]
+    try:
+        obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
+        if obj:
+            FORBIDDEN_WORDS = obj.value.split(",")
+    except:
+        print("Объект FORBIDDEN_WORDS не найден.")
+    #print("Запрещенные слова",FORBIDDEN_WORDS) # При изменении словаря, нужно перезагружать бота
     funcname = func.__name__ if func else ''
     if message.text:
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} функция {funcname} ")
+
         logger.info(log)
         if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
             delete_message(update, context,upms.chat.id, message.message_id)

@@ -23,8 +23,7 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 import requests
 import json
 from openpyxl import Workbook
-from dtb.settings import get_plugins
-from dtb.settings import logger
+from dtb.settings import get_plugins, settings, logger
 
 # Добавить проверку на роль 
 plugins_gitlab = get_plugins('').get('GITLAB')
@@ -352,7 +351,8 @@ def put_report(update: Update, label: str = "", fromDate: datetime="", toDate: d
     else:
       text = pref +CRLF+ txt 
 
-    media_dir = Path(__file__).resolve().parent.parent.parent.parent.joinpath('downloads')
+    down = 'downloads' if not settings.get("DOWNLOADS_PATH") else settings.get("DOWNLOADS_PATH")
+    media_dir = Path(__file__).resolve().parent.parent.parent.parent.joinpath(down)
     if not os.path.exists(media_dir):
       os.mkdir(media_dir)
     # Вывод в файл XLSX -----------------------------------------

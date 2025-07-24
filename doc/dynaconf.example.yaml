@@ -4,8 +4,8 @@ default:
     - 1111111111
   TELEGRAM_LOGS_CHAT_ID: 
   ERRORS_THREAD_ID:
-  UPDATES_PATH: "/updates"
-  DOWNLOADS_PATH: "/downloads"
+  UPDATES_DB: 1 # Сохранять в бд все обновления от всех пользователей
+  DOWNLOADS_PATH: "downloads"
   WEBHOOK_DOMAIN: "https://serpan.site/telebot"
   YAML_FILE_PATH: "strings"
   LOG_DIR: "logs"

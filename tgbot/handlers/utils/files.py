@@ -40,12 +40,14 @@ from telegram import Update
 from telegram.ext import CallbackContext
 import os
 from pathlib import Path
-
+from dtb.settings import settings
+ 
 from users.models import User
 
 ALL_TG_FILE_TYPES = ["document", "video_note", "voice", "sticker", "audio", "video", "animation", "photo"]
 
-media_dir = Path(__file__).resolve().parent.parent.parent.parent.joinpath('downloads')
+down = 'downloads' if not settings.get("DOWNLOADS_PATH") else settings.get("DOWNLOADS_PATH")
+media_dir = Path(__file__).resolve().parent.parent.parent.parent.joinpath(down)
 if not os.path.exists(media_dir):
     os.mkdir(media_dir)
 
