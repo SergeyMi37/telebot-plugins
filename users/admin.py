@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from dtb.settings import DEBUG
 
-from users.models import Location, GroupRoles, User, Options, Updates
+from users.models import Location, GroupRoles, User, Options, Updates, UsersOptions
 from users.forms import BroadcastForm
 
 from users.tasks import broadcast_message
@@ -46,6 +46,10 @@ class UserAdmin(admin.ModelAdmin):
             return render(
                 request, "admin/broadcast_message.html", {'form': form, 'title': u'Broadcast message'}
             )
+
+@admin.register(UsersOptions)
+class UsersOptionsAdmin(admin.ModelAdmin):
+     list_display = ['name','user_id','value', 'description']
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):

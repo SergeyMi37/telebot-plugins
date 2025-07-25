@@ -15,13 +15,6 @@ class AdminUserManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_admin=True)
     
-# class Roles(CreateTracker):
-#     name = models.CharField(("Название"), max_length=80, unique=True)
-#     description = models.TextField(("Описание"),default='', blank=True)
-#     objects = GetOrNoneManager()
-#     def __str__(self):
-#         return f"{self.name}, {self.description}"
-
 class GroupRoles(CreateTracker):
     name = models.CharField(("Название"), max_length=80, unique=True)
     description = models.TextField(("Описание"), default='',blank=True)
@@ -113,6 +106,18 @@ class Location(CreateTracker):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     latitude = models.FloatField()
     longitude = models.FloatField()
+    objects = GetOrNoneManager()
+    def __str__(self):
+        return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
+
+class UsersOptions(CreateTracker):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=132,unique=True, **nb,help_text="Имя параметра")
+    description = models.TextField(("Описание"), default='',blank=True,help_text="Описание параметра")
+    category = models.CharField(max_length=256,default='dflt',help_text="Категория параметра")
+    type = models.CharField(max_length=256, **nb,default='str',help_text="Тип параметра")
+    value = models.TextField(default='',help_text="Значение параметра")
+    enabled = models.BooleanField(default=True,help_text="Включено")
     objects = GetOrNoneManager()
     def __str__(self):
         return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
