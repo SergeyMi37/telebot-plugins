@@ -70,31 +70,37 @@ def universal_message_handler(update, context, func=""):
     # todo сохранять в бд все обновления
     message = upms
     #pp.pprint(update.to_dict())
-    # Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
-    FORBIDDEN_WORDS = ["укра", "хох", "сво", "русня"]
-    try:
-        obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
-        if obj:
-            FORBIDDEN_WORDS = obj.value.split(",")
-    except:
-        print("Объект FORBIDDEN_WORDS не найден.")
     #print("Запрещенные слова",FORBIDDEN_WORDS) # При изменении словаря, нужно перезагружать бота
     funcname = func.__name__ if func else ''
     if message.text:
         log = (f"Из {upms.chat.id} Пользователь {upms.from_user.id} отправил текст: {message.text} функция {funcname} ")
-
         logger.info(log)
-        if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
-            delete_message(update, context,upms.chat.id, message.message_id)
-            delete_user(update, context,upms.chat.id, upms.from_user.id)
-            context.bot.send_message(
-                chat_id=upms.chat.id,
-                text=f"⚠️ Обнаружены запрещенные слова! Пожалуйста, соблюдайте правила чата.",
-                disable_web_page_preview=True,
-                parse_mode=ParseMode.HTML
-                )
-            # kick_user(update, context, upms.chat.id, upms.from_user.id)
-            return 
+        # - check_forbidden_words = 0
+        # - delete_user_after_forbidden_words = 0
+        # Проверять ли на запрещенные слова ?
+        # Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
+        FORBIDDEN_WORDS = ["укра", "хох", "сво", "русня"]
+        try:
+            obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
+            if obj:
+                FORBIDDEN_WORDS = obj.value.split(",")
+        except:
+            print("Объект FORBIDDEN_WORDS не найден.")
+        #print('---',get_plugins('').get('ADMIN').get("check_forbidden_words"))
+        if get_plugins('').get('ADMIN').get("check_forbidden_words")=='1':
+            if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
+                delete_message(update, context,upms.chat.id, message.message_id)
+                # Удалять ли сразу ? А если ложное срабатывание ?
+                if get_plugins('').get('ADMIN').get("delete_user_after_forbidden_words")=='1':
+                    delete_user(update, context,upms.chat.id, upms.from_user.id)
+                context.bot.send_message(
+                    chat_id=upms.chat.id,
+                    text=f"⚠️ Обнаружены запрещенные слова! Пожалуйста, соблюдайте правила чата.",
+                    disable_web_page_preview=True,
+                    parse_mode=ParseMode.HTML
+                    )
+                # kick_user(update, context, upms.chat.id, upms.from_user.id)
+                return 
         if '/help' in message.text:
             return #func(update, context) # Ошибка и при бродкаст
     elif message.document:

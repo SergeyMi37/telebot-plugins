@@ -41,9 +41,15 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - ADMIN:
         - blocked = 0
         - desc = Модуль администрирования групп
+        - check_forbidden_words = 0
+        - delete_user_after_forbidden_words = 0
     - WIKI:
         - blocked = 0
         - desc = Получить статью из википедии /wiki_
+    - DATA:
+        - blocked = 1
+        - desc = Портал открытых данных mos.ru и других ресурсов
+        - key = <1345-6789>
     - IRIS:
         - blocked = 1
         - desc = Сервис мониторинга серверов IRIS там, где установлен проект AppTools 
