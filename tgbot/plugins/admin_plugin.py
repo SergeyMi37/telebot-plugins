@@ -38,6 +38,7 @@ _admin_help = '🌏/ask_location: Отправить локацию' \
 '\n/admin_export_options: Экспорт options.csv' \
 '\n/admin_export_usersoptions: Экспорт usersoptions.csv' \
 '\n\n🔸/help'
+plugins = get_plugins('').get('ADMIN')
 
 # try:
 #     option = get_plugins('').get('ADMIN').get("option")
@@ -87,11 +88,11 @@ def universal_message_handler(update, context, func=""):
         except:
             print("Объект FORBIDDEN_WORDS не найден.")
         #print('---',get_plugins('').get('ADMIN').get("check_forbidden_words"))
-        if get_plugins('').get('ADMIN').get("check_forbidden_words")=='1':
+        if plugins.get("check_forbidden_words")=='1':
             if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
                 delete_message(update, context,upms.chat.id, message.message_id)
                 # Удалять ли сразу ? А если ложное срабатывание ?
-                if get_plugins('').get('ADMIN').get("delete_user_after_forbidden_words")=='1':
+                if plugins.get("delete_user_after_forbidden_words")=='1':
                     delete_user(update, context,upms.chat.id, upms.from_user.id)
                 context.bot.send_message(
                     chat_id=upms.chat.id,

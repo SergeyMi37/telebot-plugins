@@ -39,7 +39,7 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("help", onboarding_handlers.command_help)) 
 
     # Загружаем плагины из dynaconf
-    plugins = get_plugins() 
+    #plugins = get_plugins() 
     # Загружаем все плагины
     plugs = discover_plugins()
     

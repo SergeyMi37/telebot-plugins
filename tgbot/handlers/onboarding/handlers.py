@@ -21,7 +21,7 @@ def command_dispatcher(update: Update, context: CallbackContext) -> None:
     u, created = User.get_user_and_created(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
-    plugins = get_plugins(u.get_all_roles())
+    #plugins = get_plugins(u.get_all_roles())
     text = CRLF+f' dispatcher '+telecmd
     context.bot.send_message(
         chat_id=upms.chat.id,
@@ -140,8 +140,8 @@ def command_plugins(update: Update, context: CallbackContext) -> None:
         text = static_text.start_created.format(first_name=u.first_name)
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
-    Roles=u.get_all_roles()
-    plugins = get_plugins('')
+    Roles = u.get_all_roles()
+    plugins = get_plugins(Roles)
     text += f"{CRLF}Вам доступны следующие плагины:"
     for pl,val in plugins.items():
         if pl in Roles or "All" in Roles:
