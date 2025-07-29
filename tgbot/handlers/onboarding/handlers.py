@@ -12,7 +12,7 @@ from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import CRLF
 from tgbot.plugins import reports_gitlab, admin_plugin
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
-from dtb.settings import get_plugins, settings
+from dtb.settings import get_plugins, settings, get_unblock_plugins
 from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_groupe_user
 
@@ -41,7 +41,9 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
     # Все роли пользователя
     users_roles = u.get_all_roles()
-    plugins = get_plugins(users_roles)
+    #plugins = get_plugins_for_roles(users_roles) # Получить все доступные плагины пользователю из неблокированных
+    plugins = get_plugins(users_roles) # Получить все доступные плагины пользователю из неблокированных
+    # todo get_unblock_plugins 
     text += CRLF+'/start: Кнопки ссылок на модули\n'
     url = settings.get("SUPPORT_GROUP", "https://t.me/+__Qezxf7-E0xY2I6")
     text += CRLF+f'<a href=\"{url}\">🎯Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'

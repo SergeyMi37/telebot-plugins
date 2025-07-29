@@ -15,8 +15,6 @@ from django.utils.timezone import now
 from datetime import timedelta
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
-from dtb.settings import get_plugins
-from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.admin import static_text
 from users.models import User
@@ -24,7 +22,7 @@ import pprint as pp
 import string
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
-from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG, settings
+from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG, settings, logger , get_plugins , unblock_plugins
 from tgbot.handlers.utils.decorators import check_groupe_user, superadmin_only, send_typing_action
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
 from users.models import Options
@@ -38,8 +36,8 @@ _admin_help = '🌏/ask_location: Отправить локацию' \
 '\n/admin_export_options: Экспорт options.csv' \
 '\n/admin_export_usersoptions: Экспорт usersoptions.csv' \
 '\n\n🔸/help'
-plugins = get_plugins('').get('ADMIN')
 
+plugins = unblock_plugins.get('ADMIN')
 # try:
 #     option = get_plugins('').get('ADMIN').get("option")
 # except Exception as e:
@@ -88,11 +86,11 @@ def universal_message_handler(update, context, func=""):
         except:
             print("Объект FORBIDDEN_WORDS не найден.")
         #print('---',get_plugins('').get('ADMIN').get("check_forbidden_words"))
-        if plugins.get("check_forbidden_words")=='1':
+        if plugins and plugins.get("check_forbidden_words")=='1':
             if contains_forbidden_words(message.text, FORBIDDEN_WORDS):
                 delete_message(update, context,upms.chat.id, message.message_id)
                 # Удалять ли сразу ? А если ложное срабатывание ?
-                if plugins.get("delete_user_after_forbidden_words")=='1':
+                if plugins and plugins.get("delete_user_after_forbidden_words")=='1':
                     delete_user(update, context,upms.chat.id, upms.from_user.id)
                 context.bot.send_message(
                     chat_id=upms.chat.id,
@@ -166,7 +164,13 @@ def kick_user(update: Update, context: CallbackContext,chat_id, user_id):
         print(e)
         #update.message.reply_text(f"Произошла ошибка при удалении сообщения {message_id}.")
         return f'{e}'
-
+    
+def admin_opt() -> str:
+    optres=''
+    for opt in ["check_forbidden_words","delete_user_after_forbidden_words"]:
+        ico = '✅' if plugins.get(opt)=='1' else '❎' #❌'
+        optres += f'\n - {ico} {opt}'
+    return optres
 
 @check_groupe_user
 @superadmin_only
@@ -181,7 +185,7 @@ def admin_info(update: Update, context: CallbackContext) -> None:
     works = 1 if DEBUG else settings.get("workers", 4)
     text += f' {GetExtInfo.GetOS()}\n🚧 DEBUG: {DEBUG}\n Потоков: {works}\n😎 chat_id: {u.user_id} \
         \n🚨 TELEGRAM_LOGS_CHAT_ID: {TELEGRAM_LOGS_CHAT_ID} {GetExtInfo.GetHostInfo()} \
-        {GetExtInfo.GetExtIp()} {GetExtInfo.GetGitInfo()} \
+        {GetExtInfo.GetExtIp()} {admin_opt()} {GetExtInfo.GetGitInfo()} \
         \n\n🔸/help: Перечень команд'
     context.bot.send_message(
         chat_id=u.user_id, # вернуть личный чат сурепадмина
@@ -223,13 +227,12 @@ class AdminPlugin(BasePlugin):
         #dp.add_handler(CommandHandler("stats", admin_handlers.stats))
         dp.add_handler(CommandHandler('admin_export_users', admin_export_users))
         dp.add_handler(MessageHandler(Filters.regex(rf'^/admin(/s)?.*'), commands_admin))
-        #dp.add_handler(CallbackQueryHandler(button, pattern="^button_admin"))
-        dp.add_handler(CallbackQueryHandler(button, pattern="^button_admin"))
+        dp.add_handler(CallbackQueryHandler(button_admin, pattern="^button_admin"))
 
 
 @check_groupe_user
 @superadmin_only
-def button(update: Update, context: CallbackContext) -> None:
+def button_admin(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)

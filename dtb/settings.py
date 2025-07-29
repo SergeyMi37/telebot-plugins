@@ -26,7 +26,6 @@ SECRET_KEY = os.getenv(
     'x%#3&%giwv8f0+%r946en7z&d@9*rc$sl0qoql56xr%bh^w2mj',
 )
 
-
 if os.environ.get('DJANGO_DEBUG', default=False) in ['True', 'true', '1', True]:
     DEBUG = True
 else:
@@ -74,6 +73,31 @@ logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF",""))
 logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
 logger.info('====== DEBUG: '+str(DEBUG))
 
+def get_unblock_plugins():
+    retpl = {}
+    plug = settings.get("PLUGINS")
+    for pl in plug:
+        pldict=dict(pl)
+        for name_plug, val in pldict.items():
+            print('--unblock--',name_plug)
+            item = pldict.get(name_plug)
+            ret = {}
+            blocked=0
+            if item:
+                for it in item:
+                    if ' = ' in it:
+                        key = it.split(' = ')[0]
+                        val = it.split(' = ')[1]
+                    if key=='blocked' and val in ['True', 'true', '1', True]:
+                        blocked=1
+                    if key:
+                        ret[key]=val
+            if not blocked:
+                retpl[name_plug] = ret
+    return retpl
+
+unblock_plugins = get_unblock_plugins()
+
 def get_plugins(Roles = None):
     retpl = {}
     if Roles is None:
@@ -104,6 +128,33 @@ def get_plugins(Roles = None):
                 retpl[name_plug] = ret
     return retpl
 
+def get_plugins_for_roles(Roles = None):
+    retpl = {}
+    if Roles is None:
+        return retpl
+    plug = unblock_plugins
+    
+    for name_plug,val in plug.items():
+        print('-get_plugins_for_roles----',name_plug,Roles)
+        if Roles:
+            if not ("All" in Roles or (name_plug in Roles)):
+                continue
+        #print('-2-',name_plug)
+        item = plug.get(name_plug)
+        ret = {}
+        blocked=0
+        if item:
+            for it in item:
+                if ' = ' in it:
+                    key = it.split(' = ')[0]
+                    val = it.split(' = ')[1]
+                if key=='blocked' and val in ['True', 'true', '1', True]:
+                    blocked=1
+                if key:
+                    ret[key]=val
+        if not blocked:
+            retpl[name_plug] = ret
+    return retpl
 
 ALLOWED_HOSTS = ["*",]  # since Telegram uses a lot of IPs for webhooks
 

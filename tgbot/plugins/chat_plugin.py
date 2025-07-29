@@ -14,7 +14,7 @@
 from telegram import ParseMode, Update
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_gigachat.chat_models import GigaChat
-from dtb.settings import get_plugins
+from dtb.settings import get_plugins, unblock_plugins
 from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_groupe_user
 from tgbot.handlers.utils.info import get_tele_command
@@ -23,12 +23,16 @@ from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandle
 from tgbot.plugins.base_plugin import BasePlugin
 
 _chat_help = 'Диалог с ГигаЧат от Сбера /chat_giga_'
+plugins = unblock_plugins.get('CHAT')
+GIGA_TOKEN = '' if not plugins else plugins.get("GIGA_CHAT")
 # Добавить проверку на роль 
-try:
-    GIGA_TOKEN = get_plugins('').get('CHAT').get("GIGA_CHAT")
-except Exception as e:
-    GIGA_TOKEN = ''
+# try:
+#     GIGA_TOKEN = plugins.get("GIGA_CHAT")
+# except Exception as e:
+#     GIGA_TOKEN = ''
 #logger.info('--- plugin GIGA: '+str(get_plugins('GIGA')))
+# Вынести на параметр сделать возможность запоминать или изменять для каждого пользователя отдельно.
+# content="Ты бот супер программист на питон, который помогает пользователю провести время с пользой."
 
 def ask_giga(prompt):
     if not GIGA_TOKEN:

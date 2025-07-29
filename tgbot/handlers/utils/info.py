@@ -48,3 +48,4 @@ def extract_user_data_from_update(update: Update) -> Dict:
             if k in user and user[k] is not None
         },
     )
+

@@ -19,7 +19,7 @@ default:
   ROLES_DFLT: "NEWS,WEATHER,WIKI,CODE,INET,TASKS"
   SUPPORT_GROUP: "https://t.me/+__Qezxf7-E0xY2I6"
   DEVELOP_GROUP: "https://t.me/+LXQkVtnHqSM1ZmZi"
-  workers: 5 # Количество потоков в продуктовом режиме DEBUG=0
+  WORKERS: 5 # Количество потоков в продуктовом режиме DEBUG=0
   PLUGINS:
     - IRIS:
         # Параметры доступа к серверам по умолчанию -------------------------------
@@ -87,6 +87,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - rss_oreanda = https://www.oreanda-news.com/rss01/rss01.txt
         - rss_hightech = https://hightech.plus/feed.rss
         - rss_computerra = https://www.computerra.ru/feed/ 
+        - rss_ssp = https://www.ssp.sh/brain/index.xml?ref=ssp.sh # https://habr.com/ru/companies/ruvds/articles/930942/
     - WEATHER:
         - blocked = 0
         - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_ - ввести город
