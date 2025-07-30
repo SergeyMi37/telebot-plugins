@@ -6,7 +6,7 @@ from telegram.ext import (
     CommandHandler, MessageHandler,
     CallbackQueryHandler,
 )
-from dtb.settings import get_plugins, settings, DEBUG
+from dtb.settings import settings, DEBUG, get_plugins_for_roles #get_plugins,
 from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCAST
 from tgbot.handlers.broadcast_message.static_text import broadcast_command,reports_command
 #from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
@@ -42,11 +42,12 @@ def setup_dispatcher(dp):
     #plugins = get_plugins() 
     # Загружаем все плагины
     plugs = discover_plugins()
-    
+    plugins = get_plugins_for_roles('')
     # Регистрируем обработчики для каждого плагина
     for plugin_name, plugin_instance in plugs.items():
         NAME = str(plugin_name).split("_")[0].upper()
-        if get_plugins('').get(NAME):
+        #if get_plugins('').get(NAME):
+        if plugins.get(NAME):
             #print('---',f"Loading plugin: {NAME}")
             plugin_instance.setup_handlers(dp)
    

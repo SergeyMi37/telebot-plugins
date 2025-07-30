@@ -14,7 +14,7 @@
 from telegram import ParseMode, Update
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_gigachat.chat_models import GigaChat
-from dtb.settings import get_plugins, unblock_plugins
+from dtb.settings import unblock_plugins
 from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_groupe_user
 from tgbot.handlers.utils.info import get_tele_command

@@ -98,6 +98,7 @@ def get_unblock_plugins():
 
 unblock_plugins = get_unblock_plugins()
 
+# DEPRICATE
 def get_plugins(Roles = None):
     retpl = {}
     if Roles is None:
@@ -139,15 +140,16 @@ def get_plugins_for_roles(Roles = None):
         if Roles:
             if not ("All" in Roles or (name_plug in Roles)):
                 continue
-        #print('-2-',name_plug)
         item = plug.get(name_plug)
+        print('-2-',name_plug, item)
         ret = {}
         blocked=0
         if item:
-            for it in item:
-                if ' = ' in it:
-                    key = it.split(' = ')[0]
-                    val = it.split(' = ')[1]
+            for key, val in item.items():
+                # print('-3-', it)
+                # if ' = ' in it:
+                #     key = it.split(' = ')[0]
+                #     val = it.split(' = ')[1]
                 if key=='blocked' and val in ['True', 'true', '1', True]:
                     blocked=1
                 if key:

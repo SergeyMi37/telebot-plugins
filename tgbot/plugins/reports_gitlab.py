@@ -23,11 +23,13 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 import requests
 import json
 from openpyxl import Workbook
-from dtb.settings import get_plugins, settings, logger
+from dtb.settings import settings, logger, get_plugins_for_roles
 
 # Добавить проверку на роль 
-plugins_gitlab = get_plugins('').get('GITLAB')
-#logger.info('--- plugin GITLAB: '+str(plugins_gitlab))
+#plugins_gitlab = get_plugins('').get('GITLAB')
+# Добавить проверку на роль 
+plugins_gitlab = get_plugins_for_roles('').get('GITLAB')
+logger.info(f'--- plugin GITLAB: {plugins_gitlab}')
 
 if plugins_gitlab:
   ACCESS_TOKEN = plugins_gitlab.get('ACCESS_TOKEN')

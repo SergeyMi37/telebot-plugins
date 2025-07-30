@@ -18,7 +18,7 @@ from typing import Any
 #import datetime
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
-from dtb.settings import get_plugins
+from dtb.settings import get_plugins_for_roles
 import requests
 import json
 
@@ -29,7 +29,7 @@ TIMEOUT =25
 
 # Добавить проверку на роль 
 #plugin
-plugins_iris = get_plugins('').get('IRIS')
+plugins_iris = get_plugins_for_roles('').get('IRIS')
 #logger.info('--- plugin IRIS: '+str(plugins_iris))
 #logger.info('--=- plugin IRIS: '+str(plugin))
 
@@ -45,27 +45,30 @@ def command_servers(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
 
     result=''
-    for key in plugins_iris:
-    #for key in os.environ:
-      if "URL_" in key:
-        #print(key, '=>', os.environ[key])
-        #result += key.split("URL_")[1]
-        #Загрузить из сервиса результат
-        #_u = os.environ[key]+'1'
-        #print('---url---',_u )
-        _u = plugins_iris[key]+'1'
-        err, resp = get_open(url=_u,timeout=TIMEOUT) # 0 - Только статус
-        #print(err, resp) 
-      
-        if err.find("_OK")!=-1:
-           icon = "🟡 /" 
-           count = len(resp["ns"]) if "ns" in resp else 0
-           msg= f'<b>{resp["server"]}</b> Продукций: {count}'
-        else:
-           icon = "🔴 "
-           msg = "Нет доступа"
-        #
-        result += f'{icon}s_{key.split("URL_")[1]} {msg}{CRLF}'
+    if plugins_iris:
+      for key in plugins_iris:
+      #for key in os.environ:
+        if "URL_" in key:
+          #print(key, '=>', os.environ[key])
+          #result += key.split("URL_")[1]
+          #Загрузить из сервиса результат
+          #_u = os.environ[key]+'1'
+          #print('---url---',_u )
+          _u = plugins_iris[key]+'1'
+          err, resp = get_open(url=_u,timeout=TIMEOUT) # 0 - Только статус
+          #print(err, resp) 
+        
+          if err.find("_OK")!=-1:
+            icon = "🟡 /" 
+            count = len(resp["ns"]) if "ns" in resp else 0
+            msg= f'<b>{resp["server"]}</b> Продукций: {count}'
+          else:
+            icon = "🔴 "
+            msg = "Нет доступа"
+          #
+          result += f'{icon}s_{key.split("URL_")[1]} {msg}{CRLF}'
+    else:
+      result += f'🔴 Блокирован {CRLF}'
     upms.reply_text(
             text=result,
             parse_mode=ParseMode.HTML,

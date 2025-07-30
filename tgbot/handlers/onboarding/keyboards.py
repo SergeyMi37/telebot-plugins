@@ -2,10 +2,10 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
 from tgbot.handlers.onboarding.static_text import github_button_text, secret_level_button_text
-from dtb.settings import get_plugins
+from dtb.settings import get_plugins_for_roles
 
 def make_keyboard_for_start_command(roles="") -> InlineKeyboardMarkup:
-    plugins = get_plugins(roles)
+    plugins = get_plugins_for_roles(roles)
     columns = 1  # 4 Количество колонок (количество кнопок в одном ряду)
     keyboard = []     # Создание клавиатуры
     row = []    # Текущий ряд кнопок

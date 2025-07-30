@@ -12,7 +12,7 @@ from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import CRLF
 from tgbot.plugins import reports_gitlab, admin_plugin
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
-from dtb.settings import get_plugins, settings, get_unblock_plugins
+from dtb.settings import settings, get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_groupe_user
 
@@ -41,8 +41,8 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
     # Все роли пользователя
     users_roles = u.get_all_roles()
-    #plugins = get_plugins_for_roles(users_roles) # Получить все доступные плагины пользователю из неблокированных
-    plugins = get_plugins(users_roles) # Получить все доступные плагины пользователю из неблокированных
+    plugins = get_plugins_for_roles(users_roles) # Получить все доступные плагины пользователю из неблокированных
+    #plugins = get_plugins(users_roles) # Получить все доступные плагины пользователю из неблокированных
     # todo get_unblock_plugins 
     text += CRLF+'/start: Кнопки ссылок на модули\n'
     url = settings.get("SUPPORT_GROUP", "https://t.me/+__Qezxf7-E0xY2I6")
@@ -133,37 +133,3 @@ def command_start(update: Update, context: CallbackContext) -> None:
     '''
     update.message.reply_text(text=text, reply_markup=make_keyboard_for_start_command(u.get_all_roles()))
    
-# depricate
-@check_groupe_user
-def command_plugins(update: Update, context: CallbackContext) -> None:
-    u, created = User.get_user_and_created(update, context)
-
-    if created:
-        text = static_text.start_created.format(first_name=u.first_name)
-    else:
-        text = static_text.start_not_created.format(first_name=u.first_name)
-    Roles = u.get_all_roles()
-    plugins = get_plugins(Roles)
-    text += f"{CRLF}Вам доступны следующие плагины:"
-    for pl,val in plugins.items():
-        if pl in Roles or "All" in Roles:
-            text += f"{CRLF}/{pl.lower()} - {val.get('desc')}{CRLF}"
-    update.message.reply_text(text=text)
-
-# depricate
-@check_groupe_user
-def secret_level(update: Update, context: CallbackContext) -> None:
-    # callback_data: SECRET_LEVEL_BUTTON variable from manage_data.py
-    """ Pressed 'secret_level_button_text' after /start command"""
-    user_id = extract_user_data_from_update(update)['user_id']
-    text = static_text.unlock_secret_room.format(
-        user_count=User.objects.count(),
-        active_24=User.objects.filter(updated_at__gte=timezone.now() - datetime.timedelta(hours=24)).count()
-    )
-
-    context.bot.edit_message_text(
-        text=text,
-        chat_id=user_id,
-        message_id=update.callback_query.message.message_id,
-        parse_mode=ParseMode.HTML
-    )
