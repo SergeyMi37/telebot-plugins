@@ -79,7 +79,7 @@ def get_unblock_plugins():
     for pl in plug:
         pldict=dict(pl)
         for name_plug, val in pldict.items():
-            print('--unblock--',name_plug)
+            #print('--unblock--',name_plug)
             item = pldict.get(name_plug)
             ret = {}
             blocked=0
@@ -94,68 +94,28 @@ def get_unblock_plugins():
                         ret[key]=val
             if not blocked:
                 retpl[name_plug] = ret
+                print('--unblock-',name_plug)
     return retpl
 
 unblock_plugins = get_unblock_plugins()
-
-# DEPRICATE
-def get_plugins(Roles = None):
-    retpl = {}
-    if Roles is None:
-        return retpl
-    plug = settings.get("PLUGINS")
-    
-    for pl in plug:
-        pldict=dict(pl)
-        for name_plug,val in pldict.items():
-            print('-1-',name_plug,Roles)
-            if Roles:
-               if not ("All" in Roles or (name_plug in Roles)):
-                   continue
-            #print('-2-',name_plug)
-            item = pldict.get(name_plug)
-            ret = {}
-            blocked=0
-            if item:
-                for it in item:
-                    if ' = ' in it:
-                        key = it.split(' = ')[0]
-                        val = it.split(' = ')[1]
-                    if key=='blocked' and val in ['True', 'true', '1', True]:
-                        blocked=1
-                    if key:
-                        ret[key]=val
-            if not blocked:
-                retpl[name_plug] = ret
-    return retpl
 
 def get_plugins_for_roles(Roles = None):
     retpl = {}
     if Roles is None:
         return retpl
     plug = unblock_plugins
-    
     for name_plug,val in plug.items():
-        print('-get_plugins_for_roles----',name_plug,Roles)
+        #print('--get_plugins_for_roles----',name_plug,Roles)
         if Roles:
             if not ("All" in Roles or (name_plug in Roles)):
                 continue
         item = plug.get(name_plug)
-        print('-2-',name_plug, item)
+        #print('----2-',name_plug, item)
         ret = {}
-        blocked=0
         if item:
             for key, val in item.items():
-                # print('-3-', it)
-                # if ' = ' in it:
-                #     key = it.split(' = ')[0]
-                #     val = it.split(' = ')[1]
-                if key=='blocked' and val in ['True', 'true', '1', True]:
-                    blocked=1
-                if key:
-                    ret[key]=val
-        if not blocked:
-            retpl[name_plug] = ret
+                ret[key]=val
+        retpl[name_plug] = ret
     return retpl
 
 ALLOWED_HOSTS = ["*",]  # since Telegram uses a lot of IPs for webhooks

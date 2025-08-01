@@ -21,19 +21,19 @@
 # ]
 
 from telegram import ParseMode, Update
-from dtb.settings import get_plugins
+# from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
-import wikipediaapi
-# plugins/news_rss_plugin.py
-from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
+# import inspect
+# name = inspect.currentframe().f_code.co_name   - имя текущей функции
 
+from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
 
 # Добавить проверку на роль ''
-plugin_tasks = get_plugins('').get('TASKS')
+#plugin_tasks = get_plugins_for_roles('').get('TASKS')
 
 CODE_INPUT = range(1)
 _tasks_help = 'Модуль создания, просмотра, удаления, редактирования и запуска регулярных задач' \

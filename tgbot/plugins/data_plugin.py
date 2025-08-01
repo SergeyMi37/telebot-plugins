@@ -14,7 +14,7 @@
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
-from dtb.settings import get_plugins
+# from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
@@ -26,7 +26,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from tgbot.plugins.base_plugin import BasePlugin
 
 # Добавить проверку на роль ''
-plugin_wiki = get_plugins('').get('WIKI')
+#plugin_wiki = get_plugins('').get('WIKI')
 
 CODE_INPUT = range(1)
 _wiki_help = 'Поиск на https://ru.wikipedia.org Введите слово после ключевого wiki ' \

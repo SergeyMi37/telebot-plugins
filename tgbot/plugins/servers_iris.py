@@ -118,7 +118,10 @@ def command_server(cmd: str) -> None:
     Если "ИмяСервера___" выводить список продукций с количеством ошибок за 1 день
     Если "ИмяСервера_ИмяОбласти__" выводить список первых 20 ошибок с усеченным текстом
     '''
-    #url = os.getenv(f'URL_{cmd.split("_")[0]}')
+    if not plugins_iris:
+      msg = "🔴 блокирован модуль IRIS "
+      result += f'{msg}{CRLF}'
+      return result
     url = plugins_iris.get(f'URL_{cmd.split("_")[0]}')
     result=''
     _servname = cmd.split("_")[0]
@@ -206,6 +209,8 @@ def command_server(cmd: str) -> None:
 def get_custom_commands(servname: str, mode: str) -> None:
     #url = os.getenv('CC_SERPAN_TEMP_VIEW') # CC_SERPAN_TEMP_VIEW = http://m   
     result=''
+    if not plugins_iris:
+      return result
     #for key in os.environ:
     for key in plugins_iris:
       if f"CC_{servname}_" in key:

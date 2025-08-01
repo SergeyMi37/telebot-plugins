@@ -13,7 +13,7 @@
 from django.utils.timezone import now
 from telegram import ParseMode, Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler, CallbackContext
-from dtb.settings import get_plugins
+from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
@@ -21,7 +21,7 @@ from users.models import User
 import feedparser, random
 
 # Добавить проверку на роль ''
-plugin_news = get_plugins('').get('NEWS')
+plugin_news = get_plugins_for_roles('').get('NEWS')
 
 rss_dict = {}
 if plugin_news:
@@ -172,6 +172,9 @@ def commands_(update: Update, context: CallbackContext) -> None:
     upms = get_tele_command(update)
     telecmd = upms.text
     count = 10
+    if not plugin_news:
+        upms.reply_text("🕒.минутку...")
+        return
     # Список всех ссылок на RSS-каналы
     rss_dict = {}
     for key, val in plugin_news.items():

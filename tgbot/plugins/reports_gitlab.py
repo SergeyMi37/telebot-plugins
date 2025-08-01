@@ -27,24 +27,17 @@ from dtb.settings import settings, logger, get_plugins_for_roles
 
 # Добавить проверку на роль 
 #plugins_gitlab = get_plugins('').get('GITLAB')
+
 # Добавить проверку на роль 
 plugins_gitlab = get_plugins_for_roles('').get('GITLAB')
 logger.info(f'--- plugin GITLAB: {plugins_gitlab}')
 
-if plugins_gitlab:
-  ACCESS_TOKEN = plugins_gitlab.get('ACCESS_TOKEN')
-  GRAPHQL_URL = plugins_gitlab.get('GRAPHQL_URL')
-  GITLAB_URL = plugins_gitlab.get('GITLAB_URL')
-  GITLAB_LABELS = plugins_gitlab.get('GITLAB_LABELS')
-  PROJ_EN = plugins_gitlab.get('PROJ_EN','')
-  PROJ_RU = plugins_gitlab.get('PROJ_RU','')
-else:
-  ACCESS_TOKEN = ''
-  GRAPHQL_URL = ''
-  GITLAB_URL = ''
-  GITLAB_LABELS = ''
-  PROJ_EN = ''
-  PROJ_RU = ''
+ACCESS_TOKEN = plugins_gitlab.get('ACCESS_TOKEN') if plugins_gitlab else ''
+GRAPHQL_URL = plugins_gitlab.get('GRAPHQL_URL') if plugins_gitlab else ''
+GITLAB_URL = plugins_gitlab.get('GITLAB_URL') if plugins_gitlab else ''
+GITLAB_LABELS = plugins_gitlab.get('GITLAB_LABELS') if plugins_gitlab else ''
+PROJ_EN = plugins_gitlab.get('PROJ_EN','') if plugins_gitlab else ''
+PROJ_RU = plugins_gitlab.get('PROJ_RU','') if plugins_gitlab else ''
 
 @check_groupe_user
 def command_yesterday(update: Update, context: CallbackContext) -> None:

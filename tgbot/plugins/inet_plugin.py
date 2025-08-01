@@ -12,7 +12,7 @@
 import requests
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
-from dtb.settings import get_plugins
+# from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
@@ -20,6 +20,14 @@ from users.models import User
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
 from duckduckgo_search import DDGS
+
+# Добавить проверку на роль ''
+#plugin_ddg = get_plugins_for_roles('').get('INET')
+
+CODE_INPUT = range(1)
+_inet_help = 'Введите поисковый запрос после команды /inet_ddg_ ' \
+    '\n/inet_dflt_result_55 - Изменить количество строк вывода результата на 55'
+
 
 def search_on_russian(query, num_results=3):
     """
@@ -42,13 +50,6 @@ def search_on_russian(query, num_results=3):
             })
     
     return results
-
-# Добавить проверку на роль ''
-plugin_ddg = get_plugins('').get('INET')
-
-CODE_INPUT = range(1)
-_inet_help = 'Введите поисковый запрос после команды /inet_ddg_ ' \
-    '\n/inet_dflt_result_55 - Изменить количество строк вывода результата на 55'
 
 def write_duckduckgo(context, upms, res, count = 100):
     num=0

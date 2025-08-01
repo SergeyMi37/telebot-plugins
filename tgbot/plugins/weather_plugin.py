@@ -5,7 +5,7 @@
 # имя плагина weather должно быть первым полем от _ в имени файла weather_plugin
 # имя файла плагина должно окачиваться на _plugin
 from telegram import ParseMode, Update
-from dtb.settings import get_plugins
+from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
@@ -21,7 +21,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from tgbot.plugins.base_plugin import BasePlugin
 
 # Добавить проверку на роль ''
-plugin_weather = get_plugins('').get('WEATHER')
+plugin_weather = get_plugins_for_roles('').get('WEATHER')
 
 # https://dadata.ru/api/geolocate/
 # https://github.com/hflabs/dadata-py
@@ -29,6 +29,8 @@ from dadata import Dadata
 
 # https://www.openstreetmap.org/  «Дадата» берет координаты домов и улиц из OpenStreetMap. 
 def get_adress(lat,lon):
+    if not plugin_weather:
+        return ''
     token = plugin_weather.get('dadata_token','')
     if not token:
         return ''
@@ -142,6 +144,8 @@ def get_hourly_temperature(latitude, longitude, date ):
 
 def get_weather_forecast(latitude, longitude, days=1):
     """Получение прогноза погоды на указанное количество дней"""
+    if not plugin_weather:
+        return ''
     uri  = plugin_weather.get('url','')
     if not uri:
         print(f"Пустой параметр url в настройках dynaconf")

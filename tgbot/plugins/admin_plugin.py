@@ -22,7 +22,7 @@ import pprint as pp
 import string
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
-from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG, settings, logger , get_plugins , unblock_plugins
+from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG, settings, logger , unblock_plugins
 from tgbot.handlers.utils.decorators import check_groupe_user, superadmin_only, send_typing_action
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
 from users.models import Options

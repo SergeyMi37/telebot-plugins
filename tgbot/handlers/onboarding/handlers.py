@@ -10,7 +10,7 @@ from tgbot.handlers.utils.info import extract_user_data_from_update, get_tele_co
 from users.models import User
 from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
 from tgbot.handlers.admin.static_text import CRLF
-from tgbot.plugins import reports_gitlab, admin_plugin
+# from tgbot.plugins import reports_gitlab, admin_plugin
 from tgbot.handlers.broadcast_message.static_text import reports_wrong_format
 from dtb.settings import settings, get_plugins_for_roles
 from dtb.settings import logger
