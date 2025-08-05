@@ -12,7 +12,7 @@ https://rg.ru/xml/index.xml
 https://www.pnp.ru/rss/index.xml
 
 https://iz.ru/xml/rss/all.xml
-
+https://rssexport.rbc.ru/rbcnews/news/30/full.rss
 https://lenta.ru/info/posts/export/
 Доступны следующие RSS:
 /rss/news — новости    https://lenta.ru/rss/news

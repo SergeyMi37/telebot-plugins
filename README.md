@@ -29,7 +29,7 @@ Currently supported plug-ins:
 
 ``` bash
 git clone https://github.com/SergeyMi37/telebot-plugins
-cd django-telegram-bot
+cd telebot-plugins
 ```
 
 Create virtual environment (optional)
