@@ -64,8 +64,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - PROJ_EN = telebot,telebotbd
     - CHAT:
         - blocked = 1
-        - only_private_chat = 1 # 1 - Только в приветных чатах, или список ids чатов, где будет работать
-        - desc = Сервис - собеседник на основе нейронки GigaChat. Введи текст вопроса после команды /chat_giga_
+        - desc = Сервис - собеседник на основе нейронок GigaChat, Ollama. /chat_list - список моделей. Введи текст вопроса после команды /chat_giga_
+        - URL_OLLAMA = http://127.0.0.1:11434
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0

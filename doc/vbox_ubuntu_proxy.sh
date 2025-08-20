@@ -1,10 +1,10 @@
 #!/bin/bash
-# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vbox_ubuntu.sh && chmod +x vbox_ubuntu.sh && ./vbox_ubuntu.sh
+# wget --no-check-certificate https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vbox_ubuntu.sh && chmod +x vbox_ubuntu.sh && ./vbox_ubuntu.sh
 # Обновляем систему перед началом установки пакетов
-sudo apt update && sudo apt upgrade -y
+sudo apt --allow-unauthenticated update && sudo apt --allow-unauthenticated upgrade -y
 
 # Устанавливаем необходимые пакеты
-sudo apt install -y \
+sudo apt install --allow-unauthenticated -y \
     ca-certificates \
     curl \
     gnupg \
@@ -15,7 +15,7 @@ sudo apt install -y \
     mc
 
 # Установка Docker
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+curl --insecure -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
@@ -26,8 +26,8 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker "$USER"
 
 # Установка Docker Compose
-DOCKER_COMPOSE_VERSION="$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d '"' -f 4)"
-sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+DOCKER_COMPOSE_VERSION="$(curl --insecure -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d '"' -f 4)"
+sudo curl --insecure -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Добавляем команды в файл .bashrc
@@ -56,6 +56,11 @@ export HISTTIMEFORMAT='%d.%m.%Y %H:%M:%S: '
 export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_BUILDKIT=1
 export EDITOR=mcedit
+
+# Настройки прокси сервера
+#export http_proxy=http://proxyuser:${proxypass}@${proxyip}:${proxport}
+#export https_proxy=${http_proxy}
+#export ftp_proxy=${http_proxy}
 
 alias dockersrm='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) -f && docker system prune -f'
 alias dockersrmi='docker rmi $(docker images -q) -f && docker system prune -f'

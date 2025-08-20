@@ -1,6 +1,6 @@
 # Name Plugin: CHAT
     # - CHAT:
-    #     - desc = Модуль создания, просмотра, удаления, редактирования и запуска регулярных задач /tasks
+    #     - desc = Модуль работы с ГигаЧатом и другими моделями ollama
 # имя плагина CHAT должно совпадать с именем в конфигурации Dynaconf
 # имя плагина chat должно быть первым полем от _ в имени файла chat_plugin
 # имя файла плагина должно окачиваться на _plugin
@@ -11,6 +11,8 @@
 # pip install langchain-gigachat
 # https://developers.sber.ru/docs/ru/gigachain/overview
 # https://developers.sber.ru/docs/ru/gigachat/api/images-generation?tool=python&lang=py
+# С ollama работа по requests
+
 from telegram import ParseMode, Update
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_gigachat.chat_models import GigaChat
@@ -21,10 +23,12 @@ from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
+import requests, json
 
-_chat_help = 'Диалог с ГигаЧат от Сбера /chat_giga_'
+_chat_help = 'Диалог с ГигаЧат от Сбера /chat_giga_ и другими моделями ollama /chat_list'
 plugins = unblock_plugins.get('CHAT')
 GIGA_TOKEN = '' if not plugins else plugins.get("GIGA_CHAT")
+URL_OLLAMA = '' if not plugins else plugins.get("URL_OLLAMA")
 # Добавить проверку на роль 
 # try:
 #     GIGA_TOKEN = plugins.get("GIGA_CHAT")
@@ -144,3 +148,58 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
+
+def list_models():
+    r = requests.get(f"{URL_OLLAMA}/api/tags")
+    ret = ''
+    mod = []
+    # print(r.raise_for_status())
+    for model in r.json()["models"]:
+        # print(model,end='\n')
+        ret +=f'{model["name"]} {model["details"]["parameter_size"]} {model["details"]["quantization_level"]}\n'
+        mod.append(model["name"])
+    return ret , mod
+
+def show_model(name):
+    try:
+        r = requests.get(f"{URL_OLLAMA}/api/show", params={"name": name})
+        r.raise_for_status()
+
+    except requests.HTTPError as e:
+        print(f"GET failed: {e}")
+        # fallback to POST
+        r = requests.post(f"{URL_OLLAMA}/api/show", json={"name": name})
+    return f"{name}\n {r.json().get('capabilities')}\n {r.json().get('model_info')}\n {r.json().get('modified_at')}\n"
+
+def pull_model(name):
+    r = requests.post(f"{URL_OLLAMA}/api/pull", json={"name": name})
+    r.raise_for_status()
+    # stream
+    for line in r.iter_lines():
+        if line:
+            print(json.loads(line))
+
+def chat(name, messages):
+    try:
+        r = requests.post(
+            f"{URL_OLLAMA}/api/chat",
+            json={"model": name, "messages": messages, "stream": False},
+        )
+        r.raise_for_status()
+        return r.json().get('message', {}).get('content', '')
+    except requests.exceptions.RequestException as e:
+        print(f"Ошибка при запросе к Ollama API: {e}")
+        return None
+
+#print(list_models())
+# _list, list_models = list_models()
+# for i in list_models:
+#     if True:
+#         print(show_model(i))
+#         print(chat(i, [{"role":"user","content":"Привет, Перечисли планеты солнечной системы"}]))
+        #print(chat(i, [{"role":"user","content":"Почему нет плутона ?"}]))
+# print(pull_model('qwen2.5-coder:1.5b'))
+# mo = 'gemma3:1b'
+# print(show_model(mo))
+#print(chat(mo, [{"role":"user","content":"Привет, Перечисли планеты солнечной системы"}]))
+#print(chat(mo, [{"role":"user","content":"Почему нет плутона ?"}]))
