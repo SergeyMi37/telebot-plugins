@@ -7,7 +7,7 @@ def get_tele_command(update: Update) -> str:
    #print('----get_tele_command---',update)
    from users.models import Updates
    if settings.get("UPDATES_DB"):
-      pp.pprint(update.to_dict(), depth=2)
+      #pp.pprint(update.to_dict(), depth=2)
       update_obj = Updates.save_from_update(update)
    #pp.pprint(update_obj, depth=2)
    try:

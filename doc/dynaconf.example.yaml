@@ -66,6 +66,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - blocked = 1
         - desc = Сервис - собеседник на основе нейронок GigaChat, Ollama. /chat_list - список моделей. Введи текст вопроса после команды /chat_giga_
         - URL_OLLAMA = http://127.0.0.1:11434
+        - TRANSLATE = granite3-dense:2b # Модель для перевода
         - GIGA_CHAT = <token==>
     - NEWS:
         - blocked = 0

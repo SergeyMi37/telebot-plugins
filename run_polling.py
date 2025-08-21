@@ -10,9 +10,18 @@ from dtb.settings import TELEGRAM_TOKEN
 from tgbot.dispatcher import setup_dispatcher
 
 
+if not os.environ.get("PROXY_URL"):
+    REQUEST_KWARGS={}
+else:
+    REQUEST_KWARGS={
+    'proxy_url': os.environ.get("PROXY_URL"),
+    }
+
+
+
 def run_polling(tg_token: str = TELEGRAM_TOKEN):
     """ Run bot in polling mode """
-    updater = Updater(tg_token, use_context=True)
+    updater = Updater(tg_token, use_context=True, request_kwargs=REQUEST_KWARGS)
 
     dp = updater.dispatcher
     dp = setup_dispatcher(dp)

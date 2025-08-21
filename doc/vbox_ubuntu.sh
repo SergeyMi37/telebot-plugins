@@ -14,6 +14,9 @@ sudo apt install -y \
     make \
     mc
 
+# Установка VsCode
+sudo snap install code --classic
+
 # Установка Docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo \

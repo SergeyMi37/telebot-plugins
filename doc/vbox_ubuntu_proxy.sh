@@ -32,7 +32,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 # Добавляем команды в файл .bashrc
 echo "
-alias myip='wget -qO myip http://www.ipchicken.com/; grep -o "[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}" myip;  rm myip'
+alias myip='wget --no-check-certificate -qO myip http://www.ipchicken.com/; grep -o "[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}" myip;  rm myip'
 alias ver='cat /etc/*-release'
 alias mc='mc -S gotar'
 alias hi='history | grep'
@@ -58,9 +58,11 @@ export DOCKER_BUILDKIT=1
 export EDITOR=mcedit
 
 # Настройки прокси сервера
-#export http_proxy=http://proxyuser:${proxypass}@${proxyip}:${proxport}
+#export http_proxy=http://${proxyuser}:${proxypass}@${proxyip}:${proxport}
 #export https_proxy=${http_proxy}
 #export ftp_proxy=${http_proxy}
+
+
 
 alias dockersrm='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) -f && docker system prune -f'
 alias dockersrmi='docker rmi $(docker images -q) -f && docker system prune -f'

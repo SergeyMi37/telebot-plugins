@@ -8,15 +8,16 @@
 # class CodPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
 # https://codificator.ru/code/mobile/#list - полезный сайт
+# https://pypi.org/project/phonenumbers/ - телефоны TODO    
 
-from django.utils.timezone import now
+#from django.utils.timezone import now
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 #from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
-from users.models import User
+#from users.models import User
 from tgbot.plugins.base_plugin import BasePlugin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 
