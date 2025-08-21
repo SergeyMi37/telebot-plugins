@@ -12,6 +12,8 @@
 # https://developers.sber.ru/docs/ru/gigachain/overview
 # https://developers.sber.ru/docs/ru/gigachat/api/images-generation?tool=python&lang=py
 # С ollama работа по requests
+# Долгое время отвечают
+# gemma3:27b gpt-oss:120b
 
 from telegram import ParseMode, Update
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -29,7 +31,8 @@ import pprint as pp
 chat_help = 'Диалог с ГигаЧат от Сбера /chat_giga_ \nи другими моделями ollama /chat_list /chat_listinfo'
 plugins = unblock_plugins.get('CHAT')
 GIGA_TOKEN = '' if not plugins else plugins.get("GIGA_CHAT")
-URL_OLLAMA = '' if not plugins else plugins.get("URL_OLLAMA")
+URL_OLLAMA = '' if not plugins else plugins.get("URL_OLLAMA",'')
+print('--- plugin GIGA: '+str(plugins),GIGA_TOKEN,URL_OLLAMA)
 # Добавить проверку на роль 
 # try:
 #     GIGA_TOKEN = plugins.get("GIGA_CHAT")
@@ -168,14 +171,14 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
         else:
             num = int(telecmd.replace('/chat_o_',''))
             name = dict_models.get(num)
-            output = f"😎<b>Модель {name}</b>\n"
+            output = f"😎<b>{num}.Модель {name}</b>\n"
             msg = "Привет. Какая ты модель и что ты можешь ?"
             messages = [
                 {"role": "system", "content": "Ты разговариваешь с пользователем, чтобы помочь ему с чем-то."},
                 {"role": "user", "content": msg},
             ]
             output += f'<b>{msg}</b>\n'
-            upms.reply_text("🕒.минутку..")
+            upms.reply_text("🕒..секундочку..")
             text, res = chat_ollama(name, messages)
             if "<" in text:
                 text = text.replace('<', '&lt;').replace('>', '&gt;')
@@ -199,6 +202,8 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
     )
 
 def get_models():
+    if URL_OLLAMA == '':
+        return  'URL_OLLAMA is empty', [], {}
     r = requests.get(f"{URL_OLLAMA}/api/tags")
     str_models = ''
     list_models = []
