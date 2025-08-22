@@ -39,7 +39,7 @@ chat_help = 'Диалог с ГигаЧат от Сбера /chat_giga_ \nи д�
 plugins = unblock_plugins.get('CHAT')
 GIGA_TOKEN = '' if not plugins else plugins.get("GIGA_CHAT")
 URL_OLLAMA = '' if not plugins else plugins.get("URL_OLLAMA",'')
-print('--- plugin GIGA: '+str(plugins),GIGA_TOKEN,URL_OLLAMA)
+#print('--- plugin GIGA: '+str(plugins),GIGA_TOKEN,URL_OLLAMA)
 # Добавить проверку на роль 
 # try:
 #     GIGA_TOKEN = plugins.get("GIGA_CHAT")
@@ -236,8 +236,16 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
             text, res = chat_ollama(name, messages)
             if "<" in text:
                 text = text.replace('<', '&lt;').replace('>', '&gt;')
-            output += text+ f"\n<b>Общая продолжительность: {format_time(res['total_duration'])}</b>\n\r🔸/help /chat_list"
+            output += text+ f"\n<b>Общая продолжительность: {format_time(res['total_duration'])}</b> \
+            \n\r🔸/help /chat_list /chat_oll_{num} - диалог с этой моделью"
             pp.pprint(res)
+    elif '/chat_oll_' in telecmd:
+        if telecmd == "/chat_oll_":
+            output = chat_help
+        else:
+            num = int(telecmd.replace('/chat_oll_',''))
+            name = dict_models.get(num)
+
     elif '/chat_oi_' in telecmd:
         if telecmd == "/chat_oi_":
             output = chat_help

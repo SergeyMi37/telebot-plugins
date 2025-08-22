@@ -65,7 +65,8 @@ python manage.py createsuperuser
 ```
 or 
 ``` bash 
-python manage.py createsuperuser --noinput --username adm --email adm@localhost.com # .env DJANGO_SUPERUSER_PASSWORD=demo
+# .env DJANGO_SUPERUSER_PASSWORD=demo
+python manage.py createsuperuser --noinput --username adm --email adm@localhost.com 
 ```
 
 
