@@ -12,8 +12,14 @@
 # https://developers.sber.ru/docs/ru/gigachain/overview
 # https://developers.sber.ru/docs/ru/gigachat/api/images-generation?tool=python&lang=py
 # С ollama работа по requests
-# Долгое время отвечают
-# gemma3:27b gpt-oss:120b
+# Долгое время отвечают - больше минуты на моем ПК
+# gemma3:27b gpt-oss:120b llama3.2:latest qwen3:30b gpt-oss:20b qwen3:4b qwen3:8b deepseek-r1:8b
+# deepseek-r1:1.5b                                         e0979632db5a    1.1 GB    4 hours ago
+# qwen2.5-coder:1.5b                                       d7372fd82851    986 MB    2 days ago 
+# deepseek-coder:6.7b                                      ce298d984115    3.8 GB    3 days ago 
+# huggingface.co/IlyaGusev/saiga_mistral_7b_gguf:latest    8e1d1e7be53f    3.1 GB    3 days ago 
+# sqlcoder:latest                                          77ac14348387    4.1 GB    3 days ago 
+# gemma3:1b                       
 
 from telegram import ParseMode, Update
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -25,8 +31,9 @@ from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
-import requests, json
 import pprint as pp
+import requests, json, base64
+from pathlib import Path
 
 chat_help = 'Диалог с ГигаЧат от Сбера /chat_giga_ \nи другими моделями ollama /chat_list /chat_listinfo'
 plugins = unblock_plugins.get('CHAT')
@@ -41,6 +48,38 @@ print('--- plugin GIGA: '+str(plugins),GIGA_TOKEN,URL_OLLAMA)
 #logger.info('--- plugin GIGA: '+str(get_plugins('GIGA')))
 # Вынести на параметр сделать возможность запоминать или изменять для каждого пользователя отдельно.
 # content="Ты бот супер программист на питон, который помогает пользователю провести время с пользой."
+
+
+def get_image():
+    if URL_OLLAMA == '':
+        return  'URL_OLLAMA is empty', [], {}
+    API_URL = f"{URL_OLLAMA}/api/generate"
+
+    payload = {
+        "model": "ozbillwang/stable_diffusion-ema-pruned-v2-1_768.q8_0:latest",                     # или stable-diffusion / flux
+        "prompt": "A surreal portrait of a cyber‑punk cat, vivid colors",
+        "options": {
+            "num_predict": 1,
+            "width": 1024,
+            "height": 1024,
+            "seed": 777,
+        },
+        # Для SD необходимо явно указать, что хотим изображение:
+        "stream": False,
+        "format": "json"
+    }
+
+    r = requests.post(API_URL, json=payload, timeout=180)   # генерация может занять ~30‑60 сек
+    r.raise_for_status()
+    data = r.json()
+
+    # В ответе будет поле `image` (base64‑строка)
+    if "image" in data:
+        img = base64.b64decode(data["image"])
+        Path("sdxl_result.png").write_bytes(img)
+        print("✅ Сохранено → sdxl_result.png")
+    else:
+        print("❌ Ошибка:", data)
 
 def format_time(duration):
     # Преобразуем длительность из наносекунд в секунды
@@ -157,6 +196,9 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
     output = ''
     telecmd = upms.text
     ret, list_model, dict_models  = get_models()
+    if not list_model:
+        upms.reply_text(f"❌ {ret}")
+        return None
     if telecmd == "/chat_list":
         output = "😎<b>Список моделей ollama</b>\n"
         for i in range(1, len(dict_models)+1):
@@ -171,7 +213,19 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
         else:
             num = int(telecmd.replace('/chat_o_',''))
             name = dict_models.get(num)
+            if not name:
+                upms.reply_text("❌..неверный номер модели..")
+                return None
             output = f"😎<b>{num}.Модель {name}</b>\n"
+            if name == 'ozbillwang/stable_diffusion-ema-pruned-v2-1_768.q8_0:latest':
+                return get_image()
+            elif name == 'impactframes/llama3_ifai_sd_prompt_mkr_q4km:latest':
+                return get_image()
+            elif name == 'brxce/stable-diffusion-prompt-generator:latest':
+                return get_image()
+            elif name == 'gnokit/improve-prompt:latest':
+                return get_image()
+
             msg = "Привет. Какая ты модель и что ты можешь ?"
             messages = [
                 {"role": "system", "content": "Ты разговариваешь с пользователем, чтобы помочь ему с чем-то."},
@@ -205,19 +259,23 @@ def get_models():
     if URL_OLLAMA == '':
         return  'URL_OLLAMA is empty', [], {}
     r = requests.get(f"{URL_OLLAMA}/api/tags")
-    str_models = ''
-    list_models = []
-    dict_model = {}
-    number = 1
-    # print(r.raise_for_status())
-    for model in r.json()["models"]:
-        # print(model,end='\n')
-        str_models +=f'{model["name"]} {model["details"]["parameter_size"]} {model["details"]["quantization_level"]}\n'
-        list_models.append(model["name"])
-        dict_model[number]= model["name"] 
-        number += 1
-    return str_models , list_models, dict_model
-
+    try:
+        str_models = ''
+        list_models = []
+        dict_model = {}
+        number = 1
+        # print(r.raise_for_status())
+        for model in r.json()["models"]:
+            # print(model,end='\n')
+            str_models +=f'{model["name"]} {model["details"]["parameter_size"]} {model["details"]["quantization_level"]}\n'
+            list_models.append(model["name"])
+            dict_model[number]= model["name"] 
+            number += 1
+        return str_models , list_models, dict_model
+    except requests.HTTPError as e:
+        print(f"GET failed: {e}")
+        return f"GET failed: {e}", [], {}
+    
 def show_model(name):
     try:
         r = requests.get(f"{URL_OLLAMA}/api/show", params={"name": name})
