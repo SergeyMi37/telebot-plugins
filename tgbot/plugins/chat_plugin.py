@@ -216,7 +216,7 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
             if not name:
                 upms.reply_text("❌..неверный номер модели..")
                 return None
-            output = f"😎<b>{num}.Модель {name}</b>\n"
+            output = f"<b>{num}.Модель {name}</b>\n"
             if name == 'ozbillwang/stable_diffusion-ema-pruned-v2-1_768.q8_0:latest':
                 return get_image()
             elif name == 'impactframes/llama3_ifai_sd_prompt_mkr_q4km:latest':
@@ -236,23 +236,24 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
             text, res = chat_ollama(name, messages)
             if "<" in text:
                 text = text.replace('<', '&lt;').replace('>', '&gt;')
-            output += text+ f"\n<b>Общая продолжительность: {format_time(res['total_duration'])}</b> \
+            output += text+ f"\n**Общая продолжительность: {format_time(res['total_duration'])}** \
             \n\r🔸/help /chat_list /chat_oll_{num} - диалог с этой моделью"
             pp.pprint(res)
+    
     elif '/chat_oll_' in telecmd:
         if telecmd == "/chat_oll_":
             output = chat_help
         else:
             num = int(telecmd.replace('/chat_oll_',''))
             name = dict_models.get(num)
-
+            output = '...Диалог с моделью {name}\n'
     elif '/chat_oi_' in telecmd:
         if telecmd == "/chat_oi_":
             output = chat_help
         else:
             num = int(telecmd.replace('/chat_oi_',''))
             name = dict_models.get(num)
-            output = f"😎<b>Модель {name}</b>\n"
+            output = f"😎**Модель {name}**\n"
             output += show_model(name)
     else:
         output = chat_help
@@ -266,8 +267,9 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
 def get_models():
     if URL_OLLAMA == '':
         return  'URL_OLLAMA is empty', [], {}
-    r = requests.get(f"{URL_OLLAMA}/api/tags")
-    try:
+    try: 
+        r = requests.get(f"{URL_OLLAMA}/api/tags",timeout=1)
+        r.raise_for_status()
         str_models = ''
         list_models = []
         dict_model = {}
@@ -280,9 +282,10 @@ def get_models():
             dict_model[number]= model["name"] 
             number += 1
         return str_models , list_models, dict_model
-    except requests.HTTPError as e:
-        print(f"GET failed: {e}")
-        return f"GET failed: {e}", [], {}
+    except Exception as e:
+        msg = f"{e}".replace(URL_OLLAMA.split("://")[1].split(':')[0] ,"URL_OLLAMA")
+        print(msg)
+        return msg, [], {}
     
 def show_model(name):
     try:
