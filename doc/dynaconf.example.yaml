@@ -68,6 +68,9 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - URL_OLLAMA = http://127.0.0.1:11434
         - TRANSLATE = granite3-dense:2b # Модель для перевода
         - GIGA_CHAT = <token==>
+    - MEDIA:
+        - blocked = 1
+        - desc = Сервис для скачивания роликов с Ютуба и ВкВидео и обмена ссылками между пользователями бота
     - NEWS:
         - blocked = 0
         - desc = Сервис агрегации rss новостей. /news_list - список СМИ /news_ - поиск по контексту
