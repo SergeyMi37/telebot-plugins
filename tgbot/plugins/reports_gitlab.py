@@ -30,7 +30,7 @@ from dtb.settings import settings, logger, get_plugins_for_roles
 
 # Добавить проверку на роль 
 plugins_gitlab = get_plugins_for_roles('').get('GITLAB')
-logger.info(f'--- plugin GITLAB: {plugins_gitlab}')
+#logger.info(f'--- plugin GITLAB: {plugins_gitlab}')
 
 ACCESS_TOKEN = plugins_gitlab.get('ACCESS_TOKEN') if plugins_gitlab else ''
 GRAPHQL_URL = plugins_gitlab.get('GRAPHQL_URL') if plugins_gitlab else ''
