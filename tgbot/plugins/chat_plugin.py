@@ -135,12 +135,12 @@ def request_chat_sys(update: Update, context):
     curr_model = MODEL_NAME.get(u.user_id, 'default')
     role_sys = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
     ques_user = 'Что ты умеешь ? Можешь ли сгенерировать картинку ?'
-    role = UsersOptions.objects.get(user=u,name='sys_role_'+curr_model).value
-    if role != '':
-        role_sys = role
-    ques = UsersOptions.objects.get(user=u,name='sys_ques_'+curr_model).value
-    if ques != '':
-        ques_user = ques
+    uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_'+curr_model)
+    if uo.value != '':
+        role_sys = uo.value
+    uoq, cr = UsersOptions.objects.get_or_create(user=u,name='sys_ques_'+curr_model)
+    if uoq.value != '':
+        ques_user = uoq.value
     msg=(f"😎Для текущей модели <b>{curr_model}</b>\nВведите :<b>Системный параметр \
           роли|Вопрос о модели</b>.\n Текущий: <code>{role_sys}|{ques_user}</code>\n/cancel_chat_sys - не изменять")
     context.bot.send_message(
@@ -221,16 +221,16 @@ def check_chat_ollama(update: Update, context):
     u = User.get_user(update, context)
     print('---',upms.text,MODEL_NAME)
     name = MODEL_NAME.get(u.user_id)
-    role = UsersOptions.objects.get(user=u,name='sys_role_'+name).value
-    if "|" in role:
-        if role.split('|')[0]:
-            role = role.split('|')[0]
-        else:
-            role = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
+    role = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
+    uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_'+name)
+    if "|" in uo.value:
+        if uo.value.split('|')[0]:
+            role = uo.value.split('|')[0]
+
     output = f"<b>{upms.text}...Разговор с моделью '{name}'</b>\n"
     # запоминать контекст ? где хранить ?
     upms.reply_text("🕒.один момент..")
-    output += chat_ollama_model(name, upms.text,sys_msg=role)
+    output += chat_ollama_model(name, upms.text,sys_msg = role)
     CONST = 4090
     ot=0
     do=CONST
@@ -264,9 +264,10 @@ def check_chat(update: Update, context):
     upms.reply_text("🕒.секундочку..")
     u = User.get_user(update, context)
     MODEL_NAME.update({ u.user_id:'giga' })
-    role = UsersOptions.objects.get(user=u,name='sys_role_giga').value
-    if not role:
-        role = f"Ты бот супер программист на питон, который помогает пользователю проводить время с пользой."
+    role = f"Ты бот супер программист на питон, который помогает пользователю проводить время с пользой."
+    uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_giga')
+    if uo.value !='':
+            role = uo.value
 
     messages = [
         SystemMessage(
