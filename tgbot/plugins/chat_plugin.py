@@ -92,21 +92,16 @@ def format_time(duration):
     
     return f"{hours}h {minutes}m {seconds}s"
 
-def ask_giga(prompt):
+def ask_giga(prompt, messages):
     if not GIGA_TOKEN:
         return "Токен для GigaChat не опрделен"
+
     giga = GigaChat(
         # Для авторизации запросов используйте ключ, полученный в проекте GigaChat API
         credentials=GIGA_TOKEN,
         verify_ssl_certs=False,
     )
-    messages = [
-        SystemMessage(
-            # content="Ты внимательный бот-психолог, который помогает пользователю решить его проблемы."
-            # content="Ты бот-собеседник, который помогает пользователю провести время с пользой."
-            content="Ты бот супер программист на питон, который помогает пользователю провести время с пользой."
-        )
-    ]
+
     messages.append(HumanMessage(content=prompt))
     try:
         res = giga.invoke(messages)
@@ -115,18 +110,21 @@ def ask_giga(prompt):
     except Exception as e:
         return e.args.__repr__()
 
-@check_groupe_user
-def text_message(update, context):
-    upms = get_tele_command(update)
-    telecmd = upms.text
-    resp = ask_giga(telecmd)
-    # Ответ пользователю
+# @check_groupe_user
+# def text_message(update, context):
+#     upms = get_tele_command(update)
+#     telecmd = upms.text
+#     u = User.get_user(update, context)
+#     MODEL_NAME.update({ u.user_id:'giga' })
+    
+#     resp = ask_giga(telecmd)
+#     # Ответ пользователю
 
-    context.bot.send_message(
-        chat_id=upms.chat.id,
-        text=f"Ответ Гиги: {resp} \n\r🔸/help",
-        parse_mode=ParseMode.HTML
-    )
+#     context.bot.send_message(
+#         chat_id=upms.chat.id,
+#         text=f"Ответ Гиги: {resp} \n\r🔸/help",
+#         parse_mode=ParseMode.HTML
+#     )
 
 CODE_INPUT = range(1)
 CODE_INPUT2 = range(1)
@@ -264,7 +262,20 @@ def check_chat(update: Update, context):
     upms = get_tele_command(update)
     _input = upms.text
     upms.reply_text("🕒.секундочку..")
-    _output = ask_giga(_input)
+    u = User.get_user(update, context)
+    MODEL_NAME.update({ u.user_id:'giga' })
+    role = UsersOptions.objects.get(user=u,name='sys_role_giga').value
+    if not role:
+        role = f"Ты бот супер программист на питон, который помогает пользователю проводить время с пользой."
+
+    messages = [
+        SystemMessage(
+            # content="Ты внимательный бот-психолог, который помогает пользователю решить его проблемы."
+            # content="Ты бот-собеседник, который помогает пользователю провести время с пользой."
+            content=f"{role}"
+        )
+    ]
+    _output = ask_giga(_input, messages)
     
     context.bot.send_message(
         chat_id=upms.chat.id,
@@ -278,7 +289,7 @@ def check_chat(update: Update, context):
 def cancel_chat(update: Update, context):
     """Завершаем диалог"""
     upms = get_tele_command(update)
-    upms.reply_text("диалог закончен \n\r🔸/help /chat /chat_giga_ - начать новый диалог")
+    upms.reply_text("диалог закончен \n\r🔸/help /chat /chat_sys_ /chat_giga_ - начать новый диалог")
     return ConversationHandler.END
 
 class ChatPlugin(BasePlugin):
