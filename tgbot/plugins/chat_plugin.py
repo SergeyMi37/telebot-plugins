@@ -28,7 +28,7 @@ from dtb.settings import unblock_plugins
 from dtb.settings import logger
 from tgbot.handlers.utils.decorators import check_groupe_user
 from tgbot.handlers.utils.info import get_tele_command
-from users.models import User
+from users.models import User, UsersOptions
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
 import pprint as pp
@@ -51,36 +51,36 @@ MODEL_NAME = {}
 # content="Ты бот супер программист на питон, который помогает пользователю провести время с пользой."
 
 
-def get_image():
-    if URL_OLLAMA == '':
-        return  'URL_OLLAMA is empty', [], {}
-    API_URL = f"{URL_OLLAMA}/api/generate"
+# def get_image():
+#     if URL_OLLAMA == '':
+#         return  'URL_OLLAMA is empty', [], {}
+#     API_URL = f"{URL_OLLAMA}/api/generate"
 
-    payload = {
-        "model": "ozbillwang/stable_diffusion-ema-pruned-v2-1_768.q8_0:latest",                     # или stable-diffusion / flux
-        "prompt": "A surreal portrait of a cyber‑punk cat, vivid colors",
-        "options": {
-            "num_predict": 1,
-            "width": 1024,
-            "height": 1024,
-            "seed": 777,
-        },
-        # Для SD необходимо явно указать, что хотим изображение:
-        "stream": False,
-        "format": "json"
-    }
+#     payload = {
+#         "model": "ozbillwang/stable_diffusion-ema-pruned-v2-1_768.q8_0:latest",                     # или stable-diffusion / flux
+#         "prompt": "A surreal portrait of a cyber‑punk cat, vivid colors",
+#         "options": {
+#             "num_predict": 1,
+#             "width": 1024,
+#             "height": 1024,
+#             "seed": 777,
+#         },
+#         # Для SD необходимо явно указать, что хотим изображение:
+#         "stream": False,
+#         "format": "json"
+#     }
 
-    r = requests.post(API_URL, json=payload, timeout=180)   # генерация может занять ~30‑60 сек
-    r.raise_for_status()
-    data = r.json()
+#     r = requests.post(API_URL, json=payload, timeout=180)   # генерация может занять ~30‑60 сек
+#     r.raise_for_status()
+#     data = r.json()
 
-    # В ответе будет поле `image` (base64‑строка)
-    if "image" in data:
-        img = base64.b64decode(data["image"])
-        Path("sdxl_result.png").write_bytes(img)
-        print("✅ Сохранено → sdxl_result.png")
-    else:
-        print("❌ Ошибка:", data)
+#     # В ответе будет поле `image` (base64‑строка)
+#     if "image" in data:
+#         img = base64.b64decode(data["image"])
+#         Path("sdxl_result.png").write_bytes(img)
+#         print("✅ Сохранено → sdxl_result.png")
+#     else:
+#         print("❌ Ошибка:", data)
 
 def format_time(duration):
     # Преобразуем длительность из наносекунд в секунды
@@ -133,19 +133,75 @@ CODE_INPUT2 = range(1)
 CODE_INPUT_SYS = range(1)
 def request_chat_sys(update: Update, context):
     upms = get_tele_command(update)
-    role_sys = 'Ты разговариваешь с пользователем, чтобы помочь ему с чем-то.'
-    upms.reply_text(f"😎Введите системный параметр роли. Текущий: <code>{role_sys}</code>")
+    u = User.get_user(update, context)
+    curr_model = MODEL_NAME.get(u.user_id, 'default')
+    role_sys = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
+    ques_user = 'Что ты умеешь ? Можешь ли сгенерировать картинку ?'
+    role = UsersOptions.objects.get(user=u,name='sys_role_'+curr_model).value
+    if role != '':
+        role_sys = role
+    ques = UsersOptions.objects.get(user=u,name='sys_ques_'+curr_model).value
+    if ques != '':
+        ques_user = ques
+    msg=(f"😎Для текущей модели <b>{curr_model}</b>\nВведите :<b>Системный параметр \
+          роли|Вопрос о модели</b>.\n Текущий: <code>{role_sys}|{ques_user}</code>\n/cancel_chat_sys - не изменять")
+    context.bot.send_message(
+        chat_id=upms.chat.id,
+        text = msg,
+        disable_web_page_preview=True,
+        parse_mode=ParseMode.HTML
+    )
     return CODE_INPUT_SYS
 
 def check_chat_sys(update: Update, context):
     upms = get_tele_command(update)
-    role_sys = upms.text
-    upms.reply_text(f".Сохранили.: <code>{role_sys}</code>")
+    u = User.get_user(update, context)
+    curr_model = MODEL_NAME.get(u.user_id, 'default')
+    role = upms.text
+    ques = ''
+    if '|' in role:
+        ques = role.split('|')[1]
+        role = role.split('|')[0]
+    
+    try:
+        instance, created = UsersOptions.objects.update_or_create(
+                    user=u,
+                    name='sys_role_'+curr_model,
+                    defaults={
+                        'description': 'Системный параметр роли для {"role": "system", "content": sys_msg}',
+                        'category': "model_option",
+                        'type': "text",
+                        'value': role,
+                        'enabled': True
+                    }
+                )
+        instance, created = UsersOptions.objects.update_or_create(
+                    user=u,
+                    name='sys_ques_'+curr_model,
+                    defaults={
+                        'description': 'Вопрос к модели - параметр роли для {"role": "user", "content": sys_msg}',
+                        'category': "model_option",
+                        'type': "text",
+                        'value': ques,
+                        'enabled': True
+                    }
+                )
+        msg = (f"Для текущей модели <b>{curr_model}</b>\nСохранили.: <code>{role}|{ques}</code>")
+    except Exception as e:
+        msg = (f"Ошибка сохранения: {e}")
+    msg += (f"\n\n🔸/help /chat_list /chat_sys_")
+    context.bot.send_message(
+        chat_id=upms.chat.id,
+        text = msg,
+        disable_web_page_preview=True,
+        parse_mode=ParseMode.HTML
+    )
+    return ConversationHandler.END
 
 def cancel_chat_sys(update: Update, context):
     """Завершаем диалог"""
     upms = get_tele_command(update)
-    upms.reply_text("диалог закончен \n\r🔸/help /chat /chat_giga_ - начать новый диалог")
+    upms.reply_text("диалог закончен \n\r🔸/help /chat /chat_sys_ /chat_giga_ - начать новый диалог")
     return ConversationHandler.END
 
 def request_chat_ollama(update: Update, context):
@@ -157,8 +213,7 @@ def request_chat_ollama(update: Update, context):
         if num.isdigit():
             name = dict_models.get(int(num))
             if name:
-                MODEL_NAME.update({ u.user_id:name })
-            # print('---==',upms.text,MODEL_NAME)
+                MODEL_NAME.update({ u.user_id:name }) # запоминаем текущую модель для пользователя
    
     upms.reply_text(f"😎Введите вопрос к Модели: '{MODEL_NAME.get(u.user_id)}'. /cancel_ollama - конец диалога")
     return CODE_INPUT2
@@ -168,24 +223,36 @@ def check_chat_ollama(update: Update, context):
     u = User.get_user(update, context)
     print('---',upms.text,MODEL_NAME)
     name = MODEL_NAME.get(u.user_id)
-
+    role = UsersOptions.objects.get(user=u,name='sys_role_'+name).value
+    if "|" in role:
+        if role.split('|')[0]:
+            role = role.split('|')[0]
+        else:
+            role = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
     output = f"<b>{upms.text}...Разговор с моделью '{name}'</b>\n"
+    # запоминать контекст ? где хранить ?
     upms.reply_text("🕒.один момент..")
-    output += chat_ollama_model(name, upms.text)
-    #output += f"\n\r🔸/help /chat_list /chat_ollama_ - новый диалог с этой моделью"
-
-    context.bot.send_message(
-        chat_id=upms.chat.id,
-        text = output,
-        disable_web_page_preview=True,
-        parse_mode=ParseMode.HTML
-    )
+    output += chat_ollama_model(name, upms.text,sys_msg=role)
+    CONST = 4090
+    ot=0
+    do=CONST
+    while True:
+        context.bot.send_message(
+            chat_id=upms.chat.id,
+            text = output[ot:do], # выводим в телегу порциями по :4090]
+            disable_web_page_preview=True,
+            parse_mode=ParseMode.HTML
+        )
+        ot += CONST
+        do += CONST
+        if output[ot:do]=='':
+            break
     request_chat_ollama(update, context) # зацикливаем диалог
 
 def cancel_chat_ollama(update: Update, context):
     """Завершаем диалог """
     upms = get_tele_command(update)
-    upms.reply_text("диалог c моделью закончен \n\r🔸/help /chat /chat_list /chat_ollama_ - начать новый диалог")
+    upms.reply_text("диалог c моделью закончен \n\r🔸/help /chat /chat_list /chat_sys_ /chat_ollama_ - начать новый диалог")
     return ConversationHandler.END
 
 def request_chat(update: Update, context):
@@ -223,7 +290,7 @@ class ChatPlugin(BasePlugin):
                     MessageHandler(Filters.text & (~Filters.command), check_chat),
                 ],
             },
-            conversation_timeout=130,
+            conversation_timeout=300,
             fallbacks=[
                 CommandHandler('cancel_giga', cancel_chat),
             ]
@@ -235,7 +302,7 @@ class ChatPlugin(BasePlugin):
                     MessageHandler(Filters.text & (~Filters.command), check_chat_ollama),
                 ],
             },
-            conversation_timeout=130,
+            conversation_timeout=300,
             fallbacks=[
                 CommandHandler('cancel_ollama', cancel_chat_ollama),
             ]
@@ -243,11 +310,11 @@ class ChatPlugin(BasePlugin):
         conv_handler_sys = ConversationHandler(
             entry_points=[CommandHandler('chat_sys_', request_chat_sys)],
             states={
-                CODE_INPUT: [
+                CODE_INPUT_SYS: [
                     MessageHandler(Filters.text & (~Filters.command), check_chat_sys),
                 ],
             },
-            conversation_timeout=100,
+            conversation_timeout=300,
             fallbacks=[
                 CommandHandler('cancel_chat_sys', cancel_chat_sys),
             ]
@@ -288,7 +355,7 @@ def chat_ollama_model(name,msg,sys_msg="Ты разговариваешь с п�
         if "<" in text:
             text = text.replace('<', '&lt;').replace('>', '&gt;')
         output = text+ f"\n**Общая продолжительность: {format_time(res['total_duration'])}** "            
-    # output += f"\n\r🔸/help /chat_list /chat_ollama_{num} - диалог с этой моделью"
+    # output += f"\n\r🔸/help /chat_list /chat_sys_ /chat_ollama_{num} - диалог с этой моделью"
     pp.pprint(res)
     return output
 
@@ -297,6 +364,7 @@ def chat_ollama_model(name,msg,sys_msg="Ты разговариваешь с п�
 def commands_chat(update: Update, context: CallbackContext) -> None:
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
+    u = User.get_user(update, context)
     output = ''
     telecmd = upms.text
     if telecmd == "/chat":
@@ -334,12 +402,14 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
             #     return get_image()
 
             msg = "Какая ты модель и что ты можешь ? Умеешь ли ты сгенерировать картинку ?"
-
+            uo , cr = UsersOptions.objects.get_or_create(user=u,name='sys_ques_'+str(name))
+            if uo.value != '':
+                msg = uo.value
+            MODEL_NAME.update({u.user_id:name }) # запоминаем имя модели
             output = f"<b>{msg}. Вопрос к '{name}'</b>\n"
             upms.reply_text("🕒.один момент..")
             output += chat_ollama_model(name,msg)
-            output += f"\n\r🔸/help /chat_list /chat_ollama_{num} - начать диалог с этой моделью"
-
+            output += f"\n\r🔸/help /chat_list /chat_sys_ /chat_ollama_{num} - начать диалог с этой моделью"
 
     elif '/chat_ollama_' in telecmd:
         if telecmd == "/chat_ollama_":
@@ -347,7 +417,8 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
         else:
             num = int(telecmd.replace('/chat_ollama_',''))
             name = dict_models.get(num)
-            output = '...Диалог с моделью {name}\n'
+            output = f'...Диалог с моделью !!!! {name}\n'
+            
     elif '/chat_oi_' in telecmd:
         if telecmd == "/chat_oi_":
             output = chat_help
