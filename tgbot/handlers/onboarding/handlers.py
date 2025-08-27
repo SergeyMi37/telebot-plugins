@@ -44,7 +44,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
     plugins = get_plugins_for_roles(users_roles) # Получить все доступные плагины пользователю из неблокированных
     #plugins = get_plugins(users_roles) # Получить все доступные плагины пользователю из неблокированных
     # todo get_unblock_plugins 
-    text += CRLF+'/start: Кнопки ссылок на модули\n'
+    text += CRLF+'🔸/start: Кнопки ссылок на модули'
     url = settings.get("SUPPORT_GROUP", "https://t.me/+__Qezxf7-E0xY2I6")
     text += CRLF+f'<a href=\"{url}\">🎯Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'
     if u.is_admin:
@@ -54,16 +54,14 @@ def command_help(update: Update, context: CallbackContext) -> None:
     #    text += CRLF+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
         # Если есть доступ к плпгину IRIS
-        text += CRLF+'👉---модуль-IRIS---------'
-        text += CRLF+'/servers: Смотреть статус всех серверов IRIS'
+        #text += CRLF+'👉---модуль-IRIS---------'
+        text += CRLF+'🔸/servers: Смотреть статус всех серверов IRIS'
         text += CRLF+'/s_TEST: Смотреть продукции сервера TEST'
-        text += CRLF
     if plugins.get('GITLAB'):
         # Если есть доступ к плагину GITLAB
-        text += CRLF+'👉---модуль-GITLAB---------'
-        text += CRLF+'/daily: Отчет ежедневный по меткам проекта'
+        #text += CRLF+'👉---модуль-GITLAB---------'
+        text += CRLF+'🔸/daily: Отчет ежедневный по меткам проекта'
         text += CRLF+'/yesterday: Отчет вчерашний по меткам проекта'
-        text += CRLF+CRLF
         _i = 0
         
         if reports_gitlab.PROJ_RU:
@@ -88,8 +86,8 @@ def command_help(update: Update, context: CallbackContext) -> None:
     for pl,val in plugins.items():
         if not (pl in ['GIGA','GITLAB','IRIS']): # кроме встроенных модулей
             if users_roles is not None and (pl in users_roles or "All" in users_roles):
-                text += CRLF + f'👉---модуль-{pl}---------'
-                text += CRLF + f"/{pl.lower()} {val.get('desc')}{CRLF}"
+                #text += CRLF + f'👉---модуль-{pl}---------'
+                text += CRLF + f"🔸/{pl.lower()} {val.get('desc')}"
 
     #if u.is_superadmin and (upms.chat.id==u.user_id): # если суперадмин и мы в личном чате с ним
         # text += CRLF+'👉----Super admin options--------'
@@ -100,7 +98,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         # text += CRLF+' 👥/export_users: Экспорт users.csv'
         # text += CRLF+' /ask_info - информация о состоянии бота'
     
-    text += CRLF+CRLF+'🔸/help: Перечень команд'
+    #text += CRLF+CRLF+'🔸/help: Перечень команд'
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=text,
