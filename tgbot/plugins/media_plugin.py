@@ -103,7 +103,7 @@ def commands(update: Update, context: CallbackContext) -> None:
         http = Updates.objects.filter(
             message__startswith='https://youtu',
             from_id=u.user_id
-        ).values()
+        ).values('from_id', 'message', 'chat_id')
         csv = _get_csv_from_qs_values(http,'url_http')
         upms.reply_document(csv)
     # updates_with_http_links = Updates.objects.filter(message__startswith='https')
