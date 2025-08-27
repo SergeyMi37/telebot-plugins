@@ -515,3 +515,10 @@ def chat_ollama(name, messages):
 # print(show_model(mo))
 #print(chat(mo, [{"role":"user","content":"Привет, Перечисли планеты солнечной системы"}]))
 #print(chat(mo, [{"role":"user","content":"Почему нет плутона ?"}]))
+
+
+def main() -> None:
+    print(URL_OLLAMA)
+
+if __name__ == '__main__':
+    main()

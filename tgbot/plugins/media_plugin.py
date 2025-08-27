@@ -23,19 +23,18 @@ from telegram.ext import CallbackContext
 # from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
-from users.models import User
-
+from users.models import User,Updates
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
-
 from tgbot.plugins.base_plugin import BasePlugin
+from datetime import date
+from tgbot.handlers.admin.utils import _get_csv_from_qs_values
 
 # Добавить проверку на роль ''
 #plugin_wiki = get_plugins_for_roles('').get('WIKI')
 
 plugin_cmd = "media"
 CODE_INPUT = range(1)
-plugin_help = f'Загрузка роликов с ютуба. 🔸/help /{plugin_cmd} /{plugin_cmd}_ - диалог для загрузки роликов с ютуба' 
-
+plugin_help = f'Загрузка роликов с ютуба. 🔸/help /{plugin_cmd} /media_get_yt /{plugin_cmd}_ - диалог для загрузки роликов с ютуба' 
 
 def request_p(update: Update, context):
     """Запрашиваем у пользователя"""
@@ -97,10 +96,28 @@ def button(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
-    #u = User.get_user(update, context)
+    u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
-    #if telecmd == '/':
+    if telecmd == '/media_get_yt':
+        http = Updates.objects.filter(
+            message__startswith='https://youtu',
+            from_id=u.user_id
+        ).values()
+        csv = _get_csv_from_qs_values(http,'url_http')
+        upms.reply_document(csv)
+    # updates_with_http_links = Updates.objects.filter(message__startswith='https')
+
+    # Укажите конкретные даты начала и конца периода
+    # start_date = date(2023, 1, 1)
+    # end_date = date(2023, 12, 31)
+
+    # # Запрос с фильтрацией сообщений, начинающихся с "https", и ограничением по диапазону дат
+    # updates_with_http_and_date_range = Updates.objects.filter(
+    #     message__startswith='https',
+    #     date__range=(start_date, end_date)
+    # )
+    
     _out = plugin_help
     context.bot.send_message(
         chat_id=upms.chat.id,
@@ -108,3 +125,58 @@ def commands(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
+
+# -----------------------------------------
+# import os
+# from telegram import Update
+# from telegram.ext import Updater, CommandHandler, CallbackContext
+
+# # Загрузить необходимые библиотеки
+# import youtube_dl  # Для скачивания видео с YouTube
+# from pyrogram.telegram_client import TelegramClient
+
+
+def start(update: Update) -> None:
+    update.message.reply_text('Привет! Я бот для загрузки роликов с YouTube в ваш чат.')
+
+
+def download_video(url, output_path):
+    ytdl_format_options = {
+        'format': 'bestaudio/best',
+        'extractaudio': True,
+        'audioformat': 'mp3',
+        'outtmpl': '%(title)s.%(ext)s'
+    }
+
+    with youtube_dl.YoutubeDL(ytdl_format_options) as ydl:
+        ydl.download([url])
+        
+    # Переместить загруженный файл в нужную папку
+    os.system(f'mv {output_path} /путь/к/целевой/папке')
+    update.message.reply_text('Видео скачано и перенесено в целевую папку!')
+
+
+def download_command(update: Update, context) -> None:
+    if len(context.args) > 0 and 'https://www.youtube.com/watch' in context.args[0]:
+        video_url = " ".join(context.args)
+        output_path = f"video_{context.chat.id}"
+        
+        # Скачиваем видео
+        download_video(video_url, output_path)
+    else:
+        update.message.reply_text('Введите корректный URL на YouTube.')
+
+
+def main() -> None:
+    updater = Updater("YOUR_API_TOKEN", use_context=True)
+    
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("download", download_command))
+    
+    updater.start_polling()
+    updater.idle()
+
+
+if __name__ == '__main__':
+    main()

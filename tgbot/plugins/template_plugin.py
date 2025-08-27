@@ -1,15 +1,6 @@
-# Name Plugin: MEDIA
+# Name Plugin: TEMPLATE
     # - MEDIA:
     #     - desc = Сервис для скачивания роликов с Ютуба и ВкВидео и обмена ссылками между пользователями бота
-# Применяется утилита youtube-dl
-# https://ostechnix.com/yt-dlp-tutorial/
-# https://habr.com/ru/articles/857964/
-# https://github.com/oleksis/youtube-dl-gui/releases/tag/v1.8.2
-# интересные проекты
-# https://github.com/Algram/ytdl-webserver
-# https://github.com/marcopiovanello/yt-dlp-web-ui
-# https://github.com/oleksis/youtube-dl-gui
-# https://github.com/BKSalman/ytdlp-gui
 # имя плагина MEDIA должно совпадать с именем в конфигурации Dynaconf
 # имя плагина media должно быть первым полем от _ в имени файла media_plugin
 # имя файла плагина должно окачиваться на _plugin
@@ -32,7 +23,7 @@ from tgbot.plugins.base_plugin import BasePlugin
 # Добавить проверку на роль ''
 #plugin_wiki = get_plugins_for_roles('').get('WIKI')
 
-plugin_cmd = "media"
+plugin_cmd = "template"
 CODE_INPUT = range(1)
 plugin_help = f'Загрузка роликов с ютуба. 🔸/help /{plugin_cmd} /{plugin_cmd}_ - диалог для загрузки роликов с ютуба' 
 

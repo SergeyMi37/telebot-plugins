@@ -17,7 +17,6 @@ from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.admin import static_text
-from users.models import User
 import pprint as pp
 import string
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
@@ -25,7 +24,7 @@ from tgbot.plugins.base_plugin import BasePlugin
 from dtb.settings import TELEGRAM_LOGS_CHAT_ID, DEBUG, settings, logger , unblock_plugins
 from tgbot.handlers.utils.decorators import check_groupe_user, superadmin_only, send_typing_action
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values, GetExtInfo
-from users.models import Options
+from users.models import Options, UsersOptions, User, Updates
 
 ADMIN_INPUT = range(1)
 _admin_help = '🌏/ask_location: Отправить локацию' \
@@ -78,7 +77,7 @@ def universal_message_handler(update, context, func=""):
         # - delete_user_after_forbidden_words = 0
         # Проверять ли на запрещенные слова ?
         # Список запрещенных слов (в нижнем регистре) TODO - в будущем хранить в бд
-        FORBIDDEN_WORDS = ["укра", "хох", "сво", "русня"]
+        FORBIDDEN_WORDS = ["бля", "ебт"]
         try:
             obj = Options.get_by_name_and_category(name="FORBIDDEN_WORDS")
             if obj:
@@ -251,8 +250,20 @@ def commands_admin(update: Update, context: CallbackContext) -> None:
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
+    if telecmd == '/admin_export_updates':
+        upd = Updates.objects.all().values()
+        csv = _get_csv_from_qs_values(upd,'Updates')
+        upms.reply_document(csv)
+    if telecmd == '/admin_export_options':
+        opt = Options.objects.all().values()
+        csv = _get_csv_from_qs_values(opt,'Options')
+        upms.reply_document(csv)
+    if telecmd == '/admin_export_usersoptions':
+        upd = UsersOptions.objects.all().values()
+        csv = _get_csv_from_qs_values(upd,'UsersOtions')
+        upms.reply_document(csv)
+    
     _output = _admin_help
-
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
