@@ -12,6 +12,8 @@
 # ADMIN_INPUT = range(1)  - определена переменная, которая используется в диалогах
 
 from django.utils.timezone import now
+from django.db import connection
+from django.db.models import Count
 from datetime import timedelta
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -34,6 +36,7 @@ _admin_help = '🌏/ask_location: Отправить локацию' \
 '\n/admin_export_updates: Экспорт updates.csv для некоторых или всех пользователей' \
 '\n/admin_export_options: Экспорт options.csv' \
 '\n/admin_export_usersoptions: Экспорт usersoptions.csv' \
+'\n/admin_export_UpdatesCount: Экспорт часто выполняемых команд' \
 '\n\n🔸/help'
 
 plugins = unblock_plugins.get('ADMIN')
@@ -247,7 +250,7 @@ def button_admin(update: Update, context: CallbackContext) -> None:
 @check_groupe_user
 @superadmin_only
 def commands_admin(update: Update, context: CallbackContext) -> None:
-    #u = User.get_user(update, context)
+    u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
     if telecmd == '/admin_export_updates':
@@ -262,6 +265,21 @@ def commands_admin(update: Update, context: CallbackContext) -> None:
         upd = UsersOptions.objects.all().values()
         csv = _get_csv_from_qs_values(upd,'UsersOtions')
         upms.reply_document(csv)
+    if telecmd == '/admin_export_UpdatesCount':
+        queryset = (
+            Updates.objects
+            .filter(from_id=u.user_id)
+            .exclude(message__isnull=True)
+            .values('message')
+            .annotate(count=Count('message'))
+            .order_by('-count')
+        )
+        csv = _get_csv_from_qs_values(queryset,'UpdatesCount')
+        upms.reply_document(csv)
+        if connection.queries:
+            print('====',connection.queries[-1]['sql'])
+        else:
+            print("====Нет записей в connection.queries")
     
     _output = _admin_help
     context.bot.send_message(

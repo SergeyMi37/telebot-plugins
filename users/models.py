@@ -144,14 +144,22 @@ class Options(CreateTracker):
 
 class Updates(CreateTracker):
     update_id = models.PositiveBigIntegerField(primary_key=True)
-    message = models.TextField(default='',blank=True, null=True)
-    from_id = models.BigIntegerField(**nb)
-    chat_id = models.BigIntegerField(default=0,null=True, blank=True)
+    message = models.TextField(default='',blank=True, null=True, db_index=True)
+    #from_id = models.BigIntegerField(**nb)
+    from_id = models.BigIntegerField(null=True, blank=True, db_index=True)
+    #chat_id = models.BigIntegerField(default=0,null=True, blank=True)
+    chat_id = models.BigIntegerField(db_index=True, default=0, null=True, blank=True)
     json = models.TextField(default='',null=True)
     objects = GetOrNoneManager()
+    class Meta:
+        indexes = [
+            models.Index(fields=['from_id'], name='idx_from_id'),
+            models.Index(fields=['chat_id'], name='idx_chat_id'),
+            models.Index(fields=['message'], name='idx_message'),
+        ]
     def __str__(self):
         return f" {self.update_id}, {self.from_id}"
-    
+
     @classmethod
     def save_from_update(cls, update: Update) -> Updates:
         """Метод сохраняет обновление в базу данных."""
@@ -176,3 +184,30 @@ class Updates(CreateTracker):
         )
         new_update.save()  # Создаем новый экземпляр в БД
         return new_update
+    
+    # def upd_from_updates(self):
+    # if settings.get("UPDATES_DB"):
+    #   #pp.pprint(update.to_dict(), depth=2)
+    #   #update_obj = Updates.save_from_update(update)
+      
+    #   # text =getattr(upms, 'text', '')
+    #   # ud, created = Updates.objects.update_or_create(
+    #   #    update_id=upms.update_id,
+    #   #    defaults={
+    #   #          'message' = text,
+    #   #          'chat_id': upms.chat.id,
+    #   #          'json': "model_option"
+    #   #       }
+    #   #       )
+    #   try:
+    #      ins, cr = Updates.objects.update_or_create(
+    #                 update_id=update.update_id,
+    #                 defaults={
+    #                   'message': getattr(upms, 'text', ''),
+    #                   'chat_id': getattr(update.message, 'chat_id', None),
+    #                   'from_id': getattr(getattr(update.message, 'from_user', None), 'id', None),
+    #                   'json': str(update.to_dict())
+    #                 }
+    #             )
+    #   except Exception as e:
+    #      print(e)

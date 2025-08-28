@@ -7,9 +7,21 @@ def get_tele_command(update: Update) -> str:
    #print('----get_tele_command---',update)
    from users.models import Updates
    if settings.get("UPDATES_DB"):
-      #pp.pprint(update.to_dict(), depth=2)
       update_obj = Updates.save_from_update(update)
    #pp.pprint(update_obj, depth=2)
+      # try:
+      #    ins, cr = Updates.objects.update_or_create(
+      #               update_id=update.update_id,
+      #               defaults={
+      #                 'message': getattr(upms, 'text', ''),
+      #                 'chat_id': getattr(update.message, 'chat_id', None),
+      #                 'from_id': getattr(getattr(update.message, 'from_user', None), 'id', None),
+      #                 'json': str(update.to_dict())
+      #               }
+      #           )
+      # except Exception as e:
+      #    print(e)
+
    try:
       if update.message:
          upms = update.message

@@ -6,12 +6,36 @@ import dj_database_url
 import dotenv
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-consolehandler = logging.StreamHandler()
-consolehandler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-consolehandler.setFormatter(formatter)
-logger.addHandler(consolehandler)
+# logger.setLevel(logging.DEBUG)
+# consolehandler = logging.StreamHandler()
+# consolehandler.setLevel(logging.DEBUG)
+# formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# consolehandler.setFormatter(formatter)
+# logger.addHandler(consolehandler)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,  # Не отключайте существующие логгеры
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s - %(levelname)s - %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",  # Используйте нужный формат
+        },
+    },
+    # "loggers": {
+    #     # Логгер для SQL-запросов
+    #     "django.db.backends": {
+    #         "level": "DEBUG",
+    #         "handlers": ["console"],
+    #         "propagate": False,
+    #     }
+    #},
+}
 
 from pathlib import Path
 from dynaconf import Dynaconf
@@ -30,7 +54,6 @@ if os.environ.get('DJANGO_DEBUG', default=False) in ['True', 'true', '1', True]:
     DEBUG = True
 else:
     DEBUG = False
-
 
 # Load env variables from file
 dotenv_file = BASE_DIR / ".env"
