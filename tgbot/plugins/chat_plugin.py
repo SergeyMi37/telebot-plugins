@@ -265,10 +265,12 @@ def check_chat(update: Update, context):
     u = User.get_user(update, context)
     MODEL_NAME.update({ u.user_id:'giga' })
     role = f"Ты бот супер программист на питон, который помогает пользователю проводить время с пользой."
-    uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_giga')
-    if uo.value !='':
-            role = uo.value
-
+    try:
+        uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_giga')
+        if uo.value !='':
+                role = uo.value
+    except Exception as e:
+        pass
     messages = [
         SystemMessage(
             # content="Ты внимательный бот-психолог, который помогает пользователю решить его проблемы."

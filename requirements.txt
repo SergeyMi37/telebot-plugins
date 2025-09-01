@@ -51,3 +51,6 @@ scipy
 
 # for plugin duckduckgo
 duckduckgo-search
+
+# for plugin archchinese
+beautifulsoup4
