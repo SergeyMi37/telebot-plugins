@@ -135,12 +135,17 @@ def request_chat_sys(update: Update, context):
     curr_model = MODEL_NAME.get(u.user_id, 'default')
     role_sys = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
     ques_user = 'Что ты умеешь ? Можешь ли сгенерировать картинку ?'
-    uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_'+curr_model)
-    if uo.value != '':
-        role_sys = uo.value
-    uoq, cr = UsersOptions.objects.get_or_create(user=u,name='sys_ques_'+curr_model)
-    if uoq.value != '':
-        ques_user = uoq.value
+    try:
+        uo = UsersOptions.objects.get(user=u,name='sys_role_'+curr_model)
+        if uo:
+            if uo.value != '':
+                role_sys = uo.value
+        uoq = UsersOptions.objects.get(user=u,name='sys_ques_'+curr_model)
+        if uoq:
+            if uoq.value != '':
+                ques_user = uoq.value
+    except Exception as e:
+        print(e)
     msg=(f"😎Для текущей модели <b>{curr_model}</b>\nВведите :<b>Системный параметр \
           роли|Вопрос о модели</b>.\n Текущий: <code>{role_sys}|{ques_user}</code>\n/cancel_chat_sys - не изменять")
     context.bot.send_message(
@@ -222,11 +227,14 @@ def check_chat_ollama(update: Update, context):
     print('---',upms.text,MODEL_NAME)
     name = MODEL_NAME.get(u.user_id)
     role = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
-    uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_'+name)
-    if "|" in uo.value:
-        if uo.value.split('|')[0]:
-            role = uo.value.split('|')[0]
-
+    try:
+        uo = UsersOptions.objects.get(user=u,name='sys_role_'+name)
+        if uo:
+            if "|" in uo.value:
+                if uo.value.split('|')[0]:
+                    role = uo.value.split('|')[0]
+    except Exception as e:
+        print(e)
     output = f"<b>{upms.text}...Разговор с моделью '{name}'</b>\n"
     # запоминать контекст ? где хранить ?
     upms.reply_text("🕒.один момент..")
@@ -266,11 +274,12 @@ def check_chat(update: Update, context):
     MODEL_NAME.update({ u.user_id:'giga' })
     role = f"Ты бот супер программист на питон, который помогает пользователю проводить время с пользой."
     try:
-        uo, cr = UsersOptions.objects.get_or_create(user=u,name='sys_role_giga')
-        if uo.value !='':
+        uo = UsersOptions.objects.get(user=u,name='sys_role_giga')
+        if uo:
+            if uo.value !='':
                 role = uo.value
     except Exception as e:
-        pass
+        print(e)
     messages = [
         SystemMessage(
             # content="Ты внимательный бот-психолог, который помогает пользователю решить его проблемы."
@@ -416,9 +425,13 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
             #     return get_image()
 
             msg = "Какая ты модель и что ты можешь ? Умеешь ли ты сгенерировать картинку ?"
-            uo , cr = UsersOptions.objects.get_or_create(user=u,name='sys_ques_'+str(name))
-            if uo.value != '':
-                msg = uo.value
+            try:
+                uo = UsersOptions.objects.get(user=u,name='sys_ques_'+str(name))
+                if uo:
+                    if uo.value != '':
+                        msg = uo.value
+            except Exception as e:
+                print(e)
             MODEL_NAME.update({u.user_id:name }) # запоминаем имя модели
             output = f"<b>{msg}. Вопрос к '{name}'</b>\n"
             upms.reply_text("🕒.один момент..")
