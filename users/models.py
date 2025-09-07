@@ -121,7 +121,14 @@ class UsersOptions(CreateTracker):
     objects = GetOrNoneManager()
     def __str__(self):
         return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
-
+    @classmethod
+    def get_by_name_and_category(cls, user_id, name, category=None):
+        """Получает объект по пользователю, по имени и дополнительной фильтрации по категории."""
+        queryset = cls.objects.filter(user_id=user_id,name=name)
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset.first()
+    
 class Options(CreateTracker):
     name = models.CharField(max_length=132,unique=True, **nb,help_text="Имя параметра")
     description = models.TextField(("Описание"), default='',blank=True,help_text="Описание параметра")

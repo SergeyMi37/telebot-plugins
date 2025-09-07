@@ -136,11 +136,11 @@ def request_chat_sys(update: Update, context):
     role_sys = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
     ques_user = 'Что ты умеешь ? Можешь ли сгенерировать картинку ?'
     try:
-        uo = UsersOptions.objects.get(user=u,name='sys_role_'+curr_model)
+        uo = UsersOptions.get_by_name_and_category(user_id=u.user_id,name='sys_role_'+curr_model)
         if uo:
             if uo.value != '':
                 role_sys = uo.value
-        uoq = UsersOptions.objects.get(user=u,name='sys_ques_'+curr_model)
+        uoq = UsersOptions.get_by_name_and_category(user_id=u.user_id,name='sys_ques_'+curr_model)
         if uoq:
             if uoq.value != '':
                 ques_user = uoq.value
@@ -228,7 +228,7 @@ def check_chat_ollama(update: Update, context):
     name = MODEL_NAME.get(u.user_id)
     role = 'Ты бот супер программист на питон, который помогает пользователю производить эфективные программы.'
     try:
-        uo = UsersOptions.objects.get(user=u,name='sys_role_'+name)
+        uo = UsersOptions.get_by_name_and_category(user_id=u.user_id,name='sys_role_'+name)
         if uo:
             if "|" in uo.value:
                 if uo.value.split('|')[0]:
@@ -274,7 +274,7 @@ def check_chat(update: Update, context):
     MODEL_NAME.update({ u.user_id:'giga' })
     role = f"Ты бот супер программист на питон, который помогает пользователю проводить время с пользой."
     try:
-        uo = UsersOptions.objects.get(user=u,name='sys_role_giga')
+        uo = UsersOptions.get_by_name_and_category(user_id=u.user_id,name='sys_role_giga')
         if uo:
             if uo.value !='':
                 role = uo.value
@@ -426,7 +426,7 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
 
             msg = "Какая ты модель и что ты можешь ? Умеешь ли ты сгенерировать картинку ?"
             try:
-                uo = UsersOptions.objects.get(user=u,name='sys_ques_'+str(name))
+                uo = UsersOptions.get_by_name_and_category(user_id=u.user_id,name='sys_ques_'+str(name))
                 if uo:
                     if uo.value != '':
                         msg = uo.value
