@@ -436,7 +436,7 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
             output = f"<b>{msg}. Вопрос к '{name}'</b>\n"
             upms.reply_text("🕒.один момент..")
             output += chat_ollama_model(name,msg)
-            output += f"\n\r🔸/help /chat_list /chat_sys_ /chat_ollama_{num} - начать диалог с этой моделью"
+            output += f"\n\r🔸/help /chat /chat_list /chat_sys_ /chat_ollama_{num} - начать диалог с этой моделью"
 
     elif '/chat_ollama_' in telecmd:
         if telecmd == "/chat_ollama_":
