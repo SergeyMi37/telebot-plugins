@@ -1,6 +1,6 @@
 # Name Plugin: DATA
     # - DATA:
-    #     - desc = Получить статью из википедии по поисковой фразе. Например /wiki Соль
+    #     - desc = Получить данные из портала mos.ru .
 # имя плагина DATA должно совпадать с именем в конфигурации Dynaconf
 # имя плагина data должно быть первым полем от _ в имени файла data_plugin
 # имя файла плагина должно окачиваться на _plugin
@@ -8,60 +8,65 @@
 # https://catalog.eaist.mos.ru/catalog
 # https://data.mos.ru/developers/documentation
 # https://dadata.ru/api/find-party/
+# https://dadata.ru/api/find-address/
 # class DATAPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
 
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
-# from dtb.settings import get_plugins_for_roles
+from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
 from tgbot.handlers.utils.info import get_tele_command
 from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
-import wikipediaapi
-# plugins/news_rss_plugin.py
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
-
 from tgbot.plugins.base_plugin import BasePlugin
+from dadata import Dadata
 
 # Добавить проверку на роль ''
-#plugin_wiki = get_plugins('').get('WIKI')
+plugin_data = get_plugins_for_roles('').get('DATA')
 
 CODE_INPUT = range(1)
-_wiki_help = 'Поиск на https://ru.wikipedia.org Введите слово после ключевого wiki ' \
-'например:\n\r /wiki_Rainbow или ' \
-'\n\r /wiki_ - диалог для введения слова ' \
-'\n\r🔸/help /wiki /wiki_'
+_data_help = 'Поиск на dadata.ru Введите код после ключевого /data_ ' \
+'\n\r /data_ - диалог для введения слова ' \
+'\n\r🔸/help /data_'
 
-def fetch_page_data(page_title):
-    # Создаем объект API с использованием русского раздела Wikipedia
-    wiki_api = wikipediaapi.Wikipedia(
-            language='ru',     # русский язык
-            extract_format=wikipediaapi.ExtractFormat.WIKI,   # извлекаем содержимое в формате MediaWiki
-            user_agent="MswApp/1.0"  # Добавляем user agent
-    )
-    page = wiki_api.page(page_title)
-    if not page.exists():
-        return None, (f"Страница '{page_title}' не найдена."), None
-    summ = page.summary[:12500] + f'\n\r{page.fullurl}\n\r{page.title}'
-    return 200, summ, page.fullurl
+def get_adress_fias(fias):
+    if not plugin_data:
+        return ''
+    token = plugin_data.get('dadata_token','')
+    if not token:
+        return ''
+    try:
+        dadata = Dadata(token)
+        result = dadata.find_by_id("address", fias)
 
-def request_wiki(update: Update, context):
+        if result:
+            val = result[0]['value']
+        else:
+            val = ''
+        return 200, val, result
+    except Exception as e:
+        val = ''
+        return 500, val, result
+
+
+def request_data(update: Update, context):
     """Запрашиваем у пользователя"""
     upms = get_tele_command(update)
-    upms.reply_text("Введите слово для поиска на сайте Википедии. /cancel_wiki - отмена")
+    upms.reply_text("Введите код ФИАС. /cancel_data - отмена")
     return CODE_INPUT
 
-def check_wiki(update: Update, context):
+def check_data(update: Update, context):
     upms = get_tele_command(update)
     _input = upms.text
     if _input:
-       code, _output, link = fetch_page_data(_input)
+       code, _output, link = get_adress_fias(_input)
     else:
-        _output = _wiki_help
+        _output = _data_help
     if '🔸/help' not in _output:
-        _output += '\n\r🔸/help /wiki /wiki_' 
+        _output += '\n\r🔸/help /data_' 
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
@@ -70,42 +75,38 @@ def check_wiki(update: Update, context):
     )
     return ConversationHandler.END
 
-def cancel_wiki(update: Update, context):
+def cancel_data(update: Update, context):
     """Завершаем диалог"""
     upms = get_tele_command(update)
     upms.reply_text("отмена.")
     return ConversationHandler.END
 
-# def error(update, context):
-#     logger.warning('Update "%s" caused error "%s"', update, context.error)
-
-class WikiPlugin(BasePlugin):
+class DataPlugin(BasePlugin):
     def setup_handlers(self, dp):
-        cmd = "/wiki"
+        cmd = "/data"
 
         conv_handler = ConversationHandler(
-            entry_points=[CommandHandler('wiki_', request_wiki)],
+            entry_points=[CommandHandler('data_', request_data)],
             states={
                 CODE_INPUT: [
-                    MessageHandler(Filters.text & (~Filters.command), check_wiki),
+                    MessageHandler(Filters.text & (~Filters.command), check_data),
                 ],
             },
             fallbacks=[
-                CommandHandler('cancel_wiki', cancel_wiki),
+                CommandHandler('cancel_wiki', cancel_data),
             ]
         )
         dp.add_handler(conv_handler)
         dp.add_handler(MessageHandler(Filters.regex(rf'^{cmd}(/s)?.*'), commands))
-        dp.add_handler(MessageHandler(Filters.regex(rf'^wiki(/s)?.*'), commands))
-        dp.add_handler(CallbackQueryHandler(button_wiki, pattern="^button_wiki"))
+        dp.add_handler(CallbackQueryHandler(button_data, pattern="^button_data"))
 
 @check_groupe_user
-def button_wiki(update: Update, context: CallbackContext) -> None:
+def button_data(update: Update, context: CallbackContext) -> None:
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     text = "Введите слово или фразу..."
-    text += _wiki_help
+    text += _data_help
     query = update.callback_query
     query.answer(text=text, show_alert=True) # вывести всплывающее окно
     
@@ -121,14 +122,17 @@ def commands(update: Update, context: CallbackContext) -> None:
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
-    _input = telecmd.split('wiki')[1].replace("_"," ")
-    if _input:
-       code, _output, link = fetch_page_data(_input)
+    _input = telecmd.split('data')[1] #.replace("_"," ")
+    _output = ""
+    if "_fias" == _input:
+       _output = get_adress_fias("")
+    elif "_fias_" in _input:
+       _output = get_adress_fias(_input.split('_fias_')[1])
     else:
-        _output = _wiki_help
+        _output = _data_help
     
     if '🔸/help' not in _output:
-        _output += '\n\r🔸/help /wiki' 
+        _output += '\n\r🔸/help /data_' 
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,

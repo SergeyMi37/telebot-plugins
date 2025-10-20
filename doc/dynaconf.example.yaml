@@ -49,7 +49,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - DATA:
         - blocked = 1
         - desc = Портал открытых данных mos.ru и других ресурсов
-        - key = <1345-6789>
+        - dadata_token = <1345-6789>
     - IRIS:
         - blocked = 1
         - desc = Сервис мониторинга серверов IRIS там, где установлен проект AppTools 
