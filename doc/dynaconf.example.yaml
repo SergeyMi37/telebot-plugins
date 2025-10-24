@@ -48,7 +48,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - desc = Получить статью из википедии /wiki_
     - DATA:
         - blocked = 1
-        - desc = Портал открытых данных mos.ru и других ресурсов
+        - desc = Портал открытых данных DADATA.ru и других ресурсов
         - dadata_token = <1345-6789>
     - IRIS:
         - blocked = 1
@@ -91,7 +91,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - rss_oreanda = https://www.oreanda-news.com/rss01/rss01.txt
         - rss_hightech = https://hightech.plus/feed.rss
         - rss_computerra = https://www.computerra.ru/feed/ 
-        - rss_ssp = https://www.ssp.sh/brain/index.xml?ref=ssp.sh # https://habr.com/ru/companies/ruvds/articles/930942/
+        - rss_vas3k = https://vas3k.blog/rss/
+        - rss_IsurPublic = https://news-asur.mos.ru/IsurPublic/News/GetAtomFeed
     - WEATHER:
         - blocked = 0
         - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_ - ввести город
