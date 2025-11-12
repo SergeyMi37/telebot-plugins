@@ -34,18 +34,14 @@ cd telebot-plugins
 
 Create virtual environment (optional)
 ``` bash
-python3 -m venv env
-source env/bin/activate
-```
+python3 -m venv env-iin
+source env-lin/bin/activate
 
-Create virtual environment for Windows
-``` bash
-python -m venv env
-source env/Scripts/activate
-```
+# Create virtual environment for Windows
+python -m venv env-win
+source env-win/Scripts/activate
 
-Install all requirements:
-```
+# Install all requirements:
 pip install -r requirements.txt
 ```
 
@@ -78,6 +74,30 @@ python run_polling.py
 If you want to open Django admin panel which will be located on http://localhost:8000/tgadmin/:
 ``` bash
 python manage.py runserver
+```
+
+## Утилиты командной строки
+
+```
+#  Статистика всех моделей Django:
+python manage.py model_stats
+
+#  Детальная информация о конкретной модели:
+python manage.py check_model users.updates
+
+#  Экспорт модели в файл json:
+python manage.py model_import --model django_celery_beat.PeriodicTasks --file test.json --format json --import 0
+# или
+python manage.py model_import --model django_celery_beat.PeriodicTasks --file test.json --format json
+
+#  Экспорт модели в файл csv (по умолчанию):
+python manage.py model_import --model django_celery_beat.PeriodicTasks --file sysotiom.csv --format csv
+
+#  Импорт модели из файла json в режиме --dry-run - сухой запуск, без реального импорта:
+python manage.py model_import --model users.User --file users.json --format json --import 1 --dry-run
+
+#  Импорт модели из файла json:
+python manage.py model_import --model users.User --file users.json --format json --import 1
 ```
 
 ## Run locally using docker-compose

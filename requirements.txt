@@ -11,6 +11,7 @@ django==3.2.9
 django-cors-headers==3.13.0
 django-debug-toolbar==3.6.0
 whitenoise==6.2.0  # for serving static files
+django-import-export==3.3.6  # - проблема с версиями
 
 # Django 3.0 async requirements
 gunicorn==20.1.0
