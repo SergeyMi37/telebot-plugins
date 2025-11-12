@@ -48,12 +48,12 @@ class Command(BaseCommand):
             model_name = model_name.split('.')[1]
             models_module = import_module(f'{label}.models')
         except Exception as e:
-            print(repr(e),f'Модуль {label} не найден !')
+            self.stdout.write(f'Модуль {label} не найден !')
             exit(1)
         try:
             ModelClass = getattr(models_module, model_name)
         except Exception as e:
-            print(repr(e),f'Модель {model_name} не найдена!')
+            self.stdout.write(f'Модель {model_name} не найдена!')
             # raise ImproperlyConfigured(f'Модель {model_name} не найдена!')
             exit(1)
 
