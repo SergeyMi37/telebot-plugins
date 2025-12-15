@@ -46,10 +46,10 @@ def command_help(update: Update, context: CallbackContext) -> None:
     # todo get_unblock_plugins 
     text += CRLF+'🔸/start: Кнопки ссылок на модули'
     url = settings.get("SUPPORT_GROUP", "https://t.me/+QZjI6JxKex04Y2Ey")
-    text += CRLF+f'<a href=\"{url}\">🎯Группа поддержки. Обсуждаем ошибки и разработку новых модулей</a>'
+    text += CRLF+f'<a href=\"{url}\">🎯Группа поддержки. Обсуждаем ошибки и разработку новых модулей.</a>'
     if u.is_admin:
         url = settings.get("DEVELOP_GROUP", "https://t.me/+LXQkVtnHqSM1ZmZi")
-        text += CRLF+f'<a href=\"{url}\">🎯Группа разработки. Обсуждаем и участвуем в разработке бота</a>'
+        text += CRLF+f'<a href=\"{url}\">🎯Группа разработки. Обсуждаем и участвуем в разработке бота.</a>'
     #if plugins:
     #    text += CRLF+'/plugins: список приложений - плагинов'
     if plugins.get('IRIS'):
