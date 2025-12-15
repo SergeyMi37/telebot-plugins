@@ -2,9 +2,11 @@
 
 ## telebot-plugins
 
-Chat bot project with plug-ins and application configuration via Dynaconf
+Chatbot project with Django Admin and plugins
 
 [Документация](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/README_ru.md)
+
+[Демо бота](https://web.telegram.org/k/#@jff_sss_bot)
 
 ## What's new
 
@@ -147,36 +149,3 @@ docker logs -f
 ``` bash
  docker logs -f bot
 ```
-
-# Thanks to the author
-
-https://github.com/ohld/django-telegram-bot
-
-### Check the example bot that uses the code from Main branch: [t.me/djangotelegrambot](https://t.me/djangotelegrambot)
-## Features
-
-* Database: Postgres, Sqlite3, MySQL - you decide!
-* Admin panel (thanks to [Django](https://docs.djangoproject.com/en/3.1/intro/tutorial01/))
-* Background jobs using [Celery](https://docs.celeryproject.org/en/stable/)
-* [Production-ready](https://github.com/ohld/django-telegram-bot/wiki/Production-Deployment-using-Dokku) deployment using [Dokku](https://dokku.com)
-* Telegram API usage in polling or [webhook mode](https://core.telegram.org/bots/api#setwebhook)
-* Export all users in `.csv`
-* Native telegram [commands in menu](https://github.com/ohld/django-telegram-bot/blob/main/.github/imgs/bot_commands_example.jpg)
-  * In order to edit or delete these commands you'll need to use `set_my_commands` bot's method just like in [tgbot.dispatcher.setup_my_commands](https://github.com/ohld/django-telegram-bot/blob/main/tgbot/dispatcher.py#L150-L156)
-
-Built-in Telegram bot methods:
-* `/broadcast` — send message to all users (admin command)
-* `/export_users` — bot sends you info about your users in .csv file (admin command)
-* `/stats` — show basic bot stats 
-* `/ask_for_location` — log user location when received and reverse geocode it to get country, city, etc.
-
-
-## Content
-
-* [How to run locally](https://github.com/ohld/django-telegram-bot/#how-to-run)
-   * [Quickstart with polling and SQLite](https://github.com/ohld/django-telegram-bot/#quickstart-polling--sqlite)
-   * [Using docker-compose](https://github.com/ohld/django-telegram-bot/#run-locally-using-docker-compose)
-* [Deploy to production](https://github.com/ohld/django-telegram-bot/#deploy-to-production)
-   * [Using dokku](https://github.com/ohld/django-telegram-bot/#deploy-using-dokku-step-by-step)
-   * [Telegram webhook](https://github.com/ohld/django-telegram-bot/#https--telegram-bot-webhook)
-
