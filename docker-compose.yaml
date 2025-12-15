@@ -25,7 +25,8 @@ services:
     restart: always
     environment:
       ENV_FOR_DYNACONF: ${ENV_FOR_DYNACONF}
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py model_import --model users.Options --file doc/options.json --format json --import 1 && python manage.py model_import --model users.GroupRoles --file doc/group_roles.json --import 1 && python manage.py runserver --noreload 0.0.0.0:8000"
+    # command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py model_import --model users.Options --file doc/options.json --format json --import 1 && python manage.py model_import --model users.GroupRoles --file doc/group_roles.json --import 1 && python manage.py runserver --noreload 0.0.0.0:8000"
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py import_options --file doc/options.json && python manage.py import_group_roles --file doc/group_roles.json && python manage.py runserver --noreload 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
