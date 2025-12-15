@@ -7,8 +7,10 @@ Chatbot project with Django Admin and plugins
 [Документация](https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/README_ru.md)
 
 [Групп разработки бота](https://t.me/+LXQkVtnHqSM1ZmZi) 
+
 [Групп техподдержки бота](https://t.me/+__Qezxf7-E0xY2I6)
-[Демо бота](https://t.me/@jff_sss_bot)
+
+[Демо бота](https://t.me/jff_sss_bot)
 
 ## What's new
 
