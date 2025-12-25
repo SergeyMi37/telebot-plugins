@@ -38,9 +38,9 @@ if __name__ != "__main__":
         if not _in:
             _out = f'Нечего не введено {_in}\n\r🔸/help /{plugin_cmd}_' 
         elif len(_in)==1:
-            upms.reply_text(".等一下...минутку")
+            upms.reply_text(".等一下...ждите")
             # вызов сервиса поиска этимологии иероглифа
-            status, text = get_character_etymology(_in,verbose=False)
+            status, text = get_character_etymology(_in,verbose=True) # verbose=True - показать лог
             _out = f'Результат поиска этимологии {_in}\n\r🔸/help /{plugin_cmd}_ \n' 
             _out += text
         else:

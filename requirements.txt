@@ -56,3 +56,4 @@ duckduckgo-search
 # for plugin archchinese
 #beautifulsoup4
 selenium
+webdriver-manager

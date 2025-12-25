@@ -24,6 +24,8 @@ from selenium.webdriver.chrome.service import Service
 import time
 import logging
 
+from webdriver_manager.chrome import ChromeDriverManager
+
 # Настройка логгирования
 def setup_logging(verbose=True):
     level = logging.INFO if verbose else logging.WARNING
@@ -87,27 +89,28 @@ def get_character_etymology(character, verbose=True):
     chrome_options.add_argument("--disable-gpu")
     
     # Используем webdriver-manager для автоматического управления версиями ChromeDriver
-    if os.path.exists("chromedriver.exe"):
-        service = Service("chromedriver.exe")
-        service.args = ['--no-proxy-server', '--proxy-server="direct://"', '--disable-features=NetworkService,NetworkServiceInProcess']
-        logger.info("Использование ChromeDriver из текущей директории")
-    else:
-        logger.info("Использование ChromeDriver из системного PATH")
     
-    # Инициализация драйвера с явным указанием пути к ChromeDriver info: chrome=143.0.7499.170)
+    # if os.path.exists("chromedriver.exe"):
+    #     service = Service("chromedriver.exe")
+    #     service.args = ['--no-proxy-server', '--proxy-server="direct://"', '--disable-features=NetworkService,NetworkServiceInProcess']
+    #     logger.info("Использование ChromeDriver из текущей директории")
+    # else:
+    #     logger.info("Использование ChromeDriver из системного PATH")
+    
     logger = setup_logging(verbose)
     try:
+        # Инициализация драйвера с явным указанием пути к ChromeDriver info: chrome=143.0.7499.170)
+        service = Service(ChromeDriverManager().install())
         if service:
             driver = webdriver.Chrome(service=service, options=chrome_options)
         else:
             driver = webdriver.Chrome(options=chrome_options)
         logger.info("Chrome драйвер успешно инициализирован")
     except Exception as e:
+        msg = f"Ошибка при инициализации Chrome драйвера: {e} Возможно, ChromeDriver не установлен или не найден в PATH. Пожалуйста, убедитесь, что ChromeDriver установлен и доступен"
         if verbose:  # Показываем ошибку только если логгирование включено
-            logger.error(f"Ошибка при инициализации Chrome драйвера: {str(e)}")
-            logger.error("Возможно, ChromeDriver не установлен или не найден в PATH")
-            logger.error("Пожалуйста, убедитесь, что ChromeDriver установлен и доступен")
-        return None
+            logger.error(msg)
+        return (500,msg)
     
     try:
         # Открытие сайта с поиском иероглифа
@@ -116,7 +119,7 @@ def get_character_etymology(character, verbose=True):
         driver.get(url)
         
         # Ожидание загрузки страницы
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 2)
         
         # Поиск кнопки "More Etymology Information"
         logger.info("Поиск кнопки 'More Etymology Information'")
@@ -134,7 +137,7 @@ def get_character_etymology(character, verbose=True):
         
         # После клика на кнопку может потребоваться время для загрузки информации
         # Подождем фиксированное время, а затем проверим, появилась ли информация
-        time.sleep(5)
+        time.sleep(2)
         
         # Поиск элементов, содержащих информацию об этимологии
         # Сначала ищем основной элемент gwt-Tree
