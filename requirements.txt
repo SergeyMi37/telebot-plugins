@@ -54,4 +54,5 @@ scipy
 duckduckgo-search
 
 # for plugin archchinese
-beautifulsoup4
+#beautifulsoup4
+selenium

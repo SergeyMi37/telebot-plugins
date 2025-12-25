@@ -17,7 +17,7 @@ if __name__ != "__main__":
     from users.models import User
     from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
     from tgbot.plugins.base_plugin import BasePlugin
-
+    from tgbot.plugins.chinese_etymology import get_character_etymology
     # Добавить проверку на роль ''
     #plugin_wiki = get_plugins_for_roles('').get('WIKI')
 
@@ -38,7 +38,11 @@ if __name__ != "__main__":
         if not _in:
             _out = f'Нечего не введено {_in}\n\r🔸/help /{plugin_cmd}_' 
         elif len(_in)==1:
-            _out = f'Результат поиска этимологии {_in}\n\r🔸/help /{plugin_cmd}_' 
+            upms.reply_text(".等一下...минутку")
+            # вызов сервиса поиска этимологии иероглифа
+            status, text = get_character_etymology(_in,verbose=False)
+            _out = f'Результат поиска этимологии {_in}\n\r🔸/help /{plugin_cmd}_ \n' 
+            _out += text
         else:
             _out = f'Результат перевода {_in}\n\r🔸/help /{plugin_cmd}_' 
         context.bot.send_message(
