@@ -1,0 +1,51 @@
+# Используем официальный образ Python 3.9
+FROM python:3.10.4
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Устанавливаем системные зависимости
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    # Скачиваем .deb-пакет напрямую
+    && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    # Устанавливаем скачанный пакет
+    && apt-get install -y ./google-chrome-stable_current_amd64.deb \
+    && rm google-chrome-stable_current_amd64.deb \
+    && rm -rf /var/lib/apt/lists/*
+
+# Устанавливаем ChromeDriver (совместимый с установленной версией Chrome)
+RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
+    && echo "Установка ChromeDriver для Chrome версии: ${CHROME_VERSION}" \
+    && wget -q --continue -P /tmp/ "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" \
+    && unzip /tmp/chromedriver*.zip -d /usr/local/bin \
+    && mv /usr/local/bin/chromedriver-linux64/chromedriver /usr/local/bin/ \
+    && chmod +x /usr/local/bin/chromedriver \
+    && rm -rf /tmp/chromedriver*.zip /usr/local/bin/chromedriver-linux64
+
+# Проверяем установку
+RUN google-chrome --version && chromedriver --version
+
+# Копируем и устанавливаем Python-зависимости
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+    
+# Создаем рабочую директорию
+RUN mkdir /code
+WORKDIR /code
+
+# # Копируем и устанавливаем Python зависимости
+# COPY requirements.txt /code/
+# RUN pip install --upgrade pip
+
+
+# Устанавливаем selenium (если нет в requirements.txt)
+# RUN pip install selenium==4.18.1
+
+
+COPY . /code/
+COPY .git/config /code/,git/config
+
+    

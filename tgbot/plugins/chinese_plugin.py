@@ -40,10 +40,13 @@ if __name__ != "__main__":
         elif len(_in)==1:
             upms.reply_text(".等一下...ждите")
             # вызов сервиса поиска этимологии иероглифа
+            print('---')
             status, text = get_character_etymology(_in,verbose=True) # verbose=True - показать лог
+            print('---',status,text)
             _out = f'Результат поиска этимологии {_in}\n\r🔸/help /{plugin_cmd}_ \n' 
             _out += text
         else:
+            # вызов функции перевода с параметрами "с китайского на русский "
             _out = f'Результат перевода {_in}\n\r🔸/help /{plugin_cmd}_' 
         context.bot.send_message(
             chat_id=upms.chat.id,

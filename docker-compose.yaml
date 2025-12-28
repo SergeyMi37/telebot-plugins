@@ -38,7 +38,7 @@ services:
   bot:
     build:
       context: .
-      dockerfile: LocalDockerfile
+      dockerfile: selenDockerfile
     container_name: dtb_bot
     restart: always
     environment:

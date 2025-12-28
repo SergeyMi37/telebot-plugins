@@ -40,7 +40,7 @@ cd telebot-plugins
 
 Create virtual environment (optional)
 ``` bash
-python3 -m venv env-iin
+python3 -m venv env-lin
 source env-lin/bin/activate
 
 # Create virtual environment for Windows
