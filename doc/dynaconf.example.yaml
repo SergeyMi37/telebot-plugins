@@ -122,3 +122,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - CHINESE:
         - blocked = 0
         - desc = Учить китайские иероглифы. Поиск этимологиеи и перевод.
+    - TRANS:
+        - blocked = 0
+        - desc = Переводить на локальных моделях.
+        - URL_OLLAMA = http://127.0.0.1:11434
+        - MODEL = lauchacarro/qwen2.5-translator:latest # Модель для перевода
