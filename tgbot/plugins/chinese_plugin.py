@@ -41,7 +41,7 @@ if __name__ != "__main__":
             upms.reply_text(".等一下...ждите")
             # вызов сервиса поиска этимологии иероглифа
             print('---')
-            status, text = get_character_etymology(_in,verbose=True) # verbose=True - показать лог
+            status, text = get_character_etymology(_in,verbose=False) # verbose=True - показать лог
             print('---',status,text)
             _out = f'Результат поиска этимологии {_in}\n\r🔸/help /{plugin_cmd}_ \n' 
             _out += text

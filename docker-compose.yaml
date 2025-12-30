@@ -38,7 +38,7 @@ services:
   bot:
     build:
       context: .
-      dockerfile: selenDockerfile
+      dockerfile: chromiumDockerfile
     container_name: dtb_bot
     restart: always
     environment:

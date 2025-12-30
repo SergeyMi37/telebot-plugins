@@ -54,6 +54,9 @@ scipy
 duckduckgo-search
 
 # for plugin archchinese
+# selenium
+# webdriver-manager
 #beautifulsoup4
-selenium
-webdriver-manager
+# pip install playwright
+# playwright install chromium
+playwright

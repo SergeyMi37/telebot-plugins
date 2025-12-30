@@ -1,0 +1,38 @@
+# Используем официальный образ Python 3.10
+FROM python:3.10.4
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Устанавливаем системные зависимости, необходимые для Playwright
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    curl \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    # Устанавливаем Google Chrome
+    && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get install -y ./google-chrome-stable_current_amd64.deb \
+    && rm google-chrome-stable_current_amd64.deb \
+    && rm -rf /var/lib/apt/lists/*
+
+# Копируем и устанавливаем Python-зависимости
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Устанавливаем браузеры для Playwright
+RUN playwright install chromium
+
+# Проверяем установку
+RUN google-chrome --version && python -c "from playwright.sync_api import sync_playwright; print('Playwright installed successfully')"
+
+# Создаем рабочую директорию
+RUN mkdir /code
+WORKDIR /code
+
+COPY . /code/
+COPY .git/config /code/.git/config
+
+    
