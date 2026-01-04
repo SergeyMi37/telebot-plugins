@@ -16,6 +16,10 @@ if sys.stderr.encoding != 'utf-8':
 # os.environ['HTTP_PROXY'] = ''
 # os.environ['HTTPS_PROXY'] = ''
 
+# os.environ['OPENSSL_CONF']='/etc/ssl/openssl.cnf'
+# os.environ['SSL_CERT_FILE']='/etc/ssl/certs/ca-certificates.crt'
+# os.environ['NODE_EXTRA_CA_CERTS']='/etc/ssl/certs/ca-certificates.crt'
+
 from playwright.sync_api import sync_playwright
 import logging
 
@@ -100,7 +104,7 @@ def get_character_etymology(character, verbose=True):
         # Создание новой страницы с настройками прокси
         # Настройка контекста с увеличенным таймаутом и дополнительными опциями
         page = browser.new_page()
-        page.set_default_timeout(60000)  # Установим таймаут 60 секунд
+        page.set_default_timeout(120000) #60000)  # Установим таймаут 60 секунд
         
         # Установка дополнительных заголовков для имитации обычного браузера
         page.set_extra_http_headers({

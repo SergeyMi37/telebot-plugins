@@ -13,6 +13,7 @@ import argparse
 import sys
 import codecs
 import logging
+from tgbot.plugins.chat_plugin import chat_ollama
 
 # Установка кодировки UTF-8 для вывода в консоль
 if sys.stdout.encoding != 'utf-8':
@@ -28,11 +29,11 @@ logger = logging.getLogger(__name__)
 # python tgbot/plugins/trans_plugin.py -t "Bonjour le monde"
 def translate_with_ollama(text, model="qwen3:14b", src_lang="auto", target_lang="ru"):
     """
-    Функция для перевода текста с помощью Ollama и модели Qwen3:14b
+    Функция для перевода текста с помощью Ollama
     """
     try:
         # URL для API Ollama
-        url = "http://172.16.253.42:1434/api/generate"
+        url = "http://192.168.43.216:11434/api/chat" #generate"
         
         # Подготовка данных для запроса
         data = {
