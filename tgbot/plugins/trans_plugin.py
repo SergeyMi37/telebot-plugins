@@ -72,7 +72,7 @@ if __name__ != "__main__":
     plugin_help = f'Перевести текст. 🔸/help /{plugin_cmd} /{plugin_cmd}_ - введите текст для перевода' 
 
 
-    def request_p(update: Update, context):
+    def request_pp(update: Update, context):
         """Запрашиваем у пользователя """
         upms = get_tele_command(update)
         upms.reply_text(f"Введите текст для перевода или /cancel_{plugin_cmd} - отмена")
@@ -108,7 +108,7 @@ if __name__ != "__main__":
     class TransPlugin(BasePlugin):
         def setup_handlers(self, dp):
             conv_handler = ConversationHandler(
-                entry_points=[CommandHandler(f'{plugin_cmd}_', request_p)],
+                entry_points=[CommandHandler(f'{plugin_cmd}_', request_pp)],
                 states={
                     CODE_INPUT: [
                         MessageHandler(Filters.text & (~Filters.command), check_p),

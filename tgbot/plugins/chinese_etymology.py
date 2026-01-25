@@ -48,14 +48,14 @@ def get_character_etymology(character, verbose=True):
     if not re.search(r'[\u4e00-\u9fff]', character):
         if verbose:
             print(f"Ошибка: '{character}' не содержит китайских иероглифов")
-        return (400, f"'{character}' не содержит китайских иероглифов")
+        return (444, f"'{character}' не содержит китайских иероглифов")
     
     # Проверка, что строка содержит только один иероглиф
     chinese_chars = re.findall(r'[\u4e00-\u9fff]', character)
     if len(chinese_chars) != 1:
         if verbose:
             print(f"Ошибка: '{character}' должен содержать только один китайский иероглиф")
-        return (400, f"'{character}' должен содержать только один китайский иероглиф")
+        return (444, f"'{character}' должен содержать только один китайский иероглиф")
     
     logger = setup_logging(verbose)
     logger.info(f"Начало поиска этимологии для иероглифа: {character}".encode('utf-8', errors='ignore').decode('utf-8'))

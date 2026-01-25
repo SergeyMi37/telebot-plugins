@@ -37,19 +37,14 @@ if __name__ != "__main__":
         _in = upms.text
         if not _in:
             _out = f'Нечего не введено {_in}\n\r🔸/help /{plugin_cmd}_' 
-        elif len(_in)==1:
-            upms.reply_text(".等一下...ждите")
-            # вызов сервиса поиска этимологии иероглифа
-            status, text = get_character_etymology(_in,verbose=False) # verbose=True - показать лог
-            _out = f'Результат поиска этимологии {_in}\n\r{text}\n\r🔸/help /{plugin_cmd}_ \n'
         else:
             # цикл по нескольким"
-            upms.reply_text(".等一下...минутку")
+            upms.reply_text("等一下...минутку")
             txt=''
             for i in _in:
-                print('---',i)
                 status, text = get_character_etymology(i,verbose=False) # verbose=True - показать лог
-                txt += text + '\n'
+                if status != 444:
+                    txt += f'{text.replace("radical","🔹radical")} \n'
             _out = f'Результат поиска этимологии {_in}\n\r{txt}\n\r🔸/help /{plugin_cmd}_ \n'
 
         context.bot.send_message(
