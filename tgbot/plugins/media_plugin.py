@@ -36,7 +36,7 @@ plugin_cmd = "media"
 CODE_INPUT = range(1)
 plugin_help = f'Загрузка роликов с ютуба. 🔸/help /{plugin_cmd} /media_get_yt /{plugin_cmd}_ - диалог для загрузки роликов с ютуба' 
 
-def request_p(update: Update, context):
+def request_pm(update: Update, context):
     """Запрашиваем у пользователя"""
     upms = get_tele_command(update)
     upms.reply_text(f"Введите урл или /cancel_{plugin_cmd} - отмена")
@@ -66,7 +66,7 @@ def cancel_p(update: Update, context):
 class PPlugin(BasePlugin):
     def setup_handlers(self, dp):
         conv_handler = ConversationHandler(
-            entry_points=[CommandHandler(f'{plugin_cmd}_', request_p)],
+            entry_points=[CommandHandler(f'{plugin_cmd}_', request_pm)],
             states={
                 CODE_INPUT: [
                     MessageHandler(Filters.text & (~Filters.command), check_p),

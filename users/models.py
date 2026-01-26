@@ -61,7 +61,7 @@ class User(CreateUpdateTracker):
                     u.deep_link = payload
                     u.save()
         if u.roles==None or u.roles==",": # Роли по умолчанию присвоим новому пользователю
-            u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI,CODE,INET,TASKS")
+            u.roles = settings.get("ROLES_DFLT","NEWS,WEATHER,WIKI,CODE,INET,TASKS,CHAT,CHINESE")
             u.save()
         return u, created
 

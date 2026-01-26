@@ -12,7 +12,7 @@
     {
         "name": "dflt",
         "description": "",
-        "roles": "NEWS,WEATHER,WIKI,CODE,INET,TASKS"
+        "roles": "NEWS,WEATHER,WIKI,CODE,INET,TASKS,CHAT,CHINESE"
     },
     {
         "name": "admins",
