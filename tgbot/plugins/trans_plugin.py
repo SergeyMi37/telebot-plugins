@@ -7,13 +7,24 @@
 # В модуле должна быть определен класс для регистрации в диспетчере
 # class TransPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
+# ISO 639-1 - код языка
+# Китайский	Chinese	zh
+# Английский	English	en
+# Арабский	Arabic	ar
+# Хинди	Hindi	hi
+# Испанский	Spanish	es
+# Французский	French	fr
+# Русский	Russian	ru
+# Португальский	Portuguese	pt
+# Бенгальский	Bengali	bn
+# Немецкий	German	de
+# Японский	Japanese	ja
 import requests
 import json
 import argparse
 import sys
 import codecs
 import logging
-from tgbot.plugins.chat_plugin import chat_ollama
 
 # Установка кодировки UTF-8 для вывода в консоль
 if sys.stdout.encoding != 'utf-8':
@@ -25,15 +36,15 @@ if sys.stderr.encoding != 'utf-8':
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# python tgbot/plugins/trans_plugin.py --text "Привет, мир!" --from "ru" --to "en" --model "qwen3:14b"
+# python tgbot/plugins/trans_plugin.py --text "Привет, мир!" --from "ru" --to "en" --model "lauchacarro/qwen2.5-translator:latest"
 # python tgbot/plugins/trans_plugin.py -t "Bonjour le monde"
-def translate_with_ollama(text, model="qwen3:14b", src_lang="auto", target_lang="ru"):
+def translate_with_ollama(text, model="lauchacarro/qwen2.5-translator:latest", src_lang="auto", target_lang="ru",url_ollama="http://127.0.0.1:11434"):
     """
     Функция для перевода текста с помощью Ollama
     """
     try:
         # URL для API Ollama
-        url = "http://192.168.43.216:11434/api/chat" #generate"
+        url = url_ollama + "/api/generate"
         
         # Подготовка данных для запроса
         data = {
@@ -43,15 +54,15 @@ def translate_with_ollama(text, model="qwen3:14b", src_lang="auto", target_lang=
         }
         
         # Отправка запроса
-        response = requests.post(url, json=data)
+        response = requests.post(url, json=data,timeout=30000)
         
         if response.status_code == 200:
             result = response.json()
-            logger.info(f"Успешный перевод с {src_lang} на {target_lang}")
+            logger.info(f"Успешный перевод с {src_lang} на {target_lang}" )
             return result.get("response", "Не удалось получить перевод")
         else:
-            logger.error(f"Ошибка при обращении к Ollama: {response.status_code}")
-            return f"Ошибка при обращении к Ollama: {response.status_code}"
+            logger.error(f"Ошибка при обращении к Ollama: {response.status_code} {response.text}")
+            return f"Ошибка при обращении к Ollama: {response.text}"
     except Exception as e:
         logger.error(f"Ошибка при переводе: {str(e)}")
         return f"Ошибка при переводе: {str(e)}"
@@ -66,6 +77,14 @@ if __name__ != "__main__":
     from users.models import User
     from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
     from tgbot.plugins.base_plugin import BasePlugin
+    from dtb.settings import unblock_plugins
+    
+    plugins = unblock_plugins.get('TRANS')
+    MODEL = 'lauchacarro/qwen2.5-translator:latest' if not plugins else plugins.get("MODEL")
+    URL_OLLAMA = '' if not plugins else plugins.get("URL_OLLAMA",'')
+
+    from tgbot.plugins.chat_plugin import chat_ollama
+    url=URL_OLLAMA + "/api/generate"
 
     plugin_cmd = "trans"
     CODE_INPUT = range(1)
@@ -87,7 +106,7 @@ if __name__ != "__main__":
         else:
             upms.reply_text("...ждите, идет перевод")
             # вызов функции перевода с помощью Ollama
-            translation = translate_with_ollama(_in)
+            translation = translate_with_ollama(_in,model=MODEL,url_ollama=URL_OLLAMA)
             _out = f'Результат перевода:\n\r{translation}\n\r🔸/help /{plugin_cmd}_' 
         context.bot.send_message(
             chat_id=upms.chat.id,
@@ -154,17 +173,18 @@ if __name__ != "__main__":
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Перевод текста с помощью Ollama и модели Qwen3:14b')
+    parser = argparse.ArgumentParser(description='Перевод текста с помощью Ollama и модели lauchacarro/qwen2.5-translator:latest')
     parser.add_argument('--text', '-t', required=True, help='Текст для перевода')
-    parser.add_argument('--model', '-m', default='qwen3:14b', help='Модель Ollama для перевода (по умолчанию: qwen3:14b)')
+    parser.add_argument('--model', '-m', default='lauchacarro/qwen2.5-translator:latest', help='Модель Ollama для перевода (по умолчанию: lauchacarro/qwen2.5-translator:latest)')
     parser.add_argument('--from', '-f', dest='src_lang', default='auto', help='Исходный язык (по умолчанию: auto)')
     parser.add_argument('--to', '-to', default='ru', help='Целевой язык (по умолчанию: ru)')
     parser.add_argument('--no-log', action='store_true', help='Отключить логгирование')
-    
+    parser.add_argument('--url', '-u', dest='url_ollama', default='http://localhost:11434', help='Адрес Ollama (по умолчанию: http://localhost:11434)')
+
     args = parser.parse_args()
     
     # Получаем перевод
-    translation = translate_with_ollama(args.text, args.model, args.src_lang, args.to)
+    translation = translate_with_ollama(args.text, args.model, args.src_lang, args.to, args.url_ollama)
     
     # Выводим результат
     if not args.no_log:
