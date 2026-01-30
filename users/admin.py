@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
+from rangefilter.filters import DateRangeFilter
 from dtb.settings import DEBUG
 
 from users.models import Location, GroupRoles, User, Options, Updates, UsersOptions
@@ -15,8 +15,7 @@ from tgbot.handlers.broadcast_message.utils import send_one_message
 class UserAdmin(admin.ModelAdmin):
     list_display = [
         'user_id', 'username', 'first_name', 'last_name', 
-        'language_code', 'deep_link',
-        'created_at', 'updated_at', "is_blocked_bot",
+        'roles', "is_blocked_bot",'updated_at','created_at'
     ]
     list_filter = ["is_blocked_bot", ]
     search_fields = ('username', 'user_id')
@@ -50,7 +49,7 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(UsersOptions)
 class UsersOptionsAdmin(admin.ModelAdmin):
      list_display = ['name','user_id','value', 'description']
-
+     search_fields = ('name','value', 'description')
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ['id', 'user_id', 'created_at']
@@ -61,9 +60,15 @@ class GroupRolesAdmin(admin.ModelAdmin):
 
 @admin.register(Options)
 class OptionsAdmin(admin.ModelAdmin):
-     list_display = ['name','value', 'description']
-
+    list_display = ['name','value', 'description']
+    search_fields = ('name','value', 'description')
 
 @admin.register(Updates)
 class UpdatesAdmin(admin.ModelAdmin):
-     list_display = ['update_id','from_id', 'chat_id']
+    list_display = ['update_id','message','created_at','from_id', 'json','chat_id']
+    search_fields = ('message', 'json')
+    # list_filter = ['created_at']
+    list_filter = [
+        'created_at',                    # 1. Простой фильтр (по конкретным датам)
+        ('created_at', DateRangeFilter), # 2. Фильтр диапазона (от и до)
+    ]

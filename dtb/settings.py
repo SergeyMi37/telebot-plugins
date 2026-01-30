@@ -102,7 +102,7 @@ def get_unblock_plugins():
     for pl in plug:
         pldict=dict(pl)
         for name_plug, val in pldict.items():
-            #print('--unblock--',name_plug)
+            #print('-unblock-',name_plug)
             item = pldict.get(name_plug)
             ret = {}
             blocked=0
@@ -117,7 +117,7 @@ def get_unblock_plugins():
                         ret[key]=val
             if not blocked:
                 retpl[name_plug] = ret
-                print('--unblock-',name_plug)
+                # print('--unblock-',name_plug)
     return retpl
 
 unblock_plugins = get_unblock_plugins()
@@ -157,6 +157,8 @@ INSTALLED_APPS = [
 
     # local apps
     'users.apps.UsersConfig',
+
+    'rangefilter',  # диапазон дат в админке
 ]
 
 MIDDLEWARE = [
