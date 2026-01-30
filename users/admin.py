@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from rangefilter.filters import DateRangeFilter
+from rangefilter.filters import DateRangeFilter, DateTimeRangeFilter
 from dtb.settings import DEBUG
 
 from users.models import Location, GroupRoles, User, Options, Updates, UsersOptions
@@ -71,4 +71,5 @@ class UpdatesAdmin(admin.ModelAdmin):
     list_filter = [
         'created_at',                    # 1. Простой фильтр (по конкретным датам)
         ('created_at', DateRangeFilter), # 2. Фильтр диапазона (от и до)
+        ('created_at', DateTimeRangeFilter),
     ]

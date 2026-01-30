@@ -7,7 +7,7 @@
 # В модуле должна быть определен класс для регистрации в диспетчере
 # class TransPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
-# ISO 639-1 - код языка
+# --------- ISO 639-1 - код языка
 # Китайский	Chinese	zh
 # Английский	English	en
 # Арабский	Arabic	ar
@@ -19,6 +19,10 @@
 # Бенгальский	Bengali	bn
 # Немецкий	German	de
 # Японский	Japanese	ja
+# ----- Хорошо работают и без GPU
+# --model "lauchacarro/qwen2.5-translator:latest" 
+# --model "SimonPu/Hunyuan-MT-Chimera-7B:Q8" 
+# --model "icky/translate:latest" 
 import requests
 import json
 import argparse
