@@ -40,47 +40,6 @@ plugins = unblock_plugins.get('CHAT')
 GIGA_TOKEN = '' if not plugins else plugins.get("GIGA_CHAT")
 URL_OLLAMA = '' if not plugins else plugins.get("URL_OLLAMA",'')
 MODEL_NAME = {}
-#print('--- plugin GIGA: '+str(plugins),GIGA_TOKEN,URL_OLLAMA)
-# Добавить проверку на роль 
-# try:
-#     GIGA_TOKEN = plugins.get("GIGA_CHAT")
-# except Exception as e:
-#     GIGA_TOKEN = ''
-#logger.info('--- plugin GIGA: '+str(get_plugins('GIGA')))
-# Вынести на параметр сделать возможность запоминать или изменять для каждого пользователя отдельно.
-# content="Ты бот супер программист на питон, который помогает пользователю провести время с пользой."
-
-
-# def get_image():
-#     if URL_OLLAMA == '':
-#         return  'URL_OLLAMA is empty', [], {}
-#     API_URL = f"{URL_OLLAMA}/api/generate"
-
-#     payload = {
-#         "model": "ozbillwang/stable_diffusion-ema-pruned-v2-1_768.q8_0:latest",                     # или stable-diffusion / flux
-#         "prompt": "A surreal portrait of a cyber‑punk cat, vivid colors",
-#         "options": {
-#             "num_predict": 1,
-#             "width": 1024,
-#             "height": 1024,
-#             "seed": 777,
-#         },
-#         # Для SD необходимо явно указать, что хотим изображение:
-#         "stream": False,
-#         "format": "json"
-#     }
-
-#     r = requests.post(API_URL, json=payload, timeout=180)   # генерация может занять ~30‑60 сек
-#     r.raise_for_status()
-#     data = r.json()
-
-#     # В ответе будет поле `image` (base64‑строка)
-#     if "image" in data:
-#         img = base64.b64decode(data["image"])
-#         Path("sdxl_result.png").write_bytes(img)
-#         print("✅ Сохранено → sdxl_result.png")
-#     else:
-#         print("❌ Ошибка:", data)
 
 def format_time(duration):
     # Преобразуем длительность из наносекунд в секунды
@@ -109,22 +68,6 @@ def ask_giga(prompt, messages):
         return res.content
     except Exception as e:
         return e.args.__repr__()
-
-# @check_groupe_user
-# def text_message(update, context):
-#     upms = get_tele_command(update)
-#     telecmd = upms.text
-#     u = User.get_user(update, context)
-#     MODEL_NAME.update({ u.user_id:'giga' })
-    
-#     resp = ask_giga(telecmd)
-#     # Ответ пользователю
-
-#     context.bot.send_message(
-#         chat_id=upms.chat.id,
-#         text=f"Ответ Гиги: {resp} \n\r🔸/help",
-#         parse_mode=ParseMode.HTML
-#     )
 
 CODE_INPUT = range(1)
 CODE_INPUT2 = range(1)
@@ -414,15 +357,6 @@ def commands_chat(update: Update, context: CallbackContext) -> None:
             if not name:
                 upms.reply_text("❌..неверный номер модели..")
                 return None
-            # output = f"<b>{num}.Модель {name}</b>\n"
-            # if name == 'ozbillwang/stable_diffusion-ema-pruned-v2-1_768.q8_0:latest':
-            #     return get_image()
-            # elif name == 'impactframes/llama3_ifai_sd_prompt_mkr_q4km:latest':
-            #     return get_image()
-            # elif name == 'brxce/stable-diffusion-prompt-generator:latest':
-            #     return get_image()
-            # elif name == 'gnokit/improve-prompt:latest':
-            #     return get_image()
 
             msg = "Какая ты модель и что ты можешь ? Умеешь ли ты сгенерировать картинку ?"
             try:
@@ -517,20 +451,6 @@ def chat_ollama(name, messages):
     except requests.exceptions.RequestException as e:
         print(f"Ошибка при запросе к Ollama API: {e}")
         return None, f"{e}".replace(URL_OLLAMA.split("://")[1].split(':')[0] ,"URL_OLLAMA")
-
-#print(list_models())
-# _list, list_models = list_models()
-# for i in list_models:
-#     if True:
-#         print(show_model(i))
-#         print(chat(i, [{"role":"user","content":"Привет, Перечисли планеты солнечной системы"}]))
-        #print(chat(i, [{"role":"user","content":"Почему нет плутона ?"}]))
-# print(pull_model('qwen2.5-coder:1.5b'))
-# mo = 'gemma3:1b'
-# print(show_model(mo))
-#print(chat(mo, [{"role":"user","content":"Привет, Перечисли планеты солнечной системы"}]))
-#print(chat(mo, [{"role":"user","content":"Почему нет плутона ?"}]))
-
 
 def main() -> None:
     print(URL_OLLAMA)
