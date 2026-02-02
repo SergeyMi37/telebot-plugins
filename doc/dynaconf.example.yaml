@@ -21,19 +21,6 @@ default:
   DEVELOP_GROUP: "https://t.me/+LXQkVtnHqSM1ZmZi"
   WORKERS: 5 # Количество потоков в продуктовом режиме DEBUG=0
   PLUGINS:
-    - IRIS:
-        # Параметры доступа к серверам по умолчанию -------------------------------
-        - URL_DEMO = https://superuser:SYS@appadmin.demo.community.intersystems.com/apptoolsrest/products/
-        - CC_DEMO_USERViewLog = https://superuser:SYS@appadmin.demo.community.intersystems.com/apptoolsrest/custom-task/user/run&class=apptools.core.rest&met=GetLastLogs&par=5
-prod:
-  TELEGRAM_TOKEN:  "<token>"
-  DATABASE_URL: "postgres://postgres:postgres@localhost:5432/telebot"
-  PLUGINS:
-    - GITLAB:
-        # gitlab.com -------------------------------
-    - GIGA:
-        - GIGA_CHAT = <token==>
-
 dev:  # https://api.telegram.org/bot<token>/getUpdates
   TELEGRAM_TOKEN: "<token>"
   DATABASE_URL: sqlite:///db.sqlite3
@@ -50,10 +37,6 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - blocked = 1
         - desc = Портал открытых данных DADATA.ru и других ресурсов
         - dadata_token = <1345-6789>
-    - IRIS:
-        - blocked = 1
-        - desc = Сервис мониторинга серверов IRIS там, где установлен проект AppTools 
-        - URL_DEMO = https://superuser:Dev@appadmin.demo.community.intersystems.com/apptoolsrest/products/    # Демо
     - GITLAB:
         - blocked = 1
         - ACCESS_TOKEN = <glpat-sdfsdfsdfsdfsffs>
@@ -106,12 +89,8 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
     - MP4GEN:
         - blocked = 1
         - desc = Сервис генерации видео роликов на основе коллекций фотокартинок и музыки
-    - INFOCHEST:
-        - blocked = 1
-        - desc = Поиск картинок, музыки и книг в локальных хранищах проекта "apptoolsrest infochest"
-        - url_app_demo = https://appadmin.demo.community.intersystems.com/apptoolsrest/a/info
     - CODE:
-        - blocked = 1
+        - blocked = 0
         - desc = Поиск Регионов РФ по госномерам, поиск страны по началу штихкода
     - INET:
         - blocked = 0
@@ -123,7 +102,7 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - blocked = 0
         - desc = Учить китайские иероглифы. Поиск этимологиеи и перевод.
     - TRANS:
-        - blocked = 0
+        - blocked = 1
         - desc = Переводить на локальных моделях.
         - URL_OLLAMA = http://127.0.0.1:11434
         - MODEL = lauchacarro/qwen2.5-translator:latest # Модель для перевода
