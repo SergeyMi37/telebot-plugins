@@ -76,6 +76,12 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - rss_computerra = https://www.computerra.ru/feed/ 
         - rss_vas3k = https://vas3k.blog/rss/
         - rss_IsurPublic = https://news-asur.mos.ru/IsurPublic/News/GetAtomFeed
+        - rss_SecLab-Новости = https://www.securitylab.ru/_Services/Export/RSS/news/
+        - rss_SecLab-Уязвимости = https://www.securitylab.ru/_Services/Export/RSS/vulnerabilities/
+        - rss_SecLab-Конкурсы = https://www.securitylab.ru/_Services/Export/RSS/contest/
+        - rss_SecLab-Статьи = https://www.securitylab.ru/_Services/Export/RSS/analytics/
+        - rss_SecLab-Софт = https://www.securitylab.ru/_Services/Export/RSS/software/
+        - rss_SecLab-ОсновнойRSSканал = https://www.securitylab.ru/_Services/Export/RSS/
     - WEATHER:
         - blocked = 0
         - desc = Прогноз погоды /weather_list - список /weather_Moscow в Москве на день и 7 дней. /weather_ - ввести город
