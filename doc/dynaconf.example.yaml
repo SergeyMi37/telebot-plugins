@@ -24,7 +24,7 @@ default:
 dev:  # https://api.telegram.org/bot<token>/getUpdates
   TELEGRAM_TOKEN: "<token>"
   DATABASE_URL: sqlite:///db.sqlite3
-  # DATABASE_URL: postgres://postgres:postgres@db:5432/telebot
+  #DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
   PLUGINS:
     - ADMIN:
         - blocked = 0

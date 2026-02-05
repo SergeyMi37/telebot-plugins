@@ -101,7 +101,6 @@ logger.info('====== DEBUG: '+str(DEBUG))
 # Кэшировать
 @lru_cache(maxsize=None)
 def get_unblock_plugins():
-    print('11111')
     retpl = {}
     plug = settings.get("PLUGINS")
     for pl in plug:
@@ -160,7 +159,6 @@ def cache_list_compatible(func):
 # Использование
 @cache_list_compatible
 def get_plugins_for_roles(Roles = None):
-    print('2222222222',Roles)
     retpl = {}
     if Roles is None:
         return retpl
