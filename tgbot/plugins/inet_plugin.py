@@ -128,7 +128,7 @@ class InetPlugin(BasePlugin):
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
     '''
-    plugin INET
+    plugin INET:
     '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
@@ -144,7 +144,7 @@ def button(update: Update, context: CallbackContext) -> None:
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
     '''
-    plugin INET
+    plugin INET:
     '''
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
