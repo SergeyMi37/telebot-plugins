@@ -41,12 +41,18 @@ PROJ_RU = plugins_gitlab.get('PROJ_RU','') if plugins_gitlab else ''
 
 @check_groupe_user
 def command_yesterday(update: Update, context: CallbackContext) -> None:
+  '''
+  plugin GITLAB:
+  '''
   _fromDate = datetime.now() + timedelta(days=-1)
   fromDate=_fromDate.date()
   command_daily(update, context, reportDate = fromDate )
 
 @check_groupe_user
 def command_daily(update: Update, context: CallbackContext, reportDate = '' ) -> None:
+    '''
+    plugin GITLAB:
+    '''
     u = User.get_user(update, context)
     if not u.is_admin:
         update.message.reply_text(only_for_admins)
@@ -88,6 +94,9 @@ def get_lab(cmdmess: str):
 
 @check_groupe_user
 def command_daily_rating_noname(update: Update, context: CallbackContext,lab = "") -> None:
+    '''
+    plugin GITLAB:
+    '''
     u = User.get_user(update, context)
     if not u.is_admin:
         update.message.reply_text(only_for_admins)
@@ -99,6 +108,9 @@ def command_daily_rating_noname(update: Update, context: CallbackContext,lab = "
 
 @check_groupe_user
 def command_daily_rating(update: Update, context: CallbackContext,lab = "") -> None:
+    '''
+    plugin GITLAB:
+    '''
     u = User.get_user(update, context)
     if not u.is_admin:
         update.message.reply_text(only_for_admins)
@@ -111,6 +123,9 @@ def command_daily_rating(update: Update, context: CallbackContext,lab = "") -> N
     
 @check_groupe_user
 def command_weekly_rating(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin GITLAB:
+    '''
     u = User.get_user(update, context)
     fromDate = (datetime.now() + timedelta(days=-7)).date()
     toDate = datetime.today().date()

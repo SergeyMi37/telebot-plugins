@@ -20,6 +20,8 @@
 # "Вам пришло сообщение о проблеме на сервере <b>PROD_SYS_AlertsView</b>\n команды:\n/s_PROD_SYS"
 # ]
 
+# !!! в разработке
+
 from telegram import ParseMode, Update
 # from dtb.settings import get_plugins_for_roles
 from dtb.settings import logger
@@ -32,7 +34,7 @@ from users.models import User
 from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
 
-# Добавить проверку на роль ''
+# проверка пользователя  на роль в декораторе @check_groupe_user
 #plugin_tasks = get_plugins_for_roles('').get('TASKS')
 
 CODE_INPUT = range(1)
@@ -87,6 +89,9 @@ class TasksPlugin(BasePlugin):
 
 @check_groupe_user
 def button_tasks(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin TASKS
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -101,7 +106,9 @@ def button_tasks(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands_tasks(update: Update, context: CallbackContext) -> None:
-    #u = User.get_user(update, context)
+    '''
+    plugin TASKS
+    '''
     upms = get_tele_command(update)
     telecmd = upms.text
     _input = telecmd.split('tasks')[1].replace("_"," ")

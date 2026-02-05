@@ -1,12 +1,14 @@
 # Name Plugin: TEMPLATE
-    # - MEDIA:
-    #     - desc = Сервис для скачивания роликов с Ютуба и ВкВидео и обмена ссылками между пользователями бота
-# имя плагина MEDIA должно совпадать с именем в конфигурации Dynaconf
+    # - TEMPLATE:
+    #     - desc = шаблон для модуля
+# имя плагина TEMPLATE должно совпадать с именем в конфигурации Dynaconf
 # имя плагина media должно быть первым полем от _ в имени файла media_plugin
 # имя файла плагина должно окачиваться на _plugin
 # В модуле должна быть опрделн класс для регистрации в диспетчере
-# class MEFIAPlugin(BasePlugin):
+# class TEMPPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
+
+# !!! шаблон - закотовка для новых плагинов
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -20,8 +22,8 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 from tgbot.plugins.base_plugin import BasePlugin
 
-# Добавить проверку на роль ''
-#plugin_wiki = get_plugins_for_roles('').get('WIKI')
+# проверка пользователя  на роль в декораторе @check_groupe_user
+#plugin_wiki = get_plugins_for_roles('').get('TEMPLATE')
 
 plugin_cmd = "template"
 CODE_INPUT = range(1)
@@ -74,6 +76,9 @@ class PPlugin(BasePlugin):
 
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin TEMPLATE
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -88,6 +93,9 @@ def button(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin TEMPLATE
+    '''
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text

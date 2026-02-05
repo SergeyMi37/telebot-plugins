@@ -295,6 +295,9 @@ class ChatPlugin(BasePlugin):
 
 @check_groupe_user
 def button_chat(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin CHAT:
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -328,6 +331,9 @@ def chat_ollama_model(name,msg,sys_msg="Ты разговариваешь с п�
 
 @check_groupe_user
 def commands_chat(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin CHAT:
+    '''
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     u = User.get_user(update, context)

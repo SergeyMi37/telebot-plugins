@@ -148,6 +148,9 @@ if __name__ != "__main__":
 
     @check_groupe_user
     def button(update: Update, context: CallbackContext) -> None:
+        '''
+        plugin TRANS
+        '''
         #user_id = extract_user_data_from_update(update)['user_id']
         u = User.get_user(update, context)
         upms = get_tele_command(update)
@@ -163,6 +166,9 @@ if __name__ != "__main__":
 
     @check_groupe_user
     def commands(update: Update, context: CallbackContext) -> None:
+        '''
+        plugin TRANS
+        '''
         #u = User.get_user(update, context)
         upms = get_tele_command(update)
         telecmd = upms.text

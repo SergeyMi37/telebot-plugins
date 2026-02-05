@@ -33,6 +33,9 @@ def is_permiss(user: User,roleslist: list):
 
 @check_groupe_user
 def server(update: Update, context: CallbackContext):
+    '''
+    plugin IRIS:
+    '''
     """ Работа с серверами ИРИС """
     u = User.get_user(update, context)
     upms = reports_gitlab.get_tele_command(update)
@@ -58,6 +61,9 @@ def server(update: Update, context: CallbackContext):
 
 @check_groupe_user
 def reports(update: Update, context: CallbackContext):
+    '''
+    plugin GITLAB:
+    '''
     """ Reports."""
     upms = reports_gitlab.get_tele_command(update)
     telecmd = upms.text
@@ -128,6 +134,9 @@ def reports(update: Update, context: CallbackContext):
 
 @check_groupe_user
 def broadcast_command_with_message(update: Update, context: CallbackContext):
+    '''
+    plugin ADMIN:
+    '''
     """ Type /broadcast <some_text>. Then check your message in HTML format and broadcast to users."""
     u = User.get_user(update, context)
     upms = reports_gitlab.get_tele_command(update)
@@ -162,6 +171,9 @@ def broadcast_command_with_message(update: Update, context: CallbackContext):
 
 @check_groupe_user
 def broadcast_decision_handler(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin ADMIN:
+    '''
     # callback_data: CONFIRM_DECLINE_BROADCAST variable from manage_data.py
     """ Entered /broadcast <some_text>.
         Shows text in HTML style with two buttons:

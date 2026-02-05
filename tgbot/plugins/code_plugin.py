@@ -21,7 +21,7 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 from tgbot.plugins.base_plugin import BasePlugin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 
-# Добавить проверку на роль ''
+# проверка пользователя  на роль в декораторе @check_groupe_user
 #plugin_wiki = get_plugins_for_roles('').get('CODE')
 
 CODE_INPUT = range(1)
@@ -384,6 +384,9 @@ def find_country(input_data):
 
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin CODE:
+    '''
     upms = get_tele_command(update)
     text = "Введите код региона автомобильного номера, или текст региона. Штрихкоды стран производителей"
     text += _code_help
@@ -396,6 +399,9 @@ def button(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin CODE:
+    '''
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
@@ -418,93 +424,3 @@ def commands(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
-'''
-Вот простой пример реализации двухэтапного диалога с использованием библиотеки Python telegram.ext, демонстрирующий пошаговую передачу двух параметров от пользователя:
-
-Предположим, мы хотим собрать у пользователя название города и дату путешествия, чтобы предложить какую-нибудь полезную информацию о погоде или мероприятиях в выбранный период.
-
-Шаги диалога:
-
-Бот просит ввести город назначения.
-Затем бот просит ввести желаемую дату путешествия.
-После ввода обоих параметров, бот выводит итоговую информацию.
-
-Код примера:
-
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
-
-# Константы для обозначения этапов диалога
-CITY, DATE = range(2)
-
-def start(update: Update, context: CallbackContext) -> int:
-    """Запускаем диалог"""
-    update.message.reply_text("Привет! Напиши название города.")
-    return CITY
-
-def city_input(update: Update, context: CallbackContext) -> int:
-    """Пользователь ввёл название города"""
-    user_city = update.message.text
-    context.user_data['city'] = user_city
-    update.message.reply_text(f'Город {user_city}. Теперь напиши дату твоего путешествия.')
-    return DATE
-
-def date_input(update: Update, context: CallbackContext) -> None:
-    """Пользователь ввёл дату путешествия"""
-    travel_date = update.message.text
-    context.user_data['date'] = travel_date
-    chosen_city = context.user_data.get('city')
-    update.message.reply_text(f"Твой выбор: {chosen_city}, {travel_date}. Спасибо!")
-    return ConversationHandler.END
-
-def cancel(update: Update, context: CallbackContext) -> None:
-    """Отмена диалога"""
-    update.message.reply_text("Диалог отменён.")
-    return ConversationHandler.END
-
-def main():
-    updater = Updater("ВАШ_TOKEN_БОТА")
-    dispatcher = updater.dispatcher
-
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
-        states={
-            CITY: [MessageHandler(Filters.text & ~Filters.command, city_input)],
-            DATE: [MessageHandler(Filters.text & ~Filters.command, date_input)],
-        },
-        fallbacks=[CommandHandler('cancel', cancel)]
-    )
-
-    dispatcher.add_handler(conv_handler)
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
-
-Как работает?
-
-Команда /start запускает первый этап диалога, предлагая пользователю ввести название города.
-Получив название города, программа сохраняет его в памяти контекста (context.user_data) и предлагает ввести дату.
-Получив дату, программа также сохраняет её и выводит итоговую информацию.
-Для выхода из диалога предусмотрена команда /cancel.
-
-Диалог выглядит примерно так:
-
-Пользователь: /start
-Бот: Привет! Напиши название города.
-Пользователь: Москва
-Бот: Город Москва. Теперь напиши дату твоего путешествия.
-Пользователь: 1 июня
-Бот: Твой выбор: Москва, 1 июня. Спасибо!
-
-Или, если пользователь решает отменить диалог:
-
-Пользователь: /start
-Бот: Привет! Напиши название города.
-Пользователь: /cancel
-Бот: Диалог отменён.
-
-Теперь у вас есть рабочий шаблон для сбора нескольких последовательных параметров от пользователя.
-
-'''

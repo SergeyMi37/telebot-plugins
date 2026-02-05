@@ -177,6 +177,9 @@ def admin_opt() -> str:
 @check_groupe_user
 @superadmin_only
 def admin_info(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin ADMIN:
+    '''
     u = User.get_user(update, context)
     a24 = User.objects.filter(updated_at__gte=now() - timedelta(hours=24))
     text = static_text.users_amount_stat.format(
@@ -201,6 +204,9 @@ def admin_info(update: Update, context: CallbackContext) -> None:
 @superadmin_only
 @send_typing_action
 def admin_export_users(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin ADMIN:
+    '''
     # in values argument you can specify which fields should be returned in output csv
     upms = get_tele_command(update)
     # Если команда редакрирован, то upms
@@ -235,6 +241,9 @@ class AdminPlugin(BasePlugin):
 @check_groupe_user
 @superadmin_only
 def button_admin(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin ADMIN:
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -250,6 +259,9 @@ def button_admin(update: Update, context: CallbackContext) -> None:
 @check_groupe_user
 @superadmin_only
 def commands_admin(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin ADMIN:
+    '''
     u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text

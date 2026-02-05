@@ -1,4 +1,4 @@
-# plugins/plugin_loader.py
+# plugins/plugin_loader.py   Загрузчик модулей
 import importlib, pkgutil
 from pathlib import Path
 from tgbot.plugins.base_plugin import BasePlugin

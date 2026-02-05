@@ -20,7 +20,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 from tgbot.plugins.base_plugin import BasePlugin
 
-# Добавить проверку на роль ''
+# проверка пользователя  на роль в декораторе @check_groupe_user
 plugin_weather = get_plugins_for_roles('').get('WEATHER')
 
 # https://dadata.ru/api/geolocate/
@@ -414,6 +414,9 @@ def get_forecast_cmd(upms, context, u, cmd):
 
 @check_groupe_user
 def commands(update, context):
+    '''
+    plugin WEATHER:
+    '''
     u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text
@@ -422,6 +425,9 @@ def commands(update, context):
 
 @check_groupe_user
 def button( update, context):
+    '''
+    plugin WEATHER:
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)

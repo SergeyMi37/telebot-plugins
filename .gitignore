@@ -135,6 +135,10 @@ dmypy.json
 .pyre/
 .DS_Store
 
+.continue
+.gigaide
+
+
 #PyCharm
 .idea/
 

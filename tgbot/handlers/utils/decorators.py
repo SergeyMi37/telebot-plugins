@@ -5,9 +5,9 @@ from telegram import Update, ChatAction, ParseMode
 from telegram.ext import CallbackContext
 from tgbot.handlers.utils.info import get_tele_command
 from users.models import User
-from dtb.settings import logger
+from dtb.settings import get_plugins_for_roles
 from tgbot import plugins
-import pprint as pp
+# import pprint as pp
 
 def check_groupe_user(func: Callable):
     """
@@ -16,21 +16,25 @@ def check_groupe_user(func: Callable):
     """
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
-        # user = User.get_user(update, context)
-        # if user.is_blocked_bot:
-        #     text = 'вы блокированы" # you are blocked'
-        #     print(text,user.first_name)
-            # context.bot.send_message(
-            #     chat_id=user.user_id,
-            #     text=text,
-            #     parse_mode=ParseMode.HTML
-            # )
-            #return
         upms = get_tele_command(update)
         if upms.chat.id<0: # публичные группы имеют отрицательный номер
             plugins.admin_plugin.universal_message_handler(update, context, func)
             return
+        plugin_func=func.__doc__.split('plugin ')[1].split(':')[0] if func.__doc__ else None
+        print('- func plugin ',plugin_func)
 
+        if plugin_func==None:
+            print(' команда не имеет в __doc__ признака plugin ',func.__name__,func.__module__)
+            return        
+        elif plugin_func !='HELP':
+            u, created = User.get_user_and_created(update, context)
+            user_roles = u.get_all_roles()
+            user_plugins = get_plugins_for_roles(user_roles)   # проверка пользователя на роль и соответсвие ее неблокированным плагинам
+            # print('-user plugins ',user_plugins.get(plugin_func))
+            if user_plugins.get(plugin_func)==None:
+                print(' команда блокирована для ',u.first_name)
+                return
+        
         return func(update, context, *args, **kwargs)
     return wrapper
 

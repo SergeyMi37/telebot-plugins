@@ -21,9 +21,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 from tgbot.plugins.base_plugin import BasePlugin
 
-# Добавить проверку на роль ''
-#plugin_wiki = get_plugins_for_roles('').get('WIKI')
-
 CODE_INPUT = range(1)
 _wiki_help = 'Поиск на https://ru.wikipedia.org Введите слово после ключевого wiki ' \
 'например:\n\r /wiki_Rainbow или ' \
@@ -97,6 +94,9 @@ class WikiPlugin(BasePlugin):
 
 @check_groupe_user
 def button_wiki(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin WIKI:
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -114,6 +114,9 @@ def button_wiki(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin WIKI:
+    '''
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text

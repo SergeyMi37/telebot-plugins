@@ -17,6 +17,8 @@
 # class MEFIAPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
 
+# !!! в разработке
+
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 # from dtb.settings import get_plugins_for_roles
@@ -29,8 +31,8 @@ from tgbot.plugins.base_plugin import BasePlugin
 from datetime import date
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
 
-# Добавить проверку на роль ''
-#plugin_wiki = get_plugins_for_roles('').get('WIKI')
+# проверка пользователя  на роль в декораторе @check_groupe_user
+# plugin_wiki = get_plugins_for_roles('').get('MEDIA')
 
 plugin_cmd = "media"
 CODE_INPUT = range(1)
@@ -82,6 +84,9 @@ class PPlugin(BasePlugin):
 
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin MEDIA:
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -96,6 +101,9 @@ def button(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin MEDIA:
+    '''
     u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text

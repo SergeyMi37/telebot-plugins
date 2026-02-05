@@ -1,4 +1,4 @@
-# Plugin Новости из ленты rss ----- стандарный
+# Plugin Новости из ленты rss 
 # Name Plugin: NEWS
     # - NEWS:
     #     - blocked = 1
@@ -20,7 +20,7 @@ from tgbot.handlers.utils.decorators import check_groupe_user
 from users.models import User
 import feedparser, random
 
-# Добавить проверку на роль ''
+# проверка пользователя  на роль в декораторе @check_groupe_user
 plugin_news = get_plugins_for_roles('').get('NEWS')
 
 rss_dict = {}
@@ -154,6 +154,9 @@ class NewsRSSPlugin(BasePlugin):
 
 @check_groupe_user
 def button_(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin NEWS:
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -168,7 +171,17 @@ def button_(update: Update, context: CallbackContext) -> None:
 
 
 @check_groupe_user
-def commands_(update: Update, context: CallbackContext) -> None:
+def commands_(update: Update, context: CallbackContext,plug='NEWS') -> None:
+    '''
+    plugin NEWS:
+   Обрабатываетвсе команды пользователя
+   /news_ - выводит список лент новостей
+   /news_<имя ленты> - выводит новости из ленты
+   /news - выводит случайные новости из всех лент
+   /news_0 - выводит все новости из всех лент
+   /news_10 - выводит 10 случайных новостей из всех лент 
+    
+    '''
     upms = get_tele_command(update)
     telecmd = upms.text
     count = 10

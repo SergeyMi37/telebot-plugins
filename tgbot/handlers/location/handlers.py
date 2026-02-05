@@ -8,6 +8,9 @@ from users.models import User, Location
 
 @check_groupe_user
 def ask_for_location(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin HELP:
+    '''
     """ Entered /ask_location command"""
     u = User.get_user(update, context)
 

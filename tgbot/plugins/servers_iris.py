@@ -38,6 +38,9 @@ plugins_iris = get_plugins_for_roles('').get('IRIS')
 
 @check_groupe_user
 def command_servers(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin IRIS:
+    '''
     u = User.get_user(update, context)
     if not u.is_admin:
         update.message.reply_text(static_text.only_for_admins)

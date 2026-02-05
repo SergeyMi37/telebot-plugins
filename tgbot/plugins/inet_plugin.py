@@ -21,7 +21,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from tgbot.plugins.base_plugin import BasePlugin
 from duckduckgo_search import DDGS
 
-# Добавить проверку на роль ''
+# проверка пользователя  на роль в декораторе @check_groupe_user
 #plugin_ddg = get_plugins_for_roles('').get('INET')
 
 CODE_INPUT = range(1)
@@ -127,6 +127,9 @@ class InetPlugin(BasePlugin):
 
 @check_groupe_user
 def button(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin INET
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -140,6 +143,9 @@ def button(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin INET
+    '''
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text

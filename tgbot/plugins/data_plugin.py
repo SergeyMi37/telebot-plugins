@@ -12,6 +12,7 @@
 # class DATAPlugin(BasePlugin):
 #    def setup_handlers(self, dp):
 
+# !!! в разработке
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
@@ -24,7 +25,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from tgbot.plugins.base_plugin import BasePlugin
 from dadata import Dadata
 
-# Добавить проверку на роль ''
+# проверка пользователя на роль в декораторе @check_groupe_user
 plugin_data = get_plugins_for_roles('').get('DATA')
 
 CODE_INPUT = range(1)
@@ -102,6 +103,9 @@ class DataPlugin(BasePlugin):
 
 @check_groupe_user
 def button_data(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin DATA:
+    '''
     #user_id = extract_user_data_from_update(update)['user_id']
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
@@ -119,6 +123,9 @@ def button_data(update: Update, context: CallbackContext) -> None:
 
 @check_groupe_user
 def commands(update: Update, context: CallbackContext) -> None:
+    '''
+    plugin DATA:
+    '''
     #u = User.get_user(update, context)
     upms = get_tele_command(update)
     telecmd = upms.text

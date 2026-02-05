@@ -4,6 +4,8 @@ import sys
 import json
 import dj_database_url
 import dotenv
+from functools import lru_cache
+from functools import wraps
 
 logger = logging.getLogger(__name__)
 # logger.setLevel(logging.DEBUG)
@@ -96,7 +98,10 @@ logger.info('====== ENV_FOR_DYNACONF: '+str(settings.get("ENV_FOR_DYNACONF",""))
 logger.info('====== DATABASE_URL: '+str(settings.get("DATABASE_URL","")))
 logger.info('====== DEBUG: '+str(DEBUG))
 
+# Кэшировать
+@lru_cache(maxsize=None)
 def get_unblock_plugins():
+    print('11111')
     retpl = {}
     plug = settings.get("PLUGINS")
     for pl in plug:
@@ -122,7 +127,40 @@ def get_unblock_plugins():
 
 unblock_plugins = get_unblock_plugins()
 
+def cache_list_compatible(func):
+    """Декоратор для кэширования функций со списками"""
+    cache = {}
+    
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Преобразуем все списки в кортежи для ключа
+        def make_hashable(obj):
+            if isinstance(obj, list):
+                return tuple(make_hashable(item) for item in obj)
+            elif isinstance(obj, dict):
+                return tuple(sorted((k, make_hashable(v)) for k, v in obj.items()))
+            else:
+                return obj
+        
+        # Создаем хешируемый ключ
+        hashable_args = tuple(make_hashable(arg) for arg in args)
+        hashable_kwargs = tuple(sorted((k, make_hashable(v)) for k, v in kwargs.items()))
+        key = (hashable_args, hashable_kwargs)
+        
+        if key not in cache:
+            cache[key] = func(*args, **kwargs)
+        
+        return cache[key]
+    
+    wrapper.cache = cache
+    wrapper.clear_cache = lambda: cache.clear()
+    
+    return wrapper
+
+# Использование
+@cache_list_compatible
 def get_plugins_for_roles(Roles = None):
+    print('2222222222',Roles)
     retpl = {}
     if Roles is None:
         return retpl
