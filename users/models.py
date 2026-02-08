@@ -112,15 +112,17 @@ class Location(CreateTracker):
 
 class UsersOptions(CreateTracker):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=132,unique=True, **nb,help_text="Имя параметра")
+    name = models.CharField(max_length=250, **nb,help_text="Имя параметра")
     description = models.TextField(("Описание"), default='',blank=True,help_text="Описание параметра")
     category = models.CharField(max_length=256,default='dflt',help_text="Категория параметра")
     type = models.CharField(max_length=256, **nb,default='str',help_text="Тип параметра")
     value = models.TextField(default='',help_text="Значение параметра")
     enabled = models.BooleanField(default=True,help_text="Включено")
     objects = GetOrNoneManager()
+
     def __str__(self):
         return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
+
     @classmethod
     def get_by_name_and_category(cls, user_id, name, category=None):
         """Получает объект по пользователю, по имени и дополнительной фильтрации по категории."""
@@ -129,6 +131,10 @@ class UsersOptions(CreateTracker):
             queryset = queryset.filter(category=category)
         return queryset.first()
     
+    class Meta:
+        unique_together = ['user', 'name']  # Один user не может иметь дублирующихся name
+
+
 class Options(CreateTracker):
     name = models.CharField(max_length=132,unique=True, **nb,help_text="Имя параметра")
     description = models.TextField(("Описание"), default='',blank=True,help_text="Описание параметра")

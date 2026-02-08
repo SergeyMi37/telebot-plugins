@@ -108,15 +108,16 @@ def check_chat_sys(update: Update, context):
     if '|' in role:
         ques = role.split('|')[1]
         role = role.split('|')[0]
-    
+    type="text"
+    category="model_option"
     try:
         instance, created = UsersOptions.objects.update_or_create(
                     user=u,
                     name='sys_role_'+curr_model,
                     defaults={
                         'description': 'Системный параметр роли для {"role": "system", "content": sys_msg}',
-                        'category': "model_option",
-                        'type': "text",
+                        'category': category,
+                        'type': type,
                         'value': role,
                         'enabled': True
                     }
@@ -126,12 +127,13 @@ def check_chat_sys(update: Update, context):
                     name='sys_ques_'+curr_model,
                     defaults={
                         'description': 'Вопрос к модели - параметр роли для {"role": "user", "content": sys_msg}',
-                        'category': "model_option",
-                        'type': "text",
+                        'category': category,
+                        'type': type,
                         'value': ques,
                         'enabled': True
                     }
                 )
+
         msg = (f"Для текущей модели <b>{curr_model}</b>\nСохранили.: <code>{role}|{ques}</code>")
     except Exception as e:
         msg = (f"Ошибка сохранения: {e}")
