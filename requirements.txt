@@ -1,3 +1,4 @@
+# Python 3.10.4 - рекомендуемая версия
 pytz
 requests
 python-dotenv

@@ -65,7 +65,8 @@ class OptionsAdmin(admin.ModelAdmin):
 
 @admin.register(Updates)
 class UpdatesAdmin(admin.ModelAdmin):
-    list_display = ['update_id','message','created_at','from_id', 'json','chat_id']
+    # list_display = ['update_id','message','created_at','from_id', 'json','chat_id']
+    list_display = ['update_id','message','created_at', 'json']
     search_fields = ('message', 'json')
     # list_filter = ['created_at']
     list_filter = [

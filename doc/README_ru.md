@@ -41,6 +41,8 @@ pip install -r requirements.txt
 Создайте файл `dynaconf.yaml` скопируйте и вставьте это или просто запустите `cp doc/dynaconf.example.yaml dynaconf.yaml`, не забудьте изменить токены:
 В файле .env нужно определить переменную ENV_FOR_DYNACONF=dev значение которой ссылается на раздел параметров в файле dynaconf.yaml
 Иногда нужно выполнить `export ENV_FOR_DYNACONF=dev`
+Проверить значение `echo ${ENV_FOR_DYNACONF}`
+Посмотреть все переменные `env`
 
 Запустите миграции для настройки базы данных:
 ``` bash
