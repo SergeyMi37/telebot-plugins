@@ -1,6 +1,6 @@
 <img src="https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/logo_min.png">
 
-## telebot-plugins
+## telebot-plugins.
 
 Chatbot project with Django Admin and plugins
 
