@@ -50,7 +50,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
     plugins = get_plugins_for_roles(users_roles) # Получить все доступные плагины пользователю из неблокированных
     #plugins = get_plugins(users_roles) # Получить все доступные плагины пользователю из неблокированных
     # todo get_unblock_plugins 
-    text += CRLF+'🔸/start: Кнопки ссылок на модули.' # Ваш ID:'+str(u.user_id)
+    text += CRLF+'🔸/start: Кнопки ссылок на модули. Ваш ID:'+str(u.user_id)
     url = settings.get("SUPPORT_GROUP", "https://t.me/+QZjI6JxKex04Y2Ey")
     text += CRLF+f'<a href=\"{url}\">🎯Группа поддержки. Обсуждаем ошибки и разработку новых модулей.</a>'
     if u.is_admin:
