@@ -1,5 +1,5 @@
 #!/bin/bash
-# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh && chmod +x vps_ubuntu_newssh.sh && ./vps_ubuntu_newssh.sh --user msw
+# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh && sudo chmod +x vps_ubuntu_newssh.sh && ./vps_ubuntu_newssh.sh --user msw
 # bash <(wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh)
 #!/bin/bash
 
@@ -365,8 +365,8 @@ if sudo ss -tlnp 2>/dev/null | grep -q ":$ssh_port" || sudo netstat -tlnp 2>/dev
     fi
 fi
 
-# Создаем временный файл конфигурации
-TEMP_CONFIG=$(mktemp)
+# Создаем временный файл конфигурации с sudo
+TEMP_CONFIG=$(sudo mktemp)
 sudo cp "$SSHD_CONFIG" "$TEMP_CONFIG"
 
 # Функция для безопасного обновления параметра
@@ -375,9 +375,9 @@ update_ssh_config() {
     local value="$2"
     local file="$3"
     
-    # Удаляем все существующие вхождения параметра
+    # Удаляем все существующие вхождения параметра (требует sudo для записи)
     sudo sed -i "/^[#[:space:]]*$param/d" "$file"
-    # Добавляем новый параметр
+    # Добавляем новый параметр (используем sudo для записи)
     echo "$param $value" | sudo tee -a "$file" > /dev/null
 }
 
