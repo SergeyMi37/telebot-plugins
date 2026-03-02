@@ -1,5 +1,5 @@
 #!/bin/bash
-# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh && chmod +x vps_ubuntu.sh && ./vps_ubuntu_newssh.sh
+# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh && chmod +x vps_ubuntu_newssh.sh && ./vps_ubuntu_newssh.sh --user msw
 # bash <(wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh)
 #!/bin/bash
 
