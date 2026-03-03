@@ -36,8 +36,9 @@ dev:  # https://api.telegram.org/bot<token>/getUpdates
         - desc = Получить статью из википедии /wiki_
     - DATA:
         - blocked = 1
-        - desc = Портал открытых данных DADATA.ru и других ресурсов
+        - desc = Портал открытых данных DADATA.ru и других ресурсов. https://github.com/hflabs/dadata-uptime
         - dadata_token = <1345-6789>
+        - dadata_secret = <987-8888>
     - GITLAB:
         - blocked = 1
         - ACCESS_TOKEN = <glpat-sdfsdfsdfsdfsffs>

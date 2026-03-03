@@ -24,50 +24,45 @@ from users.models import User
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
 from dadata import Dadata
+from tgbot.plugins.data_dadata import get_adress_fias, get_phone #,token,secret
 
 # проверка пользователя на роль в декораторе @check_groupe_user
-plugin_data = get_plugins_for_roles('').get('DATA')
+#plugin_data = get_plugins_for_roles('').get('DATA')
+# token = plugin_data.get('dadata_token','')
+# secret = plugin_data.get('dadata_secret','')
 
 CODE_INPUT = range(1)
-_data_help = 'Поиск на dadata.ru Введите код после ключевого /data_ ' \
-'\n\r /data_ - диалог для введения слова ' \
-'\n\r🔸/help /data_'
-
-def get_adress_fias(fias):
-    if not plugin_data:
-        return ''
-    token = plugin_data.get('dadata_token','')
-    if not token:
-        return ''
-    try:
-        dadata = Dadata(token)
-        result = dadata.find_by_id("address", fias)
-
-        if result:
-            val = result[0]['value']
-        else:
-            val = ''
-        return 200, val, result
-    except Exception as e:
-        val = ''
-        return 500, val, result
+_data_help = 'Поиск на dadata.ru Введите контекст поиска ' \
+'\n\r /data_phone_ - проверка телефона' \
+'\n\r /data_org_ - проверка организации' \
+'\n\r🔸/help /data'
 
 
 def request_data(update: Update, context):
-    """Запрашиваем у пользователя"""
+    """Запрашиваем у пользователя контекст"""
     upms = get_tele_command(update)
-    upms.reply_text("Введите код ФИАС. /cancel_data - отмена")
+    context.user_data['cmd'] = upms.text # запоминаем команду
+    upms.reply_text("Введите код  /cancel_data - закончить диалог")
     return CODE_INPUT
 
 def check_data(update: Update, context):
     upms = get_tele_command(update)
+    cmd_type = context.user_data.get('cmd')
     _input = upms.text
+    _output = _data_help
     if _input:
-       code, _output, link = get_adress_fias(_input)
-    else:
-        _output = _data_help
-    if '🔸/help' not in _output:
-        _output += '\n\r🔸/help /data_' 
+        if cmd_type=='/data_phone_':
+            val, json = get_phone(_input)
+        elif cmd_type=='/data_org_':
+            val, json = get_adress_fias(_input)
+        else:
+            val, json = get_phone(_input)
+
+        if val:
+          _output = f'{val}\n🔷 {json} \n\r🔸/help /data {cmd_type}'
+        else:
+          _output = f'Не найдено\n🔴 {json} \n\r🔸/help /data {cmd_type}'
+
     context.bot.send_message(
         chat_id=upms.chat.id,
         text=_output,
@@ -87,14 +82,16 @@ class DataPlugin(BasePlugin):
         cmd = "/data"
 
         conv_handler = ConversationHandler(
-            entry_points=[CommandHandler('data_', request_data)],
+            entry_points=[CommandHandler('data_phone_', request_data),
+                          CommandHandler('data_fias_', request_data),
+                          CommandHandler('data_org_', request_data)],
             states={
                 CODE_INPUT: [
                     MessageHandler(Filters.text & (~Filters.command), check_data),
                 ],
             },
             fallbacks=[
-                CommandHandler('cancel_wiki', cancel_data),
+                CommandHandler('cancel_data', cancel_data),
             ]
         )
         dp.add_handler(conv_handler)
@@ -146,3 +143,5 @@ def commands(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True,
         parse_mode=ParseMode.HTML
     )
+
+
