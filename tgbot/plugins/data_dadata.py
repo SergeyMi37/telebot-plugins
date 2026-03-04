@@ -14,9 +14,9 @@ root_dir = current_file.parent.parent.parent  # Поднимаемся на 3 у
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 
-
 from dadata import Dadata
 from dtb.settings import get_plugins_for_roles
+
 plugin_data = get_plugins_for_roles('').get('DATA')
 token = plugin_data.get('dadata_token','')
 secret = plugin_data.get('dadata_secret','')

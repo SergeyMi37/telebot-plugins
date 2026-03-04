@@ -25,12 +25,7 @@ from users.models import User
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
 from dadata import Dadata
-from tgbot.plugins.data_dadata import get_adress_fias, get_phone, get_org #,token,secret
-
-# проверка пользователя на роль в декораторе @check_groupe_user
-#plugin_data = get_plugins_for_roles('').get('DATA')
-# token = plugin_data.get('dadata_token','')
-# secret = plugin_data.get('dadata_secret','')
+from tgbot.plugins.data_dadata import get_adress_fias, get_phone, get_org
 
 CODE_INPUT = range(1)
 _data_help = 'Поиск на dadata.ru Введите контекст поиска ' \
