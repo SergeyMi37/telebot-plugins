@@ -5,6 +5,7 @@
 # имя плагина data должно быть первым полем от _ в имени файла data_plugin
 # имя файла плагина должно окачиваться на _plugin
 # В модуле должна быть опрделн класс для регистрации в диспетчере
+# 
 # https://catalog.eaist.mos.ru/catalog
 # https://data.mos.ru/developers/documentation
 # https://dadata.ru/api/find-party/
@@ -24,7 +25,7 @@ from users.models import User
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
 from tgbot.plugins.base_plugin import BasePlugin
 from dadata import Dadata
-from tgbot.plugins.data_dadata import get_adress_fias, get_phone #,token,secret
+from tgbot.plugins.data_dadata import get_adress_fias, get_phone, get_org #,token,secret
 
 # проверка пользователя на роль в декораторе @check_groupe_user
 #plugin_data = get_plugins_for_roles('').get('DATA')
@@ -54,14 +55,17 @@ def check_data(update: Update, context):
         if cmd_type=='/data_phone_':
             val, json = get_phone(_input)
         elif cmd_type=='/data_org_':
-            val, json = get_adress_fias(_input)
+            val, json = get_org(_input)
         else:
             val, json = get_phone(_input)
+        
+        json_string = str(json)
+        first_4000 = json_string[:4000]
 
         if val:
-          _output = f'{val}\n🔷 {json} \n\r🔸/help /data {cmd_type}'
+          _output = f'{val}\n🔷 {first_4000} \n\r🔸/help /data {cmd_type}'
         else:
-          _output = f'Не найдено\n🔴 {json} \n\r🔸/help /data {cmd_type}'
+          _output = f'Не найдено\n🔴 {first_4000} \n\r🔸/help /data {cmd_type}'
 
     context.bot.send_message(
         chat_id=upms.chat.id,
