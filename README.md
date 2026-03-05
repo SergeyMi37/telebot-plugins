@@ -12,22 +12,32 @@ Chatbot project with Django Admin and plugins
 
 [Демо бота](https://t.me/jff_sss_bot)
 
-## What's new
+# What's new
 
-Currently supported plug-ins:
-- Interlocutor Giga Chat
-- Monitoring of IRIS servers
-- Reporter on issue from GitLab
-- Weather forecast /weather_list - list /weather_Moscow in Moscow for a day and 7 days
-  based on the weather service https://open-meteo.com/en/docs#location_and_time
+Modules are implemented in plug-ins:
+- /data - Getting information on phones and Organizations (You need a user key https://dadata.ru/api /)
+- /chinese - For those who learn Chinese. Search for the etymology of hieroglyphs and translate into English (Using the playwrite library and website https://www.archchinese.com / )
+
+# Chatbot project with Django admin panel and with plug-ins and application configuration via Dynaconf
+
+Currently, plugins are supported:
+- /chat - An interlocutor with a Gigachat model (you need a developer key)
+- /chat_list - Chats with models from Ollama (you need the Ollama platform installed on the local network)
+- /iris - Monitoring of IRIS servers from Intersystems 
+- /gitlab - Task reporter from GitLab projects (you need a token to read from the project)
+- /weather - Weather forecast /weather_list - list /weather_Moscow in Moscow for a day and 7 days 
+  based on the weather service https://open-meteo.com/en/docs#location_and_time 
   and the reverse geocoding service https://nominatim.openstreetmap.org/reverse
-- Service for obtaining an article from Wikipedia. For example /wiki_Snow or <code>/wiki_Снег</code> or <code>wiki_Снеговик</code>
-- RSS news aggregation service. /news_list - list of feeds
-- Internet search service /inet /inet_ddg_ - so far only in the DuckDuckGo search engine
-- Administration module in groups
-    deleting system information about entering and exiting groups, changing photos
-    deleting a user from a group for writing prohibited words
-- Module for obtaining information from reference books of Russian regions codes and searching for a country by the beginning of the barcode
+- /wiki - A service for getting articles from Wikipedia. For example, /wiki_Snow or /wiki_ - enter the word
+- /news is an rss news aggregation service. /news_list - list of feeds
+- /inet - Internet search service /inet_ddg_ - currently only in the DuckDuckGo search engine
+- /admin - Group administration module
+    deleting system information about entering and exiting groups
+    removing a user from a group for writing prohibited words
+receiving reports on users and changes in the CSV
+- /code - Module format for obtaining information from regional code directories of the Russian Federation and searching for a country at the beginning of the code
+
+# Install locally
 
 <p align="left">
     <img src="https://github.com/SergeyMi37/telebot-plugins/raw/main/doc/Screenshot_1.png">
