@@ -169,7 +169,7 @@ alias dcserv='docker compose ps --services'
 
 alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"
-alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
+alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> /home/$USERNAME/.bashrc
 
 # Настройка SSH ключа если указан
 if [[ -n "$SSH_KEY" ]]; then
