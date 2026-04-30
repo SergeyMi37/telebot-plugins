@@ -1,6 +1,5 @@
 #!/bin/bash
 # wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_vnc.sh && sudo chmod +x vps_ubuntu_vnc.sh && ./vps_ubuntu_vnc.sh
-# bash <(wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_vnc.sh)
 
 # Минимальная установка VNC
 sudo apt update

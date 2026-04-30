@@ -1,6 +1,5 @@
 #!/bin/bash
 # wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_cyrillic.sh && sudo chmod +x vps_ubuntu_cyrillic.sh && ./vps_ubuntu_cyrillic.sh
-# bash <(wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_cyrillic.sh)
 
 # Скрипт для установки кириллицы в Ubuntu 22.04
 # Работает полностью через терминал

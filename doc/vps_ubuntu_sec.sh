@@ -1,7 +1,6 @@
 #!/bin/bash
 # wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_sec.sh && chmod +x vps_ubuntu_sec.sh && ./vps_ubuntu_sec.sh
-# bash <(wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_sec.sh)
-set -e  # Прерывать выполнение при ошибке
+et -e  # Прерывать выполнение при ошибке
 
 # Цвета для вывода
 RED='\033[0;31m'

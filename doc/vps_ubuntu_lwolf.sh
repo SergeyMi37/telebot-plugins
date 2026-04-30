@@ -1,6 +1,5 @@
 #!/bin/bash
 # wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_lwolf.sh && sudo chmod +x vps_ubuntu_lwolf.sh && ./vps_ubuntu_lwolf.sh
-# bash <(wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_lwolf.sh)
 
 # Скрипт установки LibreWolf на Ubuntu 22.04
 # Автоматически определяет лучший способ установки
