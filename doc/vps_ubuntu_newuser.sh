@@ -129,6 +129,48 @@ echo "$USERNAME:$PASSWORD" | chpasswd
 usermod -aG sudo "$USERNAME"
 usermod -aG docker "$USERNAME"
 
+# Добавляем команды в файл .bashrc
+echo "
+alias myip='wget -qO myip http://www.ipchicken.com/; grep -o "[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}" myip;  rm myip'
+alias ver='cat /etc/*-release'
+alias mc='mc -S gotar'
+alias hi='history | grep'
+alias lsrt='ls --human-readable --size -1 -S --classify'
+
+# если интерактивный режим, то при введении начало команды из истории можно листать PgUp/PgDn
+# https://qastack.ru/programming/4200800/in-bash-how-do-i-bind-a-function-key-to-a-command
+# возможность по клавишам PgUp, PgDn переходить по командам истории находясь на контексте строки
+if [[ \$- == *i* ]]; then
+    bind '\"\\e[5~\": history-search-backward'
+    bind '\"\\e[6~\": history-search-forward'
+fi
+
+# Настройки прокси сервера
+# export http_proxy=http://proxyuser:pass@111.114.222.114:4999
+# export https_proxy=${http_proxy}
+# export ftp_proxy=${http_proxy}
+
+
+# настройки истории
+export HISTSIZE=10000
+export HISTFILESIZE=10000
+export HISTCONTROL=ignoreboth:erasedups
+export PROMPT_COMMAND='history -a'
+export HISTIGNORE='ls:ps:hi:pwd'
+export HISTTIMEFORMAT='%d.%m.%Y %H:%M:%S: '
+
+export COMPOSE_DOCKER_CLI_BUILD=1
+export DOCKER_BUILDKIT=1
+export EDITOR=mcedit
+
+alias dockersrm='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) -f && docker system prune -f'
+alias dockersrmi='docker rmi $(docker images -q) -f && docker system prune -f'
+alias dcserv='docker compose ps --services'
+
+alias e=\"echo -e '\\e[8;50;150;t'\"
+alias ee=\"echo -e '\\e[8;55;160;t'\"
+alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> ~/.bashrc
+
 # Настройка SSH ключа если указан
 if [[ -n "$SSH_KEY" ]]; then
     mkdir -p "/home/$USERNAME/.ssh"
