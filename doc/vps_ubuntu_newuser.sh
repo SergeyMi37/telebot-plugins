@@ -1,8 +1,6 @@
 #!/bin/bash
 # wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newuser.sh && sudo chmod +x vps_ubuntu_newuser.sh && ./vps_ubuntu_newuser.sh -u msw -p P@S5w0rd
 
-#!/bin/bash
-
 # Минималистичный скрипт для создания пользователя с sudo
 # Поддерживает интерактивный и CLI режимы
 
@@ -129,6 +127,7 @@ echo "$USERNAME:$PASSWORD" | chpasswd
 
 # Добавление в группу sudo
 usermod -aG sudo "$USERNAME"
+usermod -aG docker "$USERNAME"
 
 # Настройка SSH ключа если указан
 if [[ -n "$SSH_KEY" ]]; then

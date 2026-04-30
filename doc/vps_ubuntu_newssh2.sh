@@ -1,8 +1,9 @@
 #!/bin/bash
-# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh && sudo chmod +x vps_ubuntu_newssh.sh && ./vps_ubuntu_newssh.sh --user msw --key "PUBLIC_KEY"
+# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh && sudo chmod +x vps_ubuntu_newssh.sh && ./vps_ubuntu_newssh.sh --user msw
 
 # ==============================================
 # Скрипт безопасной настройки SSH на Ubuntu
+# Автор: Claude (исправлено для сохранения UTF-8)
 # Описание: Создает sudo-пользователя, меняет порт SSH,
 #           запрещает root-доступ и включает вход только по ключам
 #
@@ -16,6 +17,11 @@
 # ==============================================
 
 set -e  # Прерывать выполнение при ошибке
+
+# Сохраняем текущую локаль ДО любых действий
+export SAVED_LANG="${LANG:-ru_RU.UTF-8}"
+export SAVED_LC_ALL="${LC_ALL:-ru_RU.UTF-8}"
+export SAVED_LANGUAGE="${LANGUAGE:-ru_RU:ru}"
 
 # Цвета для красивого вывода
 RED='\033[0;31m'
@@ -55,6 +61,80 @@ show_help() {
     echo "  $0 --user john                    # ключ будет запрошен"
     echo "  $0                                 # полностью интерактивный режим"
     exit 0
+}
+
+# Функция безопасного создания пользователя с сохранением локали
+create_user_with_locale() {
+    local username="$1"
+    local has_key="$2"
+    
+    print_info "Создание пользователя $username с сохранением UTF-8 локали..."
+    
+    # Создаем пользователя
+    if [[ "$has_key" == "yes" ]]; then
+        sudo adduser --gecos "" --disabled-password "$username"
+        print_info "Пользователь создан. Пароль не установлен (вход только по ключу)."
+    else
+        sudo adduser --gecos "" "$username"
+    fi
+    
+    # Добавляем в группу sudo
+    sudo usermod -aG sudo "$username"
+    
+    # Сохраняем русскую локаль для пользователя
+    local user_home=$(eval echo ~$username)
+    
+    # Добавляем локаль в .bashrc
+    sudo -u "$username" bash -c "cat >> ~/.bashrc << 'EOF'
+
+# Настройки локали для корректного отображения кириллицы и псевдографики
+export LANG=ru_RU.UTF-8
+export LC_ALL=ru_RU.UTF-8
+export LANGUAGE=ru_RU:ru
+EOF"
+    
+    # Добавляем локаль в .profile для неинтерактивных сессий
+    sudo -u "$username" bash -c "cat >> ~/.profile << 'EOF'
+
+# Настройки локали для корректного отображения кириллицы и псевдографики
+export LANG=ru_RU.UTF-8
+export LC_ALL=ru_RU.UTF-8
+export LANGUAGE=ru_RU:ru
+EOF"
+    
+    # Явно устанавливаем локаль для пользователя через systemd (если используется)
+    if command -v systemctl &> /dev/null; then
+        sudo systemctl set-environment LANG=ru_RU.UTF-8 2>/dev/null || true
+        sudo systemctl set-environment LC_ALL=ru_RU.UTF-8 2>/dev/null || true
+    fi
+    
+    print_success "Пользователь $username создан с поддержкой UTF-8 и добавлен в группу sudo."
+}
+
+# Функция безопасного добавления SSH-ключа
+add_ssh_key_safely() {
+    local username="$1"
+    local key="$2"
+    local user_home=$(eval echo ~$username)
+    local auth_keys="$user_home/.ssh/authorized_keys"
+    
+    # Создаем структуру .ssh от имени пользователя (не root!)
+    sudo -u "$username" mkdir -p "$user_home/.ssh"
+    
+    # Добавляем ключ (если его там еще нет)
+    if [[ -f "$auth_keys" ]] && grep -qF "$key" "$auth_keys"; then
+        print_warning "Этот ключ уже существует в authorized_keys"
+    else
+        echo "$key" | sudo -u "$username" tee -a "$auth_keys" > /dev/null
+        print_success "SSH-ключ добавлен."
+    fi
+    
+    # Устанавливаем правильные права от имени пользователя
+    sudo -u "$username" chmod 700 "$user_home/.ssh"
+    sudo -u "$username" chmod 600 "$auth_keys"
+    
+    # Убеждаемся, что владелец правильный
+    sudo chown -R "$username":"$username" "$user_home/.ssh"
 }
 
 # Парсинг аргументов командной строки
@@ -107,6 +187,8 @@ echo "====================================================="
 echo "     🔐 БЕЗОПАСНАЯ НАСТРОЙКА SSH НА UBUNTU 🔐"
 echo "====================================================="
 echo ""
+print_info "Локаль сохранена: $SAVED_LANG (UTF-8 поддержка активна)"
+echo ""
 
 # Если переданы параметры, показываем их
 if [[ -n "$USERNAME" ]]; then
@@ -145,6 +227,14 @@ echo ""
 print_info "Обновление списка пакетов..."
 sudo apt update
 
+# Проверяем и генерируем локали если нужно
+print_info "Проверка поддержки UTF-8 локалей..."
+if ! locale -a 2>/dev/null | grep -q "ru_RU.utf8\|ru_RU.UTF-8"; then
+    print_warning "Русская локаль не найдена. Генерируем..."
+    sudo locale-gen ru_RU.UTF-8 2>/dev/null || true
+    sudo locale-gen en_US.UTF-8 2>/dev/null || true
+fi
+
 # ==============================================
 # 0. СОЗДАНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
 # ==============================================
@@ -156,7 +246,7 @@ if [[ -n "$USERNAME" ]]; then
     # Используем переданный параметр
     TARGET_USER="$USERNAME"
     print_info "Используем пользователя: $TARGET_USER"
-    
+
     # Проверяем, существует ли пользователь
     if id "$TARGET_USER" &>/dev/null; then
         print_warning "Пользователь $TARGET_USER уже существует."
@@ -165,55 +255,58 @@ if [[ -n "$USERNAME" ]]; then
             print_error "Операция отменена."
             exit 1
         fi
+        # Добавляем локаль существующему пользователю
+        print_info "Добавление UTF-8 локали существующему пользователю..."
+        sudo -u "$TARGET_USER" bash -c "grep -q 'LANG=ru_RU.UTF-8' ~/.bashrc || echo 'export LANG=ru_RU.UTF-8' >> ~/.bashrc"
+        sudo -u "$TARGET_USER" bash -c "grep -q 'LC_ALL=ru_RU.UTF-8' ~/.bashrc || echo 'export LC_ALL=ru_RU.UTF-8' >> ~/.bashrc"
     else
-        # Создаем пользователя
-        print_info "Создание пользователя $TARGET_USER..."
-        
-        # Если передан ключ, создаем пользователя без запроса пароля
+        # Создаем пользователя с сохранением локали
         if [[ -n "$PUBLIC_KEY" ]]; then
-            sudo useradd -m -s /bin/bash "$TARGET_USER"
-            print_info "Пользователь создан. Пароль не установлен (вход только по ключу)."
+            create_user_with_locale "$TARGET_USER" "yes"
         else
-            sudo adduser "$TARGET_USER" --gecos ""
+            create_user_with_locale "$TARGET_USER" "no"
         fi
-        
-        # Добавляем в группу sudo
-        sudo usermod -aG sudo "$TARGET_USER"
-        print_success "Пользователь $TARGET_USER создан и добавлен в группу sudo."
     fi
 else
     # Интерактивный режим
     read -p "Хотите создать нового пользователя с правами sudo? (yes/NO): " create_user
-    
+
     if [[ "$create_user" =~ ^[Yy](es)?$ ]]; then
         read -p "Введите имя нового пользователя: " new_username
-        
+
         if id "$new_username" &>/dev/null; then
             print_warning "Пользователь $new_username уже существует."
             read -p "Продолжить с существующим пользователем? (yes/NO): " continue_existing
             if [[ "$continue_existing" =~ ^[Yy](es)?$ ]]; then
                 TARGET_USER="$new_username"
+                # Добавляем локаль существующему пользователю
+                sudo -u "$TARGET_USER" bash -c "grep -q 'LANG=ru_RU.UTF-8' ~/.bashrc || echo 'export LANG=ru_RU.UTF-8' >> ~/.bashrc"
+                sudo -u "$TARGET_USER" bash -c "grep -q 'LC_ALL=ru_RU.UTF-8' ~/.bashrc || echo 'export LC_ALL=ru_RU.UTF-8' >> ~/.bashrc"
             else
                 print_info "Пропускаем создание пользователя."
                 read -p "Введите имя существующего пользователя для настройки: " existing_user
                 if id "$existing_user" &>/dev/null; then
                     TARGET_USER="$existing_user"
+                    # Добавляем локаль существующему пользователю
+                    sudo -u "$TARGET_USER" bash -c "grep -q 'LANG=ru_RU.UTF-8' ~/.bashrc || echo 'export LANG=ru_RU.UTF-8' >> ~/.bashrc"
+                    sudo -u "$TARGET_USER" bash -c "grep -q 'LC_ALL=ru_RU.UTF-8' ~/.bashrc || echo 'export LC_ALL=ru_RU.UTF-8' >> ~/.bashrc"
                 else
                     print_error "Пользователь $existing_user не существует!"
                     exit 1
                 fi
             fi
         else
-            # Создаем пользователя
-            sudo adduser "$new_username" --gecos ""
-            sudo usermod -aG sudo "$new_username"
+            # Создаем пользователя с сохранением локали
+            create_user_with_locale "$new_username" "no"
             TARGET_USER="$new_username"
-            print_success "Пользователь $TARGET_USER успешно создан."
         fi
     else
         read -p "Введите имя существующего пользователя для настройки: " existing_user
         if id "$existing_user" &>/dev/null; then
             TARGET_USER="$existing_user"
+            # Добавляем локаль существующему пользователю
+            sudo -u "$TARGET_USER" bash -c "grep -q 'LANG=ru_RU.UTF-8' ~/.bashrc || echo 'export LANG=ru_RU.UTF-8' >> ~/.bashrc"
+            sudo -u "$TARGET_USER" bash -c "grep -q 'LC_ALL=ru_RU.UTF-8' ~/.bashrc || echo 'export LC_ALL=ru_RU.UTF-8' >> ~/.bashrc"
         else
             print_error "Пользователь $existing_user не существует!"
             exit 1
@@ -230,34 +323,15 @@ print_info "--- ШАГ 1: УСТАНОВКА SSH-КЛЮЧА ---"
 USER_HOME=$(eval echo ~$TARGET_USER)
 AUTH_KEYS_FILE="$USER_HOME/.ssh/authorized_keys"
 
-# Функция для добавления ключа
-add_ssh_key() {
-    local key="$1"
-    
-    sudo mkdir -p "$USER_HOME/.ssh"
-    
-    # Добавляем ключ (если его там еще нет)
-    if [[ -f "$AUTH_KEYS_FILE" ]] && grep -q "$key" "$AUTH_KEYS_FILE"; then
-        print_warning "Этот ключ уже существует в authorized_keys"
-    else
-        echo "$key" | sudo tee -a "$AUTH_KEYS_FILE" > /dev/null
-        print_success "SSH-ключ добавлен."
-    fi
-    
-    sudo chown -R "$TARGET_USER":"$TARGET_USER" "$USER_HOME/.ssh"
-    sudo chmod 700 "$USER_HOME/.ssh"
-    sudo chmod 600 "$AUTH_KEYS_FILE"
-}
-
 # Если передан ключ через параметр
 if [[ -n "$PUBLIC_KEY" ]]; then
     print_info "Добавление переданного SSH-ключа..."
-    add_ssh_key "$PUBLIC_KEY"
+    add_ssh_key_safely "$TARGET_USER" "$PUBLIC_KEY"
 else
     # Интерактивный режим добавления ключа
     if [[ ! -f "$AUTH_KEYS_FILE" ]] || [[ ! -s "$AUTH_KEYS_FILE" ]]; then
         print_warning "У пользователя $TARGET_USER нет SSH-ключей в ~/.ssh/authorized_keys!"
-        
+
         echo ""
         echo "Выберите способ добавления ключа:"
         echo "  1) Ввести публичный ключ вручную"
@@ -265,13 +339,13 @@ else
         echo "  3) Создать новый ключ"
         echo "  4) Пропустить (не рекомендуется)"
         read -p "Ваш выбор (1/2/3/4): " key_choice
-        
+
         case $key_choice in
             1)
                 echo "Вставьте ваш публичный SSH-ключ (начинается с 'ssh-rsa' или 'ssh-ed25519'):"
                 read -r manual_key
                 if [[ -n "$manual_key" ]]; then
-                    add_ssh_key "$manual_key"
+                    add_ssh_key_safely "$TARGET_USER" "$manual_key"
                 else
                     print_error "Ключ не может быть пустым!"
                     exit 1
@@ -279,15 +353,15 @@ else
                 ;;
             2)
                 if [[ -f ~/.ssh/authorized_keys ]] && [[ -s ~/.ssh/authorized_keys ]]; then
-                    cat ~/.ssh/authorized_keys | while read key; do
+                    while IFS= read -r key; do
                         if [[ -n "$key" ]]; then
-                            add_ssh_key "$key"
+                            add_ssh_key_safely "$TARGET_USER" "$key"
                         fi
-                    done
+                    done < ~/.ssh/authorized_keys
                 elif [[ -f ~/.ssh/id_rsa.pub ]]; then
-                    add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+                    add_ssh_key_safely "$TARGET_USER" "$(cat ~/.ssh/id_rsa.pub)"
                 elif [[ -f ~/.ssh/id_ed25519.pub ]]; then
-                    add_ssh_key "$(cat ~/.ssh/id_ed25519.pub)"
+                    add_ssh_key_safely "$TARGET_USER" "$(cat ~/.ssh/id_ed25519.pub)"
                 else
                     print_error "Не найдены ключи текущего пользователя."
                     exit 1
@@ -295,13 +369,12 @@ else
                 ;;
             3)
                 print_info "Создание нового SSH-ключа..."
-                sudo mkdir -p "$USER_HOME/.ssh"
-                sudo ssh-keygen -t ed25519 -f "$USER_HOME/.ssh/id_ed25519" -N "" -C "$TARGET_USER@$(hostname)"
-                sudo cp "$USER_HOME/.ssh/id_ed25519.pub" "$USER_HOME/.ssh/authorized_keys"
-                sudo chown -R "$TARGET_USER":"$TARGET_USER" "$USER_HOME/.ssh"
-                sudo chmod 700 "$USER_HOME/.ssh"
-                sudo chmod 600 "$USER_HOME/.ssh/authorized_keys"
-                sudo chmod 600 "$USER_HOME/.ssh/id_ed25519"
+                sudo -u "$TARGET_USER" mkdir -p "$USER_HOME/.ssh"
+                sudo -u "$TARGET_USER" ssh-keygen -t ed25519 -f "$USER_HOME/.ssh/id_ed25519" -N "" -C "$TARGET_USER@$(hostname)"
+                sudo -u "$TARGET_USER" cp "$USER_HOME/.ssh/id_ed25519.pub" "$USER_HOME/.ssh/authorized_keys"
+                sudo -u "$TARGET_USER" chmod 700 "$USER_HOME/.ssh"
+                sudo -u "$TARGET_USER" chmod 600 "$USER_HOME/.ssh/authorized_keys"
+                sudo -u "$TARGET_USER" chmod 600 "$USER_HOME/.ssh/id_ed25519"
                 print_success "SSH-ключ создан."
                 print_warning "Приватный ключ: $USER_HOME/.ssh/id_ed25519"
                 print_warning "СКОПИРУЙТЕ ЕГО СЕБЕ И УДАЛИТЕ С СЕРВЕРА!"
@@ -362,8 +435,8 @@ if sudo ss -tlnp 2>/dev/null | grep -q ":$ssh_port" || sudo netstat -tlnp 2>/dev
     fi
 fi
 
-# Создаем временный файл конфигурации с sudo
-TEMP_CONFIG=$(sudo mktemp)
+# Создаем временный файл конфигурации
+TEMP_CONFIG=$(mktemp)
 sudo cp "$SSHD_CONFIG" "$TEMP_CONFIG"
 
 # Функция для безопасного обновления параметра
@@ -371,10 +444,10 @@ update_ssh_config() {
     local param="$1"
     local value="$2"
     local file="$3"
-    
-    # Удаляем все существующие вхождения параметра (требует sudo для записи)
+
+    # Удаляем все существующие вхождения параметра
     sudo sed -i "/^[#[:space:]]*$param/d" "$file"
-    # Добавляем новый параметр (используем sudo для записи)
+    # Добавляем новый параметр
     echo "$param $value" | sudo tee -a "$file" > /dev/null
 }
 
@@ -396,6 +469,9 @@ update_ssh_config "UsePAM" "no" "$TEMP_CONFIG"
 # Включаем вход по ключам
 update_ssh_config "PubkeyAuthentication" "yes" "$TEMP_CONFIG"
 
+# Добавляем AcceptEnv для сохранения локали при SSH-подключениях
+update_ssh_config "AcceptEnv" "LANG LC_*" "$TEMP_CONFIG"
+
 # Ограничиваем вход конкретным пользователем (опционально)
 if [[ -n "$USERNAME" ]]; then
     # Если передан параметр, спрашиваем
@@ -411,7 +487,7 @@ else
     fi
 fi
 
-# Проверяем синтаксис
+# Проверяем синтаксис с сохранением локали
 print_info "Проверка синтаксиса конфигурации..."
 if sudo sshd -t -f "$TEMP_CONFIG" &>/dev/null; then
     print_success "Синтаксис конфигурации верный."
@@ -419,9 +495,10 @@ if sudo sshd -t -f "$TEMP_CONFIG" &>/dev/null; then
 else
     print_error "Ошибка в синтаксисе конфигурации!"
     sudo sshd -t -f "$TEMP_CONFIG"
+    rm "$TEMP_CONFIG"
     exit 1
 fi
-sudo rm "$TEMP_CONFIG"
+rm "$TEMP_CONFIG"
 
 # ==============================================
 # 3. ОТКЛЮЧЕНИЕ SSH.SOCKET
@@ -439,7 +516,7 @@ if systemctl list-unit-files | grep -q ssh.socket; then
     fi
 fi
 
-# Перезапускаем SSH
+# Перезапускаем SSH с сохранением окружения
 print_info "Перезапуск SSH-сервиса..."
 sudo systemctl restart ssh
 
@@ -463,17 +540,17 @@ print_info "--- ШАГ 4: НАСТРОЙКА UFW ---"
 if command -v ufw &>/dev/null; then
     if sudo ufw status | grep -q "Status: active"; then
         print_info "UFW активен. Настраиваем правила..."
-        
+
         # Разрешаем новый порт
         sudo ufw allow "$ssh_port"/tcp comment 'SSH custom port'
         print_success "Порт $ssh_port разрешен."
-        
+
         # Закрываем старый порт 22
         if sudo ufw status | grep -q "22/tcp"; then
             sudo ufw delete allow 22/tcp
             print_info "Старый порт 22 закрыт."
         fi
-        
+
         # Перезагружаем UFW
         sudo ufw reload
         print_success "Правила UFW обновлены."
@@ -483,10 +560,32 @@ if command -v ufw &>/dev/null; then
 fi
 
 # ==============================================
-# 5. ФИНАЛЬНАЯ ПРОВЕРКА
+# 5. НАСТРОЙКА ЛОКАЛИ ДЛЯ SSH-СЕССИЙ
 # ==============================================
 echo ""
-print_info "--- ШАГ 5: ФИНАЛЬНАЯ ПРОВЕРКА ---"
+print_info "--- ШАГ 5: СОХРАНЕНИЕ ЛОКАЛИ ДЛЯ SSH ---"
+
+# Убеждаемся что локаль глобально сконфигурирована
+if [[ -f /etc/default/locale ]]; then
+    sudo sed -i 's/^LANG=.*/LANG=ru_RU.UTF-8/' /etc/default/locale
+    sudo sed -i 's/^LC_ALL=.*/LC_ALL=ru_RU.UTF-8/' /etc/default/locale
+else
+    echo "LANG=ru_RU.UTF-8" | sudo tee /etc/default/locale > /dev/null
+    echo "LC_ALL=ru_RU.UTF-8" | sudo tee -a /etc/default/locale > /dev/null
+fi
+
+# Добавляем в /etc/environment если нужно
+if ! grep -q "LANG=ru_RU.UTF-8" /etc/environment 2>/dev/null; then
+    echo "LANG=ru_RU.UTF-8" | sudo tee -a /etc/environment > /dev/null
+fi
+
+print_success "Локаль настроена глобально."
+
+# ==============================================
+# 6. ФИНАЛЬНАЯ ПРОВЕРКА
+# ==============================================
+echo ""
+print_info "--- ШАГ 6: ФИНАЛЬНАЯ ПРОВЕРКА ---"
 
 # Получаем IP сервера
 SERVER_IP=$(ip -4 route get 1 | awk '{print $NF;exit}' 2>/dev/null || hostname -I | awk '{print $1}')
@@ -499,6 +598,7 @@ echo "  • Порт: $ssh_port"
 echo "  • Root доступ: ЗАПРЕЩЕН"
 echo "  • Вход по паролю: ЗАПРЕЩЕН"
 echo "  • Вход по ключам: РАЗРЕШЕН (для пользователя $TARGET_USER)"
+echo "  • UTF-8 локаль: СОХРАНЕНА (ru_RU.UTF-8)"
 if grep -q "^AllowUsers.*$TARGET_USER" "$SSHD_CONFIG"; then
     echo "  • Ограничение: Только пользователь $TARGET_USER"
 fi
@@ -511,6 +611,7 @@ echo "   ssh -p $ssh_port $TARGET_USER@$SERVER_IP"
 echo ""
 print_warning "3. Если используете публичный ключ из параметра --key, убедитесь, что у вас есть соответствующий приватный ключ."
 print_warning "4. ТОЛЬКО после успешного подключения в НОВОМ окне можно закрыть эту сессию."
+print_warning "5. При подключении проверьте локаль командой: locale"
 echo ""
 
 # Сохраняем информацию
@@ -523,6 +624,7 @@ INFO_FILE="$HOME/ssh_setup_$(date +%Y%m%d_%H%M%S).txt"
     echo "Порт: $ssh_port"
     echo "Команда подключения: ssh -p $ssh_port $TARGET_USER@$SERVER_IP"
     echo ""
+    echo "UTF-8 локаль: СОХРАНЕНА"
     echo "Резервная копия конфига: $BACKUP_FILE"
     echo "Для восстановления:"
     echo "  sudo cp $BACKUP_FILE $SSHD_CONFIG"
