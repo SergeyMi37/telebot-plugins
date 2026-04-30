@@ -435,9 +435,11 @@ if sudo ss -tlnp 2>/dev/null | grep -q ":$ssh_port" || sudo netstat -tlnp 2>/dev
     fi
 fi
 
-# Создаем временный файл конфигурации
-TEMP_CONFIG=$(mktemp)
+# Создаем временный файл конфигурации через sudo
+TEMP_CONFIG=$(sudo mktemp)
 sudo cp "$SSHD_CONFIG" "$TEMP_CONFIG"
+# Даем права на чтение текущему пользователю
+sudo chmod 644 "$TEMP_CONFIG"
 
 # Функция для безопасного обновления параметра
 update_ssh_config() {
@@ -447,7 +449,7 @@ update_ssh_config() {
 
     # Удаляем все существующие вхождения параметра
     sudo sed -i "/^[#[:space:]]*$param/d" "$file"
-    # Добавляем новый параметр
+    # Добавляем новый параметр через sudo tee
     echo "$param $value" | sudo tee -a "$file" > /dev/null
 }
 
@@ -495,10 +497,10 @@ if sudo sshd -t -f "$TEMP_CONFIG" &>/dev/null; then
 else
     print_error "Ошибка в синтаксисе конфигурации!"
     sudo sshd -t -f "$TEMP_CONFIG"
-    rm "$TEMP_CONFIG"
+    sudo rm "$TEMP_CONFIG"
     exit 1
 fi
-rm "$TEMP_CONFIG"
+sudo rm "$TEMP_CONFIG"
 
 # ==============================================
 # 3. ОТКЛЮЧЕНИЕ SSH.SOCKET
