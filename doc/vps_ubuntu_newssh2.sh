@@ -1,5 +1,5 @@
 #!/bin/bash
-# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh.sh && sudo chmod +x vps_ubuntu_newssh.sh && ./vps_ubuntu_newssh.sh --user msw
+# wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_newssh2.sh && sudo chmod +x vps_ubuntu_newssh2.sh && ./vps_ubuntu_newssh2.sh --user msw3
 
 # ==============================================
 # Скрипт безопасной настройки SSH на Ubuntu
