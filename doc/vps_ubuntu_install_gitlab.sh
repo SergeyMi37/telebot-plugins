@@ -1,7 +1,7 @@
 #!/bin/bash
 # wget https://raw.githubusercontent.com/SergeyMi37/telebot-plugins/master/doc/vps_ubuntu_install_gitlab.sh && chmod +x vps_ubuntu_install_gitlab.sh && ./vps_ubuntu_install_gitlab.sh
 
-# Скрипт установки GitLab CE на Ubuntu 22.04/24.04
+# Скрипт локальной установки GitLab CE на Ubuntu 22.04/24.04
 # Требует прав root
 
 set -e  # Остановить скрипт при любой ошибке

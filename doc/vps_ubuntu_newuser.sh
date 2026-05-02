@@ -129,8 +129,8 @@ echo "$USERNAME:$PASSWORD" | chpasswd
 usermod -aG sudo "$USERNAME"
 usermod -aG docker "$USERNAME"
 
-# Добавляем команды в файл .bashrc
-echo "
+    # Добавляем команды в файл .bashrc
+    sudo -u "$USERNAME" bash -c "cat >> /home/$USERNAME/.bashrc << 'EOF'
 alias myip='wget -qO myip http://www.ipchicken.com/; grep -o "[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}" myip;  rm myip'
 alias ver='cat /etc/*-release'
 alias mc='mc -S gotar'
@@ -169,7 +169,8 @@ alias dcserv='docker compose ps --services'
 
 alias e=\"echo -e '\\e[8;50;150;t'\"
 alias ee=\"echo -e '\\e[8;55;160;t'\"
-alias eee=\"echo -e '\\e[8;60;190;t'\"\n" >> /home/$USERNAME/.bashrc
+alias eee=\"echo -e '\\e[8;60;190;t'\"
+EOF"
 
 # Настройка SSH ключа если указан
 if [[ -n "$SSH_KEY" ]]; then
