@@ -57,6 +57,42 @@ if os.environ.get('DJANGO_DEBUG', default=False) in ['True', 'true', '1', True]:
 else:
     DEBUG = False
 
+DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
+
+# 2. Режим работы (для автоматической настройки)
+BOT_MODE = os.environ.get('BOT_MODE', 'polling')
+
+# 3. Настройки безопасности (включены ТОЛЬКО для webhook режима)
+if BOT_MODE == 'webhook':
+    # Доверяем заголовкам от Caddy
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+    
+    # Доверенные источники для CSRF
+    CSRF_TRUSTED_ORIGINS = [f'https://{DOMAIN}']
+    
+    # Дополнительные security настройки (рекомендуются)
+    SECURE_SSL_REDIRECT = True  # Перенаправлять HTTP на HTTPS
+    SESSION_COOKIE_SECURE = True  # Куки сессии только по HTTPS
+    CSRF_COOKIE_SECURE = True  # CSRF куки только по HTTPS
+    SECURE_HSTS_SECONDS = 31536000  # HTTP Strict Transport Security (1 год)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Настройки для безопасности заголовков
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Если используете сессии в БД/кеше
+    SESSION_COOKIE_HTTPONLY = True
+    
+else:  # polling режим
+    # Для локальной разработки эти настройки не нужны
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+
+
 # Load env variables from file
 dotenv_file = BASE_DIR / ".env"
 if os.path.isfile(dotenv_file):
@@ -315,6 +351,12 @@ if TELEGRAM_TOKEN is None:
         "Example of .env file: https://github.com/ohld/django-telegram-bot/blob/main/.env_example"
     )
     sys.exit(1)
+
+WEBHOOK_SECRET_PATH = TELEGRAM_TOKEN.replace(':','-')
+
+# Убедитесь, что путь заканчивается слешем
+if not WEBHOOK_SECRET_PATH.endswith('/'):
+    WEBHOOK_SECRET_PATH += '/'
 
 # -----> SENTRY
 # import sentry_sdk

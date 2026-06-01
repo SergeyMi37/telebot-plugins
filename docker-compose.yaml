@@ -1,4 +1,3 @@
-#version: "3.8"
 services:
   db:
     image: postgres:12
@@ -26,7 +25,16 @@ services:
     environment:
       ENV_FOR_DYNACONF: ${ENV_FOR_DYNACONF}
     # command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py model_import --model users.Options --file doc/options.json --format json --import 1 && python manage.py model_import --model users.GroupRoles --file doc/group_roles.json --import 1 && python manage.py runserver --noreload 0.0.0.0:8000"
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py import_options --file doc/options.json && python manage.py import_group_roles --file doc/group_roles.json && python manage.py runserver --noreload 0.0.0.0:8000"
+    # command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py import_options --file doc/options.json && python manage.py import_group_roles --file doc/group_roles.json && python manage.py runserver --noreload 0.0.0.0:8000"
+    command: >
+      bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py import_options --file doc/options.json && python manage.py import_group_roles --file doc/group_roles.json &&
+               if [ \"$$BOT_MODE\" = \"webhook\" ]; then
+                 echo 'Starting Gunicorn (webhook mode)...' &&
+                 gunicorn dtb.wsgi:application --bind 0.0.0.0:8000 --workers 4;
+               else
+                 echo 'Starting Django runserver (polling mode)...' &&
+                 python manage.py runserver 0.0.0.0:8000;
+               fi"
     volumes:
       - .:/code
     ports:
@@ -48,6 +56,12 @@ services:
       - ./.env
     depends_on:
       - web
+    # ДОБАВЛЕНО: Условие запуска - только если BOT_MODE=polling 
+    # docker-compose --profile polling up -d
+    # docker-compose --profile polling down
+    profiles:
+      - polling
+
   celery:
     build:
       context: .
