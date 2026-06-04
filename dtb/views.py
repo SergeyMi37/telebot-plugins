@@ -3,7 +3,7 @@ import logging
 from django.views import View
 from django.http import JsonResponse
 from telegram import Update
-
+from django.views.decorators.csrf import csrf_exempt
 from dtb.celery import app
 from dtb.settings import DEBUG
 from tgbot.dispatcher import dispatcher
@@ -22,21 +22,37 @@ def process_telegram_event(update_json):
 def index(request):
     return JsonResponse({"hello": "load .../tgadmin/"})
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class TelegramBotWebhookView(View):
     # WARNING: if fail - Telegram webhook will be delivered again.
     # Can be fixed with async celery task execution
     def post(self, request, *args, **kwargs):
-        if DEBUG:
-            process_telegram_event(json.loads(request.body))
-        else:
-            # Process Telegram event in Celery worker (async)
-            # Don't forget to run it and & Redis (message broker for Celery)!
-            # Locally, You can run all of these services via docker-compose.yml
-            process_telegram_event.delay(json.loads(request.body))
-
-        # e.g. remove buttons, typing event
-        return JsonResponse({"ok": "POST request processed"})
+        try:
+            # Парсим JSON из запроса
+            json_data = json.loads(request.body)
+            
+            # Логируем для отладки
+            logger.info(f"Webhook received. Update ID: {json_data.get('update_id', 'unknown')}")
+            
+            # Преобразуем JSON в объект Update
+            update = Update.de_json(json_data, bot)
+            
+            # Обрабатываем через dispatcher (здесь регистрируются все команды)
+            dispatcher.process_update(update)
+            
+            # Если нужно асинхронное выполнение через Celery, раскомментируйте:
+            # if not settings.DEBUG:
+            #     from tgbot.tasks import process_telegram_event
+            #     process_telegram_event.delay(json_data)
+            # else:
+            #     update = Update.de_json(json_data, bot)
+            #     dispatcher.process_update(update)
+            
+            return JsonResponse({"ok": True})
+            
+        except Exception as e:
+            logger.error(f"Webhook processing error: {e}", exc_info=True)
+            return JsonResponse({"ok": False, "error": str(e)})
 
     def get(self, request, *args, **kwargs):  # for debug 
         return JsonResponse({"ok": "Get request received! But nothing done"})
