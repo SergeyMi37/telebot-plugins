@@ -3,7 +3,9 @@ import logging
 from django.views import View
 from django.http import JsonResponse
 from telegram import Update
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+
 from dtb.celery import app
 from dtb.settings import DEBUG
 from tgbot.dispatcher import dispatcher
