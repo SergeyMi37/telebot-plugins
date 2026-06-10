@@ -19,7 +19,8 @@ services:
   web:
     build:
       context: .
-      dockerfile: LocalDockerfile
+      #dockerfile: LocalDockerfile
+      dockerfile: chromiumDockerfile
     container_name: dtb_django
     restart: always
     environment:
