@@ -21,9 +21,9 @@ from django.conf import settings
 from . import views
 
 urlpatterns = [
+    path(settings.WEBHOOK_SECRET_PATH, csrf_exempt(views.TelegramBotWebhookView.as_view())),
     path('tgadmin/', admin.site.urls),
     path('__debug__/', include(debug_toolbar.urls)),
     # path('', views.index, name="index"),
     path('', admin.site.urls),
-    path(settings.WEBHOOK_SECRET_PATH, csrf_exempt(views.TelegramBotWebhookView.as_view())),
 ]

@@ -259,3 +259,56 @@ docker-compose exec web python manage.py webhook info
   docker-compose exec web python manage.py webhook delete
   ```
 
+### 🚀 Регистрация вебхука напрямую через curl
+
+Замените `<TELEGRAM_TOKEN>` и `<YOUR_DOMAIN>` на свои значения:
+
+```bash
+# Установка вебхука
+curl -F "url=https://<YOUR_DOMAIN>/<WEBHOOK_SECRET_PATH>/" \
+  https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook
+```
+
+# Пример с реальными данными
+
+```
+curl -F "url=https://telega.example.com/7612325472-AAGgmLNWkF7c2hS7A0b6RG6P9pNEOSPjeEc/" \
+  https://api.telegram.org/bot7612325472:AAGgmLNWkF7c2hS7A0b6RG6P9pNEOSPjeEc/setWebhook
+```
+#### 🔍 Проверка статуса вебхука
+```bash
+#Получить информацию о текущем вебхуке
+
+curl https://api.telegram.org/bot<TELEGRAM_TOKEN>/getWebhookInfo
+
+# Пример вывода
+{
+  "ok": true,
+  "result": {
+    "url": "https://telega.example.com/7612325472-AAGgmLNWkF7c2hS7A0b6RG6P9pNEOSPjeEc/",
+    "has_custom_certificate": false,
+    "pending_update_count": 0,
+    "max_connections": 40
+  }
+}
+```
+🗑 Удаление вебхука
+```bash
+# Удалить вебхук (переключиться на polling режим)
+curl -F "url=" https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook
+```
+### Дополнительные параметры
+При установке вебхука можно указать дополнительные параметры:
+
+```bash
+# Ограничить типы обновлений
+curl -F "url=https://<YOUR_DOMAIN>/<WEBHOOK_SECRET_PATH>/" \
+  -F "allowed_updates=[\"message\", \"callback_query\"]" \
+  https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook
+
+# Установить максимальное количество соединений
+curl -F "url=https://<YOUR_DOMAIN>/<WEBHOOK_SECRET_PATH>/" \
+  -F "max_connections=100" \
+  https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook
+
+```

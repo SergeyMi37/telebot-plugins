@@ -237,7 +237,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'dtb.middleware.DisableCSRFForWebhook',  # <-- ДОБАВЛЯЕМ СЮДА (после CsrfViewMiddleware)
+    # 'dtb.middleware.DisableCSRFForWebhook',  # <-- ДОБАВЛЯЕМ СЮДА (после CsrfViewMiddleware)
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
