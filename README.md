@@ -272,8 +272,8 @@ curl -F "url=https://<YOUR_DOMAIN>/<WEBHOOK_SECRET_PATH>/" \
 # Пример с реальными данными
 
 ```
-curl -F "url=https://telega.example.com/7612325472-AAGgmLNWkF7c2hS7A0b6RG6P9pNEOSPjeEc/" \
-  https://api.telegram.org/bot7612325472:AAGgmLNWkF7c2hS7A0b6RG6P9pNEOSPjeEc/setWebhook
+curl -F "url=https://telega.example.com/<TELEGRAM_TOKEN>/" \
+  https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook
 ```
 #### 🔍 Проверка статуса вебхука
 ```bash
@@ -285,7 +285,7 @@ curl https://api.telegram.org/bot<TELEGRAM_TOKEN>/getWebhookInfo
 {
   "ok": true,
   "result": {
-    "url": "https://telega.example.com/7612325472-AAGgmLNWkF7c2hS7A0b6RG6P9pNEOSPjeEc/",
+    "url": "https://telega.example.com/<TELEGRAM_TOKEN>/",
     "has_custom_certificate": false,
     "pending_update_count": 0,
     "max_connections": 40
