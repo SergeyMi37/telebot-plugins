@@ -6,6 +6,11 @@ ENV_FOR_DYNACONF=dev
 
 # PROXY_URL = http://user:pass@ip:3128
 
+#ALL_PROXY=http://user:pass@ip:3128
+#HTTP_PROXY=http://user:pass@ip:3128
+#HTTPS_PROXY=socks5://host.docker.internal:1080
+#NO_PROXY=localhost,127.0.0.1,.local
+
 # Режим работы
 BOT_MODE=webhook
 
